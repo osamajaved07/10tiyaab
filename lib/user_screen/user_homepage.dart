@@ -16,7 +16,7 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String name = "";
 
@@ -51,23 +51,17 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: tSecondaryColor,
         elevation: 0,
         title: Text(
           '10tiyaab',
           style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         centerTitle: true,
-        leading: Icon(
-          Icons.menu,
-          color: Colors.black,
-        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -81,38 +75,57 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: screenHeight * 0.02),
+                  // First search bar with dropdown button
                   Container(
                     width: screenWidth,
                     padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.015,
-                        horizontal: screenWidth * 0.04),
+                      vertical: screenHeight * 0.001,
+                      horizontal: screenWidth * 0.04,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.search, color: Colors.grey),
-                        SizedBox(width: screenWidth * 0.02),
+                        // Icon(Icons.search, color: Colors.grey),
+                        SizedBox(width: screenWidth * 0.08),
                         Expanded(
-                          child: Text(
-                            'Select Service Provider',
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Select Service Provider',
+                              hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: screenWidth * 0.045,
+                              ),
+                              border: InputBorder.none,
+                            ),
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontSize: screenWidth * 0.045,
                             ),
                           ),
                         ),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                        IconButton(
+                          icon: Icon(Icons.keyboard_arrow_down,
+                              color: Colors.grey),
+                          onPressed: () {
+                            // Add your dropdown button functionality here
+                          },
+                        ),
                       ],
                     ),
                   ),
+
                   SizedBox(height: screenHeight * 0.015),
+
+// Second search bar
                   Container(
                     width: screenWidth,
                     padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.015,
-                        horizontal: screenWidth * 0.04),
+                      vertical: screenHeight * 0.001,
+                      horizontal: screenWidth * 0.04,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -122,10 +135,17 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         Icon(Icons.search, color: Colors.grey),
                         SizedBox(width: screenWidth * 0.02),
                         Expanded(
-                          child: Text(
-                            'Where to?',
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Where to?',
+                              hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: screenWidth * 0.045,
+                              ),
+                              border: InputBorder.none,
+                            ),
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontSize: screenWidth * 0.045,
                             ),
                           ),
@@ -133,18 +153,17 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       ],
                     ),
                   ),
+
                   SizedBox(height: screenHeight * 0.03),
                   Container(
                     width: screenWidth,
                     height: screenHeight * 0.2,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF04BEBE), Color(0xFF025858)
-                        ], 
-                         stops: [0.47, 1.0],
+                        colors: [Color(0xFF04BEBE), Color(0xFF025858)],
+                        stops: [0.47, 1.0],
                         begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter, 
+                        end: Alignment.bottomCenter,
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -179,7 +198,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       fontSize: screenWidth * 0.045,
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(height: screenHeight * 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
