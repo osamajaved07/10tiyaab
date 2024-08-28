@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:fyp_1/model/service_provider_list.dart';
 import 'package:fyp_1/styles/colors.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String name = "";
+  String? selectedServiceProvider;
 
   @override
   void initState() {
@@ -47,6 +49,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     // Navigate back to the LoginScreen
     Get.offNamed("/userLogin");
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -91,28 +95,32 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         // Icon(Icons.search, color: Colors.grey),
                         SizedBox(width: screenWidth * 0.08),
                         Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Select Service Provider',
-                              hintStyle: TextStyle(
-                                color: Colors.grey,
+                          child: DropdownButton<String>(
+                            value: selectedServiceProvider,
+                            hint: Text(
+                              'Select Service Provider',
+                              style: TextStyle(
+                                color: Color(0xFF616161),
                                 fontSize: screenWidth * 0.045,
                               ),
-                              border: InputBorder.none,
                             ),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: screenWidth * 0.045,
-                            ),
+                            items: ServiceProviderList.serviceProviders.map((String provider) {
+                              return DropdownMenuItem<String>(
+                                value: provider,
+                                child: Text(provider),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedServiceProvider = newValue;
+                              });
+                            },
+                            underline: SizedBox(),
+                            icon: Icon(Icons.keyboard_arrow_down,
+                                color: Colors.grey),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_down,
-                              color: Colors.grey),
-                          onPressed: () {
-                            // Add your dropdown button functionality here
-                          },
-                        ),
+                        
                       ],
                     ),
                   ),
@@ -139,7 +147,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             decoration: InputDecoration(
                               hintText: 'Where to?',
                               hintStyle: TextStyle(
-                                color: Colors.grey,
+                                color: Color(0xFF616161),
                                 fontSize: screenWidth * 0.045,
                               ),
                               border: InputBorder.none,
