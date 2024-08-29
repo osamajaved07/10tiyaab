@@ -8,6 +8,7 @@ import 'package:fyp_1/mazdoor_screens/mazdoor_login_screen.dart';
 import 'package:fyp_1/mazdoor_screens/mazdoor_registration_screen.dart';
 import 'package:fyp_1/screen/selection_screen.dart';
 import 'package:fyp_1/screen/splash_screen.dart';
+import 'package:fyp_1/user_screen/contactus_screen.dart';
 import 'package:fyp_1/user_screen/edit_profile_screen.dart';
 import 'package:fyp_1/user_screen/user_homepage.dart';
 import 'package:fyp_1/user_screen/user_login_screen.dart';
@@ -77,6 +78,11 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: '/editprofile',
             page: () => EditProfilePage(prefs: prefs,),
+            transition: Transition.fadeIn),
+
+            GetPage(
+            name: '/contactus',
+            page: () => ContactUsScreen(prefs: prefs,),
             transition: Transition.fadeIn),
       ],
     );

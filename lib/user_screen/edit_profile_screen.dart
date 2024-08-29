@@ -80,7 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         radius: screenWidth * 0.18,
                         backgroundImage: _profileImage != null
                             ? FileImage(File(_profileImage!.path))
-                            : AssetImage('assets/images/fb.png')
+                            : AssetImage('assets/images/default.png')
                                 as ImageProvider,
                       ),
                       Positioned(
@@ -128,13 +128,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   // Email TextField
                   TextField(
                     controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    enabled: false, // Email is not editable
+                    // enabled: false, // Email is not editable
                   ),
                   SizedBox(height: screenHeight * 0.03),
 
@@ -158,9 +159,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       SizedBox(width: screenWidth * 0.03),
                       Expanded(
                         child: TextField(
+                          enabled: false,
                           decoration: InputDecoration(
                             labelText: '+92 3308963378',
-                            border: OutlineInputBorder(
+                            disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
@@ -174,7 +176,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   // Update Button
                   SizedBox(
                     width: double.infinity,
-                    height: screenHeight * 0.07,
+                    height: screenHeight * 0.06,
                     child: ElevatedButton(
                       onPressed: () {
                         // Handle update action

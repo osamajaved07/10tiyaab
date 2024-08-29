@@ -210,7 +210,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _suggestionIcon(Icons.electric_bolt, 'Electrician'),
+                      _suggestionIcon(Icons.electric_bolt, 'Electrician',),
                       _suggestionIcon(Icons.handyman, 'Carpenter'),
                       _suggestionIcon(Icons.plumbing, 'Plumber'),
                       _suggestionIcon(Icons.calendar_today, 'Reserve'),
@@ -317,7 +317,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
              Get.toNamed('/homescreen',);
             break;
           case 3:
-             Get.toNamed('/homescreen',);
+             Get.toNamed('/contactus',);
             break;
         }
       },
