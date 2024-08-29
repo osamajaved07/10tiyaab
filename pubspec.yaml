@@ -17,6 +17,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   lottie: ^3.1.2
   feather_icons: ^1.2.0
+  image_picker: ^1.1.2
  
 flutter_launcher_icons:
  android: "launcher_icon"

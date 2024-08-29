@@ -242,7 +242,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBarWidget(),
+      bottomNavigationBar: BottomNavigationBarWidget(initialIndex: 0,),
     );
   }
 
@@ -266,21 +266,61 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 }
 
-class BottomNavigationBarWidget extends StatelessWidget {
+class BottomNavigationBarWidget extends StatefulWidget {
+  final int initialIndex;
+
+  BottomNavigationBarWidget({required this.initialIndex});
+
+  @override
+  _BottomNavigationBarWidgetState createState() =>
+      _BottomNavigationBarWidgetState();
+}
+
+class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex; // Set the initial index
+  }
+
   @override
   Widget build(BuildContext context) {
     return CurvedNavigationBar(
-      index: 0,
+      index: _currentIndex,
       backgroundColor: Colors.transparent,
       color: Colors.white,
       buttonBackgroundColor: tPrimaryColor,
       height: 60,
       items: <Widget>[
         Icon(Icons.home, size: 30, color: Colors.black),
-        Icon(Icons.account_circle, size: 30, color: Colors.black),
+        Icon(Icons.person_2_outlined, size: 30, color: Colors.black),
         Icon(Icons.local_activity, size: 30, color: Colors.black),
         Icon(Icons.phone, size: 30, color: Colors.black),
       ],
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+
+        // Navigate based on the tapped index
+        switch (index) {
+          case 0:
+            Get.toNamed('/homescreen',);
+
+            break;
+          case 1:
+             Get.toNamed('/editprofile',);
+            break;
+          case 2:
+             Get.toNamed('/homescreen',);
+            break;
+          case 3:
+             Get.toNamed('/homescreen',);
+            break;
+        }
+      },
     );
   }
 }
