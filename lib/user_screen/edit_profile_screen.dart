@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/styles/colors.dart';
-import 'package:fyp_1/styles/colors.dart';
 import 'package:fyp_1/user_screen/user_homepage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -18,8 +17,9 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  String name = "";
+  String name = "", email = "";
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   XFile? _profileImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -33,6 +33,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       name = widget.prefs.getString('name') ?? 'User';
       _nameController.text = name;
+      email = widget.prefs.getString('email') ?? '123@gmail.com';
+      _emailController.text = email;
     });
   }
 
@@ -125,8 +127,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                   // Email TextField
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
-                      labelText: 'uzzamtasleem123@gmail.com',
+                      labelText: 'Email',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -185,6 +188,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: Text(
                         'Update',
                         style: TextStyle(
+                          color: ttextColor,
                           fontSize: screenWidth * 0.045,
                           fontWeight: FontWeight.bold,
                         ),

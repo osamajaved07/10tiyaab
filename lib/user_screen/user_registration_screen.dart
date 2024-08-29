@@ -17,7 +17,7 @@ class UserRegister extends StatefulWidget {
 }
 
 class _UserRegisterState extends State<UserRegister> {
-  String name = "", password = "", confirmpassword = "";
+  String name = "",  email = "", password = "", confirmpassword = "";
   // String? selectedGender;
   // final List<String> genderOptions = ['Male', 'Female', 'Other'];
   final _formkey = GlobalKey<FormState>();
@@ -32,6 +32,7 @@ class _UserRegisterState extends State<UserRegister> {
   void register() {
     if (_formkey.currentState!.validate()) {
       String name = _namecontroller.text.trim();
+      String email = _emailcontroller.text.trim();
       String password = _passwordcontroller.text.trim();
       String confirmPassword = _confirmpasswordcontroller.text.trim();
       if (password != confirmPassword) {
@@ -47,6 +48,7 @@ class _UserRegisterState extends State<UserRegister> {
 
       // Save user data to SharedPreferences
       widget.prefs.setString('name', name);
+      widget.prefs.setString('email', email);
       widget.prefs.setString('password', password);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
