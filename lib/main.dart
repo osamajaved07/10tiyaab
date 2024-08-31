@@ -1,34 +1,38 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously, equal_keys_in_map, unnecessary_import, unused_import
 
 import 'package:flutter/material.dart';
+import 'package:fyp_1/controllers/auth_controller.dart';
 import 'package:fyp_1/phone_verification/phone_verification.dart';
 import 'package:fyp_1/phone_verification/verification_final.dart';
-import 'package:fyp_1/screen/home_screen.dart';
-import 'package:fyp_1/mazdoor_screens/mazdoor_login_screen.dart';
-import 'package:fyp_1/mazdoor_screens/mazdoor_registration_screen.dart';
-import 'package:fyp_1/screen/selection_screen.dart';
-import 'package:fyp_1/screen/splash_screen.dart';
-import 'package:fyp_1/user_screen/contactus_screen.dart';
-import 'package:fyp_1/user_screen/edit_profile_screen.dart';
-import 'package:fyp_1/user_screen/user_homepage.dart';
-import 'package:fyp_1/user_screen/user_login_screen.dart';
-import 'package:fyp_1/user_screen/user_registration_screen.dart';
+import 'package:fyp_1/views/home.dart';
+import 'package:fyp_1/views/professional_screens/professional_login.dart';
+import 'package:fyp_1/views/professional_screens/professional_registration.dart';
+import 'package:fyp_1/views/selection_screen.dart';
+import 'package:fyp_1/views/splash_screen.dart';
+import 'package:fyp_1/views/user_screens/contactus_screen.dart';
+import 'package:fyp_1/views/user_screens/edit_profile_screen.dart';
+import 'package:fyp_1/views/user_screens/user_homepage.dart';
+import 'package:fyp_1/views/user_screens/user_login.dart';
+import 'package:fyp_1/views/user_screens/user_registration.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final AuthController authController = Get.put(AuthController());
+  final bool isLoggedIn = await authController.checkLoginStatus();
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
   //     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   // await SystemChrome.setPreferredOrientations(
   //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(MyApp(prefs: prefs));
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  final SharedPreferences prefs;
-  const MyApp({required this.prefs, super.key});
+  final bool isLoggedIn;
+  // final SharedPreferences prefs;
+  const MyApp({super.key, required this.isLoggedIn});
 
   // This widget is the root of your application.
   @override
@@ -46,43 +50,37 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: '/professionalregister',
             page: () => MazdoorRegistration(
-                  prefs: prefs,
-                )),
+                 )),
         GetPage(
             name: '/professionalLogin',
             page: () => MazdoorLogin(
-                  prefs: prefs,
                 )),
         GetPage(
             name: '/userregister',
             page: () => UserRegister(
-                  prefs: prefs,
                 )),
         GetPage(
             name: '/userLogin',
             page: () => UserLogin(
-                  prefs: prefs,
                 )),
         GetPage(
             name: '/phoneverify',
             page: () => PhoneVerification(
-                  prefs: prefs,
                 )),
         GetPage(name: '/verify', page: () => MyVerify()),
         GetPage(
             name: '/homescreen',
             page: () => UserHomeScreen(
-                  prefs: prefs,
                 ),
             transition: Transition.fadeIn),
         GetPage(
             name: '/editprofile',
-            page: () => EditProfilePage(prefs: prefs,),
+            page: () => EditProfilePage(),
             transition: Transition.fadeIn),
 
             GetPage(
             name: '/contactus',
-            page: () => ContactUsScreen(prefs: prefs,),
+            page: () => ContactUsScreen(),
             transition: Transition.fadeIn),
       ],
     );

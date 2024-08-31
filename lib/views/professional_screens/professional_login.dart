@@ -2,16 +2,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_1/screen/home_screen.dart';
-import 'package:fyp_1/mazdoor_screens/mazdoor_registration_screen.dart';
+import 'package:fyp_1/views/home.dart';
+import 'package:fyp_1/views/professional_screens/professional_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MazdoorLogin extends StatefulWidget {
-  final SharedPreferences prefs;
-  const MazdoorLogin({super.key, required this.prefs});
+  // final SharedPreferences prefs;
+  const MazdoorLogin({super.key,});
 
   @override
   State<MazdoorLogin> createState() => _MazdoorLoginState();
@@ -31,30 +31,30 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
       String enteredPassword = _passwordcontroller.text;
 
       // Retrieve saved email and password from SharedPreferences
-      String savedName = widget.prefs.getString('name') ?? '';
-      String savedPassword = widget.prefs.getString('password') ?? '';
+      // String savedName = widget.prefs.getString('name') ?? '';
+      // String savedPassword = widget.prefs.getString('password') ?? '';
 
-      if (enteredName == savedName && enteredPassword == savedPassword) {
-        // Clear text fields
-        _namecontroller.clear();
-        _passwordcontroller.clear();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
+      // if (enteredName == savedName && enteredPassword == savedPassword) {
+      //   // Clear text fields
+      //   _namecontroller.clear();
+      //   _passwordcontroller.clear();
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text('Login successfully'),
+      //       backgroundColor: Colors.green,
+      //     ),
+      //   );
 
-        // Get.toNamed("/homescreen");
-      } else {
-        // Show error message if credentials do not match
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Invalid name or password'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      //   // Get.toNamed("/homescreen");
+      // } else {
+      //   // Show error message if credentials do not match
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text('Invalid name or password'),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+      // }
     }
   }
 

@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
-import 'package:fyp_1/user_screen/user_homepage.dart';
+import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactUsScreen extends StatefulWidget {
-  final SharedPreferences prefs;
+  // final SharedPreferences prefs;
 
-  const ContactUsScreen({super.key, required this.prefs});
+  const ContactUsScreen({super.key,});
 
   @override
   State<ContactUsScreen> createState() => _ContactUsScreenState();
@@ -27,10 +27,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
   Future<void> _loadUserData() async {
     setState(() {
-      name = widget.prefs.getString('name') ?? 'User';
-      _nameController.text = name;
-      email = widget.prefs.getString('email') ?? '123@gmail.com';
-      _emailController.text = email;
+      // name = widget.prefs.getString('name') ?? 'User';
+      // _nameController.text = name;
+      // email = widget.prefs.getString('email') ?? '123@gmail.com';
+      // _emailController.text = email;
     });
   }
 

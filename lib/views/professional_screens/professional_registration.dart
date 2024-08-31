@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/phone_verification/phone_verification.dart';
-import 'package:fyp_1/mazdoor_screens/mazdoor_login_screen.dart';
+import 'package:fyp_1/views/professional_screens/professional_login.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -10,8 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feather_icons/feather_icons.dart';
 
 class MazdoorRegistration extends StatefulWidget {
-  final SharedPreferences prefs;
-  const MazdoorRegistration({super.key, required this.prefs});
+  // final SharedPreferences prefs;
+  const MazdoorRegistration({super.key,});
 
   @override
   State<MazdoorRegistration> createState() => _MazdoorRegistrationState();
@@ -46,8 +46,8 @@ class _MazdoorRegistrationState extends State<MazdoorRegistration> {
       }
 
       // Save user data to SharedPreferences
-      widget.prefs.setString('name', name);
-      widget.prefs.setString('password', password);
+      // widget.prefs.setString('name', name);
+      // widget.prefs.setString('password', password);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Credentials saved successful!'),

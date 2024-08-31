@@ -8,9 +8,9 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHomeScreen extends StatefulWidget {
-  final SharedPreferences prefs;
+  // final SharedPreferences prefs;
 
-  const UserHomeScreen({Key? key, required this.prefs}) : super(key: key);
+  const UserHomeScreen({Key? key, }) : super(key: key);
 
   @override
   _UserHomeScreenState createState() => _UserHomeScreenState();
@@ -30,7 +30,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
   Future<void> _loadUsername() async {
     setState(() {
-      name = widget.prefs.getString('name') ?? 'User';
+      // name = widget.prefs.getString('name') ?? 'User';
     });
   }
 

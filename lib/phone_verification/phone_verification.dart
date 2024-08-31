@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PhoneVerification extends StatefulWidget {
-  final SharedPreferences prefs;
-  const PhoneVerification({Key? key, required this.prefs}) : super(key: key);
+  // final SharedPreferences prefs;
+  const PhoneVerification({Key? key,}) : super(key: key);
 
   @override
   State<PhoneVerification> createState() => _PhoneVerificationState();
