@@ -1,23 +1,23 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_local_variable, unused_element, sized_box_for_whitespace, unused_import, unnecessary_import, deprecated_member_use
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_local_variable, unused_element, sized_box_for_whitespace, unused_import, unnecessary_import
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_1/screen/home_screen.dart';
 import 'package:fyp_1/mazdoor_screens/mazdoor_registration_screen.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserLogin extends StatefulWidget {
+class MazdoorLogin extends StatefulWidget {
   final SharedPreferences prefs;
-  const UserLogin({super.key, required this.prefs});
+  const MazdoorLogin({super.key, required this.prefs});
 
   @override
-  State<UserLogin> createState() => _UserLoginState();
+  State<MazdoorLogin> createState() => _MazdoorLoginState();
 }
 
-class _UserLoginState extends State<UserLogin> {
+class _MazdoorLoginState extends State<MazdoorLogin> {
   String name = "", password = "", confirmpassword = "";
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
@@ -27,8 +27,8 @@ class _UserLoginState extends State<UserLogin> {
 
   void login() {
     if (_formkey.currentState!.validate()) {
-      String enteredName = _namecontroller.text.trim();
-      String enteredPassword = _passwordcontroller.text.trim();
+      String enteredName = _namecontroller.text;
+      String enteredPassword = _passwordcontroller.text;
 
       // Retrieve saved email and password from SharedPreferences
       String savedName = widget.prefs.getString('name') ?? '';
@@ -45,7 +45,7 @@ class _UserLoginState extends State<UserLogin> {
           ),
         );
 
-        Get.toNamed("/homescreen");
+        // Get.toNamed("/homescreen");
       } else {
         // Show error message if credentials do not match
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,44 +62,7 @@ class _UserLoginState extends State<UserLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   leadingWidth: 100, // Adjust width to fit the content
-      //   leading: Row(
-      //     children: [
-      //       IconButton(
-      //         icon: Icon(
-      //           Icons.arrow_back_ios_new,
-      //           color: ttextColor,
-      //         ),
-      //         onPressed: () {
-      //           Get.offNamed("/selection");
-      //           // Navigate back
-               
-      //         },
-      //       ),
-      //       Flexible(
-      //         child: GestureDetector(
-      //           onTap: () {
-                  
-      //            Get.offNamed("/selection"); // Navigate back
-                  
-      //           },
-      //           child: Text(
-      //             "Back",
-      //             style: TextStyle(
-      //               color: Colors
-      //                   .black, // Set the color to match the app bar's theme
-      //               fontSize: 18,
-      //             ),
-      //             overflow: TextOverflow.ellipsis,
-      //           ),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+      
       body: LayoutBuilder(builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
@@ -162,7 +125,9 @@ class _UserLoginState extends State<UserLogin> {
                                 key: _formkey,
                                 child: Column(
                                   children: [
-                                    
+                                    // SizedBox(
+                                    //   height: 16.0,
+                                    // ),
                                     Text(
                                       "Login",
                                       style: TextStyle(
@@ -174,7 +139,7 @@ class _UserLoginState extends State<UserLogin> {
                                       height: 30.0,
                                     ),
                                     _nameField(),
-    
+
                                     SizedBox(
                                       height: 20.0,
                                     ),
@@ -207,7 +172,7 @@ class _UserLoginState extends State<UserLogin> {
                             ),
                             GestureDetector(
                                 onTap: () {
-                                  Get.toNamed("/userregister");
+                                  Get.toNamed("/professionalregister");
                                 },
                                 child: Text(
                                   "Register",
@@ -301,10 +266,11 @@ class _UserLoginState extends State<UserLogin> {
           return null;
         }
 
+        
       },
       decoration: InputDecoration(
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-          hintText: 'Name',
+          hintText: 'John Doe',
           labelText: 'Name',
           prefixIcon: Icon(Icons.person_outline)),
     );

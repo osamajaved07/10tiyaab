@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/model/onboard.dart';
+import 'package:fyp_1/models/onboard.dart';
 import 'package:fyp_1/screen/selection_screen.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

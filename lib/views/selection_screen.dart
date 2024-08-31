@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fyp_1/main.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 
 import 'package:get/get.dart';
 

@@ -1,5 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 
 class CustomBtn extends StatelessWidget {
   final String text;

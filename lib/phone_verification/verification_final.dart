@@ -1,7 +1,7 @@
 // ignore_for_file: unused_local_variable, prefer_const_constructors, use_super_parameters, avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';

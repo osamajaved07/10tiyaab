@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_final_fields
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/user_screen/user_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

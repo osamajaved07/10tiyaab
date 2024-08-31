@@ -1,40 +1,39 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_element, unused_local_variable, unused_import
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_element, unused_local_variable, unused_import, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/phone_verification/phone_verification.dart';
 import 'package:fyp_1/mazdoor_screens/mazdoor_login_screen.dart';
-import 'package:fyp_1/styles/colors.dart';
+import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:feather_icons/feather_icons.dart';
 
-class UserRegister extends StatefulWidget {
+class MazdoorRegistration extends StatefulWidget {
   final SharedPreferences prefs;
-  const UserRegister({super.key, required this.prefs});
+  const MazdoorRegistration({super.key, required this.prefs});
 
   @override
-  State<UserRegister> createState() => _UserRegisterState();
+  State<MazdoorRegistration> createState() => _MazdoorRegistrationState();
 }
 
-class _UserRegisterState extends State<UserRegister> {
-  String name = "",  email = "", password = "", confirmpassword = "";
+class _MazdoorRegistrationState extends State<MazdoorRegistration> {
+  String name = "", password = "", confirmpassword = "";
   // String? selectedGender;
   // final List<String> genderOptions = ['Male', 'Female', 'Other'];
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
   bool ispasswordVisible = false;
   TextEditingController _namecontroller = new TextEditingController();
-  TextEditingController _emailcontroller = new TextEditingController();
   TextEditingController _passwordcontroller = new TextEditingController();
   TextEditingController _confirmpasswordcontroller =
       new TextEditingController();
 
   void register() {
     if (_formkey.currentState!.validate()) {
-      String name = _namecontroller.text.trim();
-      String email = _emailcontroller.text.trim();
-      String password = _passwordcontroller.text.trim();
-      String confirmPassword = _confirmpasswordcontroller.text.trim();
+      String name = _namecontroller.text;
+      String password = _passwordcontroller.text;
+      String confirmPassword = _confirmpasswordcontroller.text;
       if (password != confirmPassword) {
         // Show Snackbar message if passwords do not match
         ScaffoldMessenger.of(context).showSnackBar(
@@ -48,7 +47,6 @@ class _UserRegisterState extends State<UserRegister> {
 
       // Save user data to SharedPreferences
       widget.prefs.setString('name', name);
-      widget.prefs.setString('email', email);
       widget.prefs.setString('password', password);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -58,8 +56,8 @@ class _UserRegisterState extends State<UserRegister> {
       );
 
       // Navigate to next screen or perform any other action
-      
-      Get.toNamed("/phoneverify");
+      // Get.off(() => PhoneVerification(prefs: widget.prefs,));
+      Get.offNamed("/phoneverify");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -134,36 +132,23 @@ class _UserRegisterState extends State<UserRegister> {
                               key: _formkey,
                               child: Column(
                                 children: [
+                                  Icon(FeatherIcons.info, size: 56),
+
+                                  SizedBox(
+                                      height:
+                                          8), // Adds some spacing between the icon and the text
+
+                                  SizedBox(
+                                      height:
+                                          16), // Adds some spacing before the next element
                                   Text(
-                                    "Register",
+                                    'Registration for Service Provider is currently handled by our main office. Please visit our main branch or contact our representative to get registered.',
+                                    textAlign: TextAlign.justify,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 24,
-                                        color: Colors.black54),
+                                      height: 1.6,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(
-                                    height: 30.0,
-
-                                  ),
-                                  _nameField(),
-                                  SizedBox(
-                                    height: 20.0,
-                                  ),
-
-                                  _emailField(),
-                                  SizedBox(
-                                    height: 20.0,
-                                  ),
-
-                                  _passwordField(),
-                                  SizedBox(
-                                    height: 20.0,
-                                  ),
-                                  _confirmpasswordField(),
-                                  SizedBox(
-                                    height: 32.0,
-                                  ),
-                                  _registerButton(context),
                                 ],
                               ),
                             ),
@@ -188,8 +173,7 @@ class _UserRegisterState extends State<UserRegister> {
                           ),
                           GestureDetector(
                               onTap: () {
-                                // Get.off(() => LoginScreen(prefs: widget.prefs));
-                                Get.offNamed("/userLogin");
+                                Get.offNamed("/professionalLogin");
                               },
                               child: Text(
                                 "Login",
@@ -271,57 +255,40 @@ class _UserRegisterState extends State<UserRegister> {
     );
   }
 
-TextFormField _passwordField() {
-  return TextFormField(
-    controller: _passwordcontroller,
-    obscureText: !isPasswordVisible,
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please enter password';
-      } else if (value.length < 8) {
-        return 'Password must be at least 8 characters';
-      } else if (!RegExp(r'^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[a-z\d@$!%*#?&]{8,}$')
-          .hasMatch(value)) {
-        return 'Password must contain at least one letter,\none number, and one special character';
-      } else {
-        return null;
-      }
-    },
-    decoration: InputDecoration(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-      hintText: 'Password',
-      labelText: 'Password',
-      prefixIcon: Icon(Icons.lock_outlined),
-      suffixIcon: IconButton(
-        icon: Icon(
-          isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-        ),
-        onPressed: () {
-          setState(() {
-            isPasswordVisible = !isPasswordVisible; // Toggle visibility
-          });
-        },
-      ),
-    ),
-  );
-}
-
-  TextFormField _emailField() {
+  TextFormField _passwordField() {
     return TextFormField(
-      controller: _emailcontroller,
+      controller: _passwordcontroller,
+      obscureText: !isPasswordVisible,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your email';
-        } else if (!RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$').hasMatch(value)) {
-          return 'Please enter a valid email address.';
+          return 'Please enter password';
+        } else if (value.length < 8) {
+          return 'Password must be at least 8 characters';
+        } else if (!RegExp(
+                r'^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[a-z\d@$!%*#?&]{8,}$')
+            .hasMatch(value)) {
+          return 'Password must contain at least one letter,\none number, and one special character';
+        } else {
+          return null;
         }
-        return null;
       },
+      // obscureText: true,
       decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-          hintText: '123@gmail.com',
-          labelText: 'Email',
-          prefixIcon: Icon(Icons.mail_outline_rounded)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        hintText: 'Password',
+        labelText: 'Password',
+        prefixIcon: Icon(Icons.lock_outlined),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () {
+            setState(() {
+              isPasswordVisible = !isPasswordVisible; // Toggle visibility
+            });
+          },
+        ),
+      ),
     );
   }
 
@@ -343,4 +310,29 @@ TextFormField _passwordField() {
           prefixIcon: Icon(Icons.person_outline)),
     );
   }
+
+  // DropdownButtonFormField<String> _dropdownmenu() {
+  //   return DropdownButtonFormField<String>(
+  //     value: selectedGender,
+  //     decoration: InputDecoration(
+  //       prefixIcon: Icon(Icons.people),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(16),
+  //       ),
+  //       labelText: 'Gender',
+  //       hintText: 'Gender',
+  //     ),
+  //     onChanged: (newValue) {
+  //       setState(() {
+  //         selectedGender = newValue; // Update the selected gender
+  //       });
+  //     },
+  //     items: genderOptions.map((gender) {
+  //       return DropdownMenuItem<String>(
+  //         value: gender,
+  //         child: Text(gender),
+  //       );
+  //     }).toList(),
+  //   );
+  // }
 }
