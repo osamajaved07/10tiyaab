@@ -1,6 +1,7 @@
-// ignore_for_file: unused_local_variable, prefer_const_constructors, use_super_parameters, avoid_print, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, use_super_parameters
 
 import 'package:flutter/material.dart';
+import 'package:fyp_1/controllers/auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -14,6 +15,8 @@ class MyVerify extends StatefulWidget {
 }
 
 class _MyVerifyState extends State<MyVerify> {
+  final AuthController _authController = Get.find<AuthController>();
+
   Future<void> _showLoadingDialog() async {
     showDialog(
       context: context,
@@ -101,7 +104,7 @@ class _MyVerifyState extends State<MyVerify> {
       body: LayoutBuilder(builder: ((context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
-        return SingleChildScrollView(
+        return SingleChildScrollView( // Wrap content in SingleChildScrollView
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: screenWidth / 24),
             child: Column(
@@ -117,18 +120,19 @@ class _MyVerifyState extends State<MyVerify> {
                   height: 25,
                 ),
                 Text(
-                  "Phone Verification",
+                  "Email Verification",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 Text(
-                  "Enter 6 digits verification code we have sent to your phone number",
+                  "Enter 6 digits verification code we have sent to your email",
                   style: TextStyle(
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(
                   height: 30,
@@ -139,7 +143,9 @@ class _MyVerifyState extends State<MyVerify> {
                   focusedPinTheme: focusedPinTheme,
                   submittedPinTheme: submittedPinTheme,
                   showCursor: true,
-                  onCompleted: (pin) => print(pin),
+                  onCompleted: (pin) {
+                    _authController.verifyOtp(pin);
+                  },
                 ),
                 SizedBox(
                   height: 20,
@@ -158,25 +164,38 @@ class _MyVerifyState extends State<MyVerify> {
                       await _showLoadingDialog();
                     },
                     child: Text(
-                      "Verify Phone Number",
+                      "Verify Email",
                       style: TextStyle(
+                        fontSize: 18,
                         color: ttextColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.012,),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure space between items
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Get.offNamed("/phoneverify");
-                      },
-                      child: Text(
-                        "Edit Phone Number ?",
-                        style: TextStyle(color: Colors.black),
+                    Flexible(
+                      child: Row(
+                        children: [
+                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back)),
+                          TextButton(
+                            onPressed: () {
+                              Get.offNamed("/phoneverify");
+                            },
+                            child: Text(
+                              "Edit Email?",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black),
+                            ),
+                          ),
+                        ],
                       ),
-                    )
+                    ),
+                    _resendButton(context), // Resend button at the right corner
                   ],
                 )
               ],
@@ -184,6 +203,31 @@ class _MyVerifyState extends State<MyVerify> {
           ),
         );
       })),
+    );
+  }
+
+  GestureDetector _resendButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        await _authController.resendOtp(); // Call resendOtp when tapped
+      },
+      child: Material(
+        elevation: 5.0,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          decoration: BoxDecoration(
+              color: tPrimaryColor, borderRadius: BorderRadius.circular(20)),
+          child: Center(
+              child: Text(
+            "Resend Code",
+            style: TextStyle(
+                color: ttextColor,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold),
+          )),
+        ),
+      ),
     );
   }
 }

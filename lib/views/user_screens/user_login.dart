@@ -3,7 +3,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/auth_controller.dart';
-import 'package:fyp_1/views/home.dart';
+import 'package:fyp_1/models/login_model.dart';
+import 'package:fyp_1/views/others/home.dart';
 import 'package:fyp_1/views/professional_screens/professional_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
@@ -13,7 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserLogin extends StatefulWidget {
   // final SharedPreferences prefs;
-  const UserLogin({super.key,});
+  const UserLogin({
+    super.key,
+  });
 
   @override
   State<UserLogin> createState() => _UserLoginState();
@@ -27,58 +30,24 @@ class _UserLoginState extends State<UserLogin> {
   TextEditingController _namecontroller = new TextEditingController();
   TextEditingController _passwordcontroller = new TextEditingController();
 
-  void login() {
+  void login() async {
     if (_formkey.currentState!.validate()) {
-      String name = _namecontroller.text.trim();
+      String username = _namecontroller.text.trim();
       String password = _passwordcontroller.text.trim();
 
-      // Call the login function in AuthController
-      _authController.login(name, password);
+      // Create login request model
+      Get.toNamed("/home");
     } else {
       Get.snackbar('Error', 'Please fill all the required fields',
           backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 
-  // void login() {
-  //   if (_formkey.currentState!.validate()) {
-  //     String enteredName = _namecontroller.text.trim();
-  //     String enteredPassword = _passwordcontroller.text.trim();
-
-  //     // Retrieve saved email and password from SharedPreferences
-  //     String savedName = widget.prefs.getString('name') ?? '';
-  //     String savedPassword = widget.prefs.getString('password') ?? '';
-
-  //     if (enteredName == savedName && enteredPassword == savedPassword) {
-  //       // Clear text fields
-  //       _namecontroller.clear();
-  //       _passwordcontroller.clear();
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text('Login successfully'),
-  //           backgroundColor: Colors.green,
-  //         ),
-  //       );
-
-  //       Get.toNamed("/homescreen");
-  //     } else {
-  //       // Show error message if credentials do not match
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text('Invalid name or password'),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Obx(() {
-        return LayoutBuilder(builder: (context, constraints) {
+        extendBodyBehindAppBar: true,
+        body: LayoutBuilder(builder: (context, constraints) {
           final screenWidth = constraints.maxWidth;
           final screenHeight = constraints.maxHeight;
           return SingleChildScrollView(
@@ -202,9 +171,7 @@ class _UserLoginState extends State<UserLogin> {
               ),
             ),
           );
-        });
-      }),
-    );
+        }));
   }
 
   GestureDetector _loginButton(BuildContext context) {
@@ -219,18 +186,14 @@ class _UserLoginState extends State<UserLogin> {
           decoration: BoxDecoration(
               color: tPrimaryColor, borderRadius: BorderRadius.circular(20)),
           child: Center(
-              child: _authController.isLoading.value
-                  ? CircularProgressIndicator(
-                      color: Colors.white,
-                    )
-                  : Text(
-                      "LOGIN",
-                      style: TextStyle(
-                          color: ttextColor,
-                          fontSize: 18.0,
-                          fontFamily: 'Poppins1',
-                          fontWeight: FontWeight.bold),
-                    )),
+              child: Text(
+            "LOGIN",
+            style: TextStyle(
+                color: ttextColor,
+                fontSize: 18.0,
+                fontFamily: 'Poppins1',
+                fontWeight: FontWeight.bold),
+          )),
         ),
       ),
     );

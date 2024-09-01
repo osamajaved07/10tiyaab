@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_1/views/home.dart';
+import 'package:fyp_1/views/others/home.dart';
 import 'package:fyp_1/views/professional_screens/professional_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';

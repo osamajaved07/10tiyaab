@@ -295,7 +295,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
       height: 60,
       items: <Widget>[
         Icon(Icons.home, size: 30, color: Colors.black),
-        Icon(Icons.person_2_outlined, size: 30, color: Colors.black),
+        Icon(Icons.person_2, size: 30, color: Colors.black),
         Icon(Icons.local_activity, size: 30, color: Colors.black),
         Icon(Icons.phone, size: 30, color: Colors.black),
       ],

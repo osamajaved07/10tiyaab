@@ -1,79 +1,181 @@
+// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print
+
+import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:fyp_1/services/api_service.dart';
 
 class AuthController extends GetxController {
-  var isLoading = false.obs;
+  final ApiService apiService =
+      ApiService('https://fyp-project-zosb.onrender.com');
 
-Future<void> login(String email, String password) async {
-  try {
-    isLoading.value = true;
-    final response = await http.post(
-      Uri.parse('https://your-server.com/api/signin/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
+  final String baseUrl = 'https://fyp-project-zosb.onrender.com';
+  // final String user_id = '13'; // Example user ID, adjust as needed
+  String? user_id; // Nullable user_id to be set after registration
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      final token = jsonResponse['token'];  // Example: Assuming server returns a token
-
-      // Save token to shared_preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-      await prefs.setBool('isLoggedIn', true);
-
-      Get.snackbar('Success', 'Login successful', backgroundColor: Colors.green, colorText: Colors.white);
-    } else {
-      Get.snackbar('Error', 'Login failed', backgroundColor: Colors.red, colorText: Colors.white);
+  Future<void> addEmail(String email) async {
+    if (user_id == null) {
+      Get.snackbar('Error', 'User ID is not set.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
     }
-  } catch (e) {
-    Get.snackbar('Error', e.toString(), backgroundColor: Colors.red, colorText: Colors.white);
-  } finally {
-    isLoading.value = false;
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/accounts/customer/add-email/$user_id/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'Success',
+          'OTP sent to your email',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        // Adding a slight delay to ensure the Snackbar is visible
+        Future.delayed(Duration(seconds: 1), () {
+          Get.toNamed("/verify");
+        });
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to send OTP: ${response.body}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
-}
 
+  Future<void> resendOtp() async {
+    if (user_id == null) {
+      Get.snackbar('Error', 'User ID is not set.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/accounts/resend-otp/$user_id/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
 
- Future<void> register(String name, String email, String password) async {
-  try {
-    isLoading.value = true;
-    final response = await http.post(
-      Uri.parse('https://your-server.com/api/signup/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'email': email, 'password': password}),
-    );
-    if (response.statusCode == 200) {
-      // Save session details to SharedPreferences
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('name', name);
-      prefs.setString('email', email);
-      prefs.setString('password', password);
-
-      Get.offAllNamed('/homescreen');
-    } else {
-      Get.snackbar('Error', 'Registration failed, please try again.',
+      if (response.statusCode == 200) {
+        Get.snackbar('Success', 'OTP resend to your email',
+            backgroundColor: Colors.green, colorText: Colors.white);
+      } else {
+        Get.snackbar('Error', 'Failed to resend OTP: ${response.body}',
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred: $e',
           backgroundColor: Colors.red, colorText: Colors.white);
     }
-  } catch (e) {
-    Get.snackbar('Error', 'Something went wrong. Please try again later.',
-        backgroundColor: Colors.red, colorText: Colors.white);
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Get.offAllNamed('/userLogin');
   }
 
-  Future<bool> checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey('token');
+  Future<void> verifyOtp(String otp) async {
+    if (user_id == null) {
+      Get.snackbar('Error', 'User ID is not set.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/accounts/verify/$user_id/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'otp': otp,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar('Success', 'Email verified successfully',
+            backgroundColor: Colors.green, colorText: Colors.white);
+        Get.offNamed("/homescreen"); // Navigate to the home screen
+      } else {
+        Get.snackbar('Error', 'Failed to verify OTP: ${response.body}',
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
+    }
+  }
+
+  void register(String username, String firstName, String lastName,
+      String password, String confirmPassword) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://fyp-project-zosb.onrender.com/accounts/customer/signup/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'username': username,
+          'first_name': firstName,
+          'last_name': lastName,
+          'password': password,
+          'confirm_password': confirmPassword,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final dynamic userId = responseData['user_id'];
+        if (userId is int) {
+          user_id = userId.toString(); // Convert integer to string if necessary
+        } else if (userId is String) {
+          user_id = userId;
+        } else {
+          throw Exception('Unexpected user_id type');
+        }
+        Get.snackbar('Success', 'Registration successful',
+            backgroundColor: Colors.green, colorText: Colors.white);
+        // Navigate to next screen
+        Get.toNamed("/phoneverify");
+      } else {
+        // Handle different status codes
+        String errorMessage;
+        if (response.statusCode == 400) {
+          // Parse the response body for specific errors
+          final Map<String, dynamic> errorResponse = jsonDecode(response.body);
+          errorMessage =
+              errorResponse.values.join(', '); // Concatenate all error messages
+        } else {
+          errorMessage = 'Registration failed. Please try again.';
+        }
+
+        Get.snackbar('Error', errorMessage,
+            backgroundColor: Colors.red, colorText: Colors.white);
+        print("${response.body}");
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred. Please try again.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      print("$e");
+    }
+  }
+
+  Future<bool> isLoggedIn() async {
+    // Implement your logic to check if the user is logged in
+    return false;
   }
 }

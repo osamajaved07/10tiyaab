@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/auth_controller.dart';
-import 'package:fyp_1/phone_verification/phone_verification.dart';
-import 'package:fyp_1/phone_verification/verification_final.dart';
-import 'package:fyp_1/views/home.dart';
+import 'package:fyp_1/views/verifications/email_verify.dart';
+import 'package:fyp_1/views/verifications/verify_final.dart';
+import 'package:fyp_1/views/others/home.dart';
 import 'package:fyp_1/views/professional_screens/professional_login.dart';
 import 'package:fyp_1/views/professional_screens/professional_registration.dart';
-import 'package:fyp_1/views/selection_screen.dart';
-import 'package:fyp_1/views/splash_screen.dart';
+import 'package:fyp_1/views/others/selection_screen.dart';
+import 'package:fyp_1/views/others/splash_screen.dart';
 import 'package:fyp_1/views/user_screens/contactus_screen.dart';
 import 'package:fyp_1/views/user_screens/edit_profile_screen.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
@@ -21,11 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final AuthController authController = Get.put(AuthController());
-  final bool isLoggedIn = await authController.checkLoginStatus();
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  // await SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  final bool isLoggedIn = await authController.isLoggedIn();
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
@@ -87,51 +83,51 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MazdoorIdStateChecker extends StatefulWidget {
-  @override
-  _MazdoorIdStateCheckerState createState() => _MazdoorIdStateCheckerState();
-}
+// class MazdoorIdStateChecker extends StatefulWidget {
+//   @override
+//   _MazdoorIdStateCheckerState createState() => _MazdoorIdStateCheckerState();
+// }
 
-class _MazdoorIdStateCheckerState extends State<MazdoorIdStateChecker> {
-  bool isLoading = true; // Loading indicator while checking user state
+// class _MazdoorIdStateCheckerState extends State<MazdoorIdStateChecker> {
+//   bool isLoading = true; // Loading indicator while checking user state
 
-  @override
-  void initState() {
-    super.initState();
-    checkUserState(); // Check user state when the widget initializes
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     checkUserState(); // Check user state when the widget initializes
+//   }
 
-  Future<void> checkUserState() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      // Check if user data exists
-      bool userDataExists =
-          prefs.containsKey('name') && prefs.containsKey('password');
-      if (userDataExists) {
-        // Navigate to home screen if user data exists
-        Get.offNamed("/homescreen");
-      } else {
-        // Navigate to login screen if user data doesn't exist
-        Get.offNamed("/professionalLogin");
-      }
-    } catch (e) {
-      // Handle any errors that occur during the check
-      print("Error checking user state: $e");
-      // Optionally, navigate to an error screen or show an error message
-    } finally {
-      setState(() {
-        isLoading = false; // Update loading state
-      });
-    }
-  }
+//   Future<void> checkUserState() async {
+//     try {
+//       SharedPreferences prefs = await SharedPreferences.getInstance();
+//       // Check if user data exists
+//       bool userDataExists =
+//           prefs.containsKey('name') && prefs.containsKey('password');
+//       if (userDataExists) {
+//         // Navigate to home screen if user data exists
+//         Get.offNamed("/homescreen");
+//       } else {
+//         // Navigate to login screen if user data doesn't exist
+//         Get.offNamed("/professionalLogin");
+//       }
+//     } catch (e) {
+//       // Handle any errors that occur during the check
+//       print("Error checking user state: $e");
+//       // Optionally, navigate to an error screen or show an error message
+//     } finally {
+//       setState(() {
+//         isLoading = false; // Update loading state
+//       });
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Show loading indicator while checking user state
-    return Scaffold(
-      body: Center(
-        child: isLoading ? CircularProgressIndicator() : SizedBox(),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     // Show loading indicator while checking user state
+//     return Scaffold(
+//       body: Center(
+//         child: isLoading ? CircularProgressIndicator() : SizedBox(),
+//       ),
+//     );
+//   }
+// }

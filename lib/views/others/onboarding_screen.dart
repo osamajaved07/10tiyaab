@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/models/onboard.dart';
-import 'package:fyp_1/views/selection_screen.dart';
+import 'package:fyp_1/views/others/selection_screen.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';

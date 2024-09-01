@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_element, unused_local_variable, unused_import, deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/phone_verification/phone_verification.dart';
+import 'package:fyp_1/views/verifications/email_verify.dart';
 import 'package:fyp_1/views/professional_screens/professional_login.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';
@@ -19,8 +19,6 @@ class MazdoorRegistration extends StatefulWidget {
 
 class _MazdoorRegistrationState extends State<MazdoorRegistration> {
   String name = "", password = "", confirmpassword = "";
-  // String? selectedGender;
-  // final List<String> genderOptions = ['Male', 'Female', 'Other'];
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
   bool ispasswordVisible = false;
