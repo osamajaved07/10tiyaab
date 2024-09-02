@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously, equal_keys_in_map, unnecessary_import, unused_import
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/controllers/auth_controller.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
 import 'package:fyp_1/views/verifications/final.dart';
 import 'package:fyp_1/views/verifications/phoneinput.dart';

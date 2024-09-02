@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_1/controllers/auth_controller.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/login_model.dart';
 import 'package:fyp_1/views/others/home.dart';
 import 'package:fyp_1/views/professional_screens/professional_registration.dart';
@@ -13,7 +13,6 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserLogin extends StatefulWidget {
-  // final SharedPreferences prefs;
   const UserLogin({
     super.key,
   });
@@ -30,18 +29,18 @@ class _UserLoginState extends State<UserLogin> {
   TextEditingController _namecontroller = new TextEditingController();
   TextEditingController _passwordcontroller = new TextEditingController();
 
-  void login() async {
-    if (_formkey.currentState!.validate()) {
-      String username = _namecontroller.text.trim();
-      String password = _passwordcontroller.text.trim();
+ void login() async {
+  if (_formkey.currentState!.validate()) {
+    String username = _namecontroller.text.trim();
+    String password = _passwordcontroller.text.trim();
 
-      // Create login request model
-      Get.toNamed("/home");
-    } else {
-      Get.snackbar('Error', 'Please fill all the required fields',
-          backgroundColor: Colors.red, colorText: Colors.white);
-    }
+    // Call the login method from AuthController
+    await _authController.login(username, password);
+  } else {
+    Get.snackbar('Error', 'Please fill all the required fields',
+        backgroundColor: Colors.red, colorText: Colors.white);
   }
+}
 
   @override
   Widget build(BuildContext context) {

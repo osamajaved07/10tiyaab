@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_element, unused_local_variable, unused_import, unused_field
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/controllers/auth_controller.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/user__signup_model.dart'; // Importing the signup model
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';

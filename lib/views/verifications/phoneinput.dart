@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 
-import '../../controllers/auth_controller.dart';
+import '../../controllers/user_auth_controller.dart';
 
 class PhoneNumberInputPage extends StatefulWidget {
   const PhoneNumberInputPage({Key? key}) : super(key: key);

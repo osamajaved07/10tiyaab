@@ -8,11 +8,10 @@ import 'package:http/http.dart' as http;
 import 'package:fyp_1/services/api_service.dart';
 
 class AuthController extends GetxController {
-  final ApiService apiService =
-      ApiService('https://fyp-project-zosb.onrender.com');
+  // final ApiService apiService =
+  //     ApiService('https://fyp-project-zosb.onrender.com');
 
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
-  // final String user_id = '13'; // Example user ID, adjust as needed
   String? user_id; // Nullable user_id to be set after registration
 
   Future<void> addPhoneNumber(String phoneNumber) async {
@@ -87,7 +86,7 @@ class AuthController extends GetxController {
         );
         // Adding a slight delay to ensure the Snackbar is visible
         Future.delayed(Duration(seconds: 1), () {
-          Get.toNamed("/verify");
+          Get.offAllNamed("/verify");
         });
       } else {
         Get.snackbar(
@@ -154,7 +153,7 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Email verified successfully',
             backgroundColor: Colors.green, colorText: Colors.white);
-        Get.offNamed("/userphone"); // Navigate to the home screen
+        Get.offAllNamed("/userphone"); 
       } else {
         Get.snackbar('Error', 'Failed to verify OTP: ${response.body}',
             backgroundColor: Colors.red, colorText: Colors.white);
@@ -165,12 +164,12 @@ class AuthController extends GetxController {
     }
   }
 
-  void register(String username, String firstName, String lastName,
+   Future <void> register(String username, String firstName, String lastName,
       String password, String confirmPassword) async {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://fyp-project-zosb.onrender.com/accounts/customer/signup/'),
+            '$baseUrl/accounts/customer/signup/'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -196,7 +195,7 @@ class AuthController extends GetxController {
         Get.snackbar('Success', 'Registration successful',
             backgroundColor: Colors.green, colorText: Colors.white);
         // Navigate to next screen
-        Get.toNamed("/phoneverify");
+        Get.offAllNamed("/phoneverify");
       } else {
         // Handle different status codes
         String errorMessage;
@@ -207,6 +206,53 @@ class AuthController extends GetxController {
               errorResponse.values.join(', '); // Concatenate all error messages
         } else {
           errorMessage = 'Registration failed. Please try again.';
+        }
+
+        Get.snackbar('Error', errorMessage,
+            backgroundColor: Colors.red, colorText: Colors.white);
+        print("${response.body}");
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred. Please try again.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      print("$e");
+    }
+  }
+
+Future<void> login(String username, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/accounts/login/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final dynamic userId = responseData['user_id'];
+        if (userId is int) {
+          user_id = userId.toString(); // Convert integer to string if necessary
+        } else if (userId is String) {
+          user_id = userId;
+        } else {
+          throw Exception('Unexpected user_id type');
+        }
+        Get.snackbar('Success', 'Welcome back.',
+            backgroundColor: Colors.green, colorText: Colors.white);
+        // Navigate to home screen or desired page
+        Get.offAllNamed("/homescreen");
+      } else {
+        String errorMessage;
+        if (response.statusCode == 400) {
+          final Map<String, dynamic> errorResponse = jsonDecode(response.body);
+          errorMessage = errorResponse.values.join(', '); // Concatenate all error messages
+        } else {
+          errorMessage = 'Login failed. Please try again.';
         }
 
         Get.snackbar('Error', errorMessage,

@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously, use_super_parameters
 
 import 'package:flutter/material.dart';
-import 'package:fyp_1/controllers/auth_controller.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';

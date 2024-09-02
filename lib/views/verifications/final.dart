@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
-import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:lottie/lottie.dart';
 import '../../utils/colors.dart';
 
 class Final extends StatefulWidget {
@@ -13,7 +12,39 @@ class Final extends StatefulWidget {
   State<Final> createState() => _FinalState();
 }
 
-class _FinalState extends State<Final> {
+class _FinalState extends State<Final> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Initialize the animation controller
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 15),
+    );
+
+    // Start the animation
+    _animationController.forward();
+
+    // Redirect to the home screen after 15 seconds
+    Future.delayed(Duration(seconds: 4), () {
+      Get.offAllNamed ("/homescreen");
+    });
+
+    // Prevent back navigation from the home screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.key.currentState?.didChangeDependencies();
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: LayoutBuilder(builder: (context, constraints) {
@@ -74,64 +105,32 @@ class _FinalState extends State<Final> {
                               // color: Colors.white,
                               borderRadius: BorderRadius.circular(20)),
                           child: SingleChildScrollView(
-                            child: Form(
-                             
-                              child: Column(
-                                children: [
-                                  Icon(FeatherIcons.info, size: 56),
-
-                                  SizedBox(
-                                      height:
-                                          8), // Adds some spacing between the icon and the text
-
-                                  SizedBox(
-                                      height:
-                                          16), // Adds some spacing before the next element
-                                  Text(
-                                    'Registration for Service Provider is currently handled by our main office. Please visit our main branch or contact our representative to get registered.',
-                                    textAlign: TextAlign.justify,
-                                    style: TextStyle(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Lottie.asset('assets/lottie/verify.json',
+                                    width: screenWidth * 0.1,
+                                    height: screenHeight * 0.14,
+                                    fit: BoxFit.contain,
+                                   ),
+                                Text(
+                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds.',
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(
                                       height: 1.6,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
-                              ),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(height: screenHeight * 0.04,),
+                                Image.asset(
+                                  "assets/images/infinity.png",
+                                  width: screenWidth * 0.1,
+                                  height: screenHeight * 0.06,
+                                )
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Already have an account?",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: Colors.black54),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          GestureDetector(
-                              onTap: () {
-                                Get.offNamed("/professionalLogin");
-                              },
-                              child: Text(
-                                "Login",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.black87),
-                              )),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 28,
                       ),
                     ],
                   ),
@@ -141,7 +140,6 @@ class _FinalState extends State<Final> {
           ),
         ),
       );
-    })
-    );
+    }));
   }
 }
