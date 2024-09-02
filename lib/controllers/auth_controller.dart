@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print
+// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -14,6 +14,52 @@ class AuthController extends GetxController {
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
   // final String user_id = '13'; // Example user ID, adjust as needed
   String? user_id; // Nullable user_id to be set after registration
+
+  Future<void> addPhoneNumber(String phoneNumber) async {
+    if (user_id == null) {
+      Get.snackbar('Error', 'User ID is not set.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+    try {
+      final response = await http.post(
+        Uri.parse(
+            '$baseUrl/accounts/customer/add-phone-number/$user_id/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'phone_no': phoneNumber,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'Success',
+          'Phone number added successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Future.delayed(Duration(seconds: 1), () {
+          Get.toNamed("/userregisterfinal");
+        });
+         } else {
+        Get.snackbar(
+          'Error',
+          'Failed to add phone number: ${response.body}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 
   Future<void> addEmail(String email) async {
     if (user_id == null) {
@@ -108,7 +154,7 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Email verified successfully',
             backgroundColor: Colors.green, colorText: Colors.white);
-        Get.offNamed("/homescreen"); // Navigate to the home screen
+        Get.offNamed("/userphone"); // Navigate to the home screen
       } else {
         Get.snackbar('Error', 'Failed to verify OTP: ${response.body}',
             backgroundColor: Colors.red, colorText: Colors.white);

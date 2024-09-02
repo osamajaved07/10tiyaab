@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print, prefer_final_fields, unused_element
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -30,11 +31,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _loadUserData() async {
     setState(() {
-      // name = widget.prefs.getString('name') ?? 'User';
-      // _nameController.text = name;
-      // email = widget.prefs.getString('email') ?? '123@gmail.com';
-      // _emailController.text = email;
-    });
+      });
   }
 
   Future<void> _pickImage() async {
@@ -48,11 +45,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 }
 
+void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Logout"),
+          content: Text("Are you sure you want to logout?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Implement your logout logic here
+                Navigator.of(context).pop(); // Close the dialog
+                Get.offAllNamed('/login'); // Navigate to the login page
+              },
+              child: Text("Logout", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: (){
+            _showLogoutDialog(context);
+          }, icon: Icon(Icons.logout_outlined))
+        ],
         title: Text('Edit Profile', style: TextStyle(color: Colors.black)),
         centerTitle: true,
         backgroundColor: tSecondaryColor,

@@ -1,23 +1,19 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new, prefer_final_fields, unused_element, unused_local_variable, unused_import, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
-import 'package:flutter/material.dart';
-import 'package:fyp_1/views/verifications/email_verify.dart';
-import 'package:fyp_1/views/professional_screens/professional_login.dart';
-import 'package:fyp_1/utils/colors.dart';
-import 'package:get/get_core/get_core.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feather_icons/feather_icons.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ProfessionalRegistration extends StatefulWidget {
-  const ProfessionalRegistration({super.key,});
+import '../../utils/colors.dart';
+
+class Final extends StatefulWidget {
+  const Final({super.key});
 
   @override
-  State<ProfessionalRegistration> createState() => _ProfessionalRegistrationState();
+  State<Final> createState() => _FinalState();
 }
 
-class _ProfessionalRegistrationState extends State<ProfessionalRegistration> {
-
+class _FinalState extends State<Final> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: LayoutBuilder(builder: (context, constraints) {
@@ -145,6 +141,7 @@ class _ProfessionalRegistrationState extends State<ProfessionalRegistration> {
           ),
         ),
       );
-    }));
+    })
+    );
   }
 }

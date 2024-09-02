@@ -6,18 +6,18 @@ import 'package:get/get.dart';
 
 import '../../controllers/auth_controller.dart';
 
-class PhoneVerification extends StatefulWidget {
+class EmailVerification extends StatefulWidget {
   // final SharedPreferences prefs;
-  const PhoneVerification({
+  const EmailVerification({
     Key? key,
   }) : super(key: key);
 
 
   @override
-  State<PhoneVerification> createState() => _PhoneVerificationState();
+  State<EmailVerification> createState() => _EmailVerificationState();
 }
 
-class _PhoneVerificationState extends State<PhoneVerification> {
+class _EmailVerificationState extends State<EmailVerification> {
    final AuthController _authController = Get.find<AuthController>();
    TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();

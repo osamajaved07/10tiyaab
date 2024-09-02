@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/auth_controller.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
+import 'package:fyp_1/views/verifications/final.dart';
+import 'package:fyp_1/views/verifications/phoneinput.dart';
 import 'package:fyp_1/views/verifications/verify_final.dart';
 import 'package:fyp_1/views/others/home.dart';
 import 'package:fyp_1/views/professional_screens/professional_login.dart';
@@ -44,37 +46,38 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/selection', page: () => UserSelection()),
         GetPage(
-            name: '/professionalregister',
-            page: () => MazdoorRegistration(
-                 )),
-        GetPage(
-            name: '/professionalLogin',
-            page: () => MazdoorLogin(
-                )),
-        GetPage(
-            name: '/userregister',
-            page: () => UserRegister(
-                )),
+            name: '/professionalregister', page: () => ProfessionalRegistration()),
+        GetPage(name: '/professionalLogin', page: () => MazdoorLogin()),
+        GetPage(name: '/userregister', page: () => UserRegister()),
         GetPage(
             name: '/userLogin',
-            page: () => UserLogin(
-                )),
+            page: () => UserLogin(),
+            transition: Transition.fadeIn),
         GetPage(
             name: '/phoneverify',
-            page: () => PhoneVerification(
-                )),
-        GetPage(name: '/verify', page: () => MyVerify()),
+            page: () => EmailVerification(),
+            transition: Transition.fadeIn),
+        GetPage(
+            name: '/verify',
+            page: () => MyVerify(),
+            transition: Transition.fadeIn),
+        GetPage(
+            name: '/userphone',
+            page: () => PhoneNumberInputPage(),
+            transition: Transition.fadeIn),
+        GetPage(
+            name: '/userregisterfinal',
+            page: () => Final(),
+            transition: Transition.fadeIn),
         GetPage(
             name: '/homescreen',
-            page: () => UserHomeScreen(
-                ),
+            page: () => UserHomeScreen(),
             transition: Transition.fadeIn),
         GetPage(
             name: '/editprofile',
             page: () => EditProfilePage(),
             transition: Transition.fadeIn),
-
-            GetPage(
+        GetPage(
             name: '/contactus',
             page: () => ContactUsScreen(),
             transition: Transition.fadeIn),
