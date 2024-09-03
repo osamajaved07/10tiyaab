@@ -10,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
+import '../../controllers/user_auth_controller.dart';
+
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({
     super.key,
@@ -20,43 +22,42 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  final AuthController _authController = Get.find<AuthController>();
+  
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   XFile? _profileImage;
   final ImagePicker _picker = ImagePicker();
-
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
 
-  final String baseUrl =
-      'https://fyp-project-zosb.onrender.com'; // Replace with your actual base URL
-
-  Future<void> _loadUserData() async {
-    try {
-      final response = await http.get(
-          Uri.parse('$baseUrl/user/profile')); // Replace with actual endpoint
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> userData = jsonDecode(response.body);
-
-        _firstNameController.text = userData['first_name'];
-        _lastNameController.text = userData['last_name'];
-        _emailController.text = userData['email'];
-        _phoneNumberController.text = userData['phone_number'];
-      } else {
-        Get.snackbar('Error', 'Failed to load user data',
-            backgroundColor: Colors.red, colorText: Colors.white);
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'An unexpected error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+Future<void> _loadUserData() async {
+  try {
+    final userData = await _authController.fetchUserProfile();
+    if (userData != null) {
+      setState(() {
+        _firstNameController.text = userData['first_name'] ?? '';
+        _lastNameController.text = userData['last_name'] ?? '';
+        _emailController.text = userData['email'] ?? '';
+        _phoneNumberController.text = userData['phone_no'] ?? '';
+        _profileImage = userData['profile_pic'] != null
+            ? XFile(userData['profile_pic']) // Assuming profile_pic is a URL or path
+            : null;
+      });
+    } else {
+      setState(() {
+      });
     }
+  } catch (e) {
+    setState(() {
+    });
   }
+}
 
   Future<void> _pickImage() async {
     try {
@@ -84,10 +85,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: Text("Cancel"),
             ),
             TextButton(
-              onPressed: () {
-                // Implement your logout logic here
-                Navigator.of(context).pop(); // Close the dialog
-                Get.offAllNamed('/login'); // Navigate to the login page
+              onPressed: () async {
+                 await _authController.logout();
+                Get.offAllNamed('/login');
               },
               child: Text("Logout", style: TextStyle(color: Colors.red)),
             ),

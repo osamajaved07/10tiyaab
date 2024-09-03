@@ -46,9 +46,13 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/selection', page: () => UserSelection()),
         GetPage(
-            name: '/professionalregister', page: () => ProfessionalRegistration()),
+            name: '/professionalregister',
+            page: () => ProfessionalRegistration()),
         GetPage(name: '/professionalLogin', page: () => MazdoorLogin()),
-        GetPage(name: '/userregister', page: () => UserRegister()),
+        GetPage(
+            name: '/userregister',
+            page: () => UserRegister(),
+            transition: Transition.fadeIn),
         GetPage(
             name: '/userLogin',
             page: () => UserLogin(),
@@ -85,52 +89,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// class MazdoorIdStateChecker extends StatefulWidget {
-//   @override
-//   _MazdoorIdStateCheckerState createState() => _MazdoorIdStateCheckerState();
-// }
-
-// class _MazdoorIdStateCheckerState extends State<MazdoorIdStateChecker> {
-//   bool isLoading = true; // Loading indicator while checking user state
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     checkUserState(); // Check user state when the widget initializes
-//   }
-
-//   Future<void> checkUserState() async {
-//     try {
-//       SharedPreferences prefs = await SharedPreferences.getInstance();
-//       // Check if user data exists
-//       bool userDataExists =
-//           prefs.containsKey('name') && prefs.containsKey('password');
-//       if (userDataExists) {
-//         // Navigate to home screen if user data exists
-//         Get.offNamed("/homescreen");
-//       } else {
-//         // Navigate to login screen if user data doesn't exist
-//         Get.offNamed("/professionalLogin");
-//       }
-//     } catch (e) {
-//       // Handle any errors that occur during the check
-//       print("Error checking user state: $e");
-//       // Optionally, navigate to an error screen or show an error message
-//     } finally {
-//       setState(() {
-//         isLoading = false; // Update loading state
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // Show loading indicator while checking user state
-//     return Scaffold(
-//       body: Center(
-//         child: isLoading ? CircularProgressIndicator() : SizedBox(),
-//       ),
-//     );
-//   }
-// }

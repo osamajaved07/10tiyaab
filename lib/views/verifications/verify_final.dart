@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously, use_super_parameters
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 
 class MyVerify extends StatefulWidget {
@@ -16,61 +17,94 @@ class MyVerify extends StatefulWidget {
 
 class _MyVerifyState extends State<MyVerify> {
   final AuthController _authController = Get.find<AuthController>();
+  bool _isButtonEnabled = false;
+  late Timer _timer;
+  int _start = 120;
 
-  Future<void> _showLoadingDialog() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Lottie.asset('assets/lottie/loading.json', width: 200, height: 200),
-              SizedBox(height: 20),
-              Text("Verifying...", style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        );
-      },
-    );
-
-    // Simulate a network call
-    await Future.delayed(Duration(seconds: 3));
-
-    Navigator.pop(context); // Remove the loading dialog
-
-    _showSuccessDialog();
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
   }
 
-  Future<void> _showSuccessDialog() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Lottie.asset('assets/lottie/verify.json', width: 400, height: 400),
-              SizedBox(height: 20),
-              Text("Verification Complete!", style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        );
-      },
-    );
-
-    // Simulate some delay
-    await Future.delayed(Duration(seconds: 2));
-
-    Navigator.pop(context); // Remove the success dialog
-
-    // Navigate to the home screen
-    Get.offNamed("/homescreen");
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
   }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_start == 0) {
+        setState(() {
+          _isButtonEnabled = true; // Enable the button
+          timer.cancel();
+        });
+      } else {
+        setState(() {
+          _start--;
+        });
+      }
+    });
+  }
+
+  // Future<void> _showLoadingDialog() async {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return Dialog(
+  //         backgroundColor: Colors.transparent,
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Lottie.asset('assets/lottie/loading.json',
+  //                 width: 200, height: 200),
+  //             SizedBox(height: 20),
+  //             Text("Verifying...", style: TextStyle(color: Colors.white)),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+
+  //   // Simulate a network call
+  //   await Future.delayed(Duration(seconds: 3));
+
+  //   Navigator.pop(context); // Remove the loading dialog
+
+  //   _showSuccessDialog();
+  // }
+
+  // Future<void> _showSuccessDialog() async {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return Dialog(
+  //         backgroundColor: Colors.transparent,
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Lottie.asset('assets/lottie/verify.json',
+  //                 width: 400, height: 400),
+  //             SizedBox(height: 20),
+  //             Text("Verification Complete!",
+  //                 style: TextStyle(color: Colors.white)),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+
+  //   // Simulate some delay
+  //   await Future.delayed(Duration(seconds: 2));
+
+  //   Navigator.pop(context); // Remove the success dialog
+
+  //   // Navigate to the home screen
+  //   Get.offNamed("/homescreen");
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +138,8 @@ class _MyVerifyState extends State<MyVerify> {
       body: LayoutBuilder(builder: ((context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
-        return SingleChildScrollView( // Wrap content in SingleChildScrollView
+        return SingleChildScrollView(
+          // Wrap content in SingleChildScrollView
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: screenWidth / 24),
             child: Column(
@@ -161,7 +196,7 @@ class _MyVerifyState extends State<MyVerify> {
                       ),
                     ),
                     onPressed: () async {
-                      await _showLoadingDialog();
+                      await _authController.verifyOtp("pin");
                     },
                     child: Text(
                       "Verify Email",
@@ -173,29 +208,41 @@ class _MyVerifyState extends State<MyVerify> {
                     ),
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.012,),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure space between items
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceBetween, // Ensure space between items
                   children: [
                     Flexible(
                       child: Row(
                         children: [
-                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back)),
+                          IconButton(
+                              onPressed: () {}, icon: Icon(Icons.arrow_back)),
                           TextButton(
                             onPressed: () {
                               Get.offNamed("/phoneverify");
                             },
                             child: Text(
                               "Edit Email?",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    _resendButton(context), // Resend button at the right corner
+                    Column(
+                      children: [
+                        _resendButton(context),
+                        SizedBox(height: 16),
+                        Text(
+                          _start > 0 ? "Resend in $_start" : "",
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ],
+                    ), // Resend button at the right corner
                   ],
                 )
               ],
@@ -208,23 +255,29 @@ class _MyVerifyState extends State<MyVerify> {
 
   GestureDetector _resendButton(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        await _authController.resendOtp(); // Call resendOtp when tapped
-      },
+      onTap: _isButtonEnabled
+          ? () async {
+              setState(() {
+                _isButtonEnabled = false;
+                _start = 120;
+              });
+              _startTimer();
+              await _authController.resendOtp();
+            }
+          : null,
       child: Material(
         elevation: 5.0,
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
           decoration: BoxDecoration(
-              color: tPrimaryColor, borderRadius: BorderRadius.circular(20)),
+              color: _isButtonEnabled ? tPrimaryColor : Color.fromARGB(255, 188, 188, 188),
+              borderRadius: BorderRadius.circular(20)),
           child: Center(
               child: Text(
             "Resend Code",
             style: TextStyle(
-                color: ttextColor,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold),
+                color: ttextColor, fontSize: 16.0, fontWeight: FontWeight.bold),
           )),
         ),
       ),
