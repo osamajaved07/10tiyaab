@@ -1,25 +1,29 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print, prefer_final_fields, unused_element
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class EditProfilePage extends StatefulWidget {
-  // final SharedPreferences prefs;
-
-  const EditProfilePage({super.key,});
+  const EditProfilePage({
+    super.key,
+  });
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  String name = "", email = "";
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
   XFile? _profileImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -29,23 +33,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _loadUserData();
   }
 
+  final String baseUrl =
+      'https://fyp-project-zosb.onrender.com'; // Replace with your actual base URL
+
   Future<void> _loadUserData() async {
-    setState(() {
-      });
+    try {
+      final response = await http.get(
+          Uri.parse('$baseUrl/user/profile')); // Replace with actual endpoint
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> userData = jsonDecode(response.body);
+
+        _firstNameController.text = userData['first_name'];
+        _lastNameController.text = userData['last_name'];
+        _emailController.text = userData['email'];
+        _phoneNumberController.text = userData['phone_number'];
+      } else {
+        Get.snackbar('Error', 'Failed to load user data',
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An unexpected error occurred: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
+    }
   }
 
   Future<void> _pickImage() async {
-  try {
-    final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _profileImage = pickedImage;
-    });
-  } catch (e) {
-    print('Error picking image: $e');
+    try {
+      final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+      setState(() {
+        _profileImage = pickedImage;
+      });
+    } catch (e) {
+      print('Error picking image: $e');
+    }
   }
-}
 
-void _showLogoutDialog(BuildContext context) {
+  void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -73,23 +97,29 @@ void _showLogoutDialog(BuildContext context) {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: (){
-            _showLogoutDialog(context);
-          }, icon: Icon(Icons.logout_outlined))
+          IconButton(
+            onPressed: () {
+              _showLogoutDialog(context);
+            },
+            icon: Icon(
+              Icons.logout_outlined,
+              color: tPrimaryColor,
+              size: 32,
+            ),
+          )
         ],
         title: Text('Edit Profile', style: TextStyle(color: Colors.black)),
         centerTitle: true,
         backgroundColor: tSecondaryColor,
         elevation: 0,
         automaticallyImplyLeading: false,
-         ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final screenWidth = constraints.maxWidth;
@@ -125,7 +155,8 @@ void _showLogoutDialog(BuildContext context) {
                               shape: BoxShape.circle,
                               border: Border.all(color: Colors.grey, width: 2),
                             ),
-                            child: Icon(Icons.camera_alt, size: screenWidth * 0.05),
+                            child: Icon(Icons.camera_alt,
+                                size: screenWidth * 0.05),
                           ),
                         ),
                       ),
@@ -135,7 +166,7 @@ void _showLogoutDialog(BuildContext context) {
 
                   // User Name
                   Text(
-                    name,
+                    "name",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: screenWidth * 0.05,
@@ -144,14 +175,23 @@ void _showLogoutDialog(BuildContext context) {
                   SizedBox(height: screenHeight * 0.04),
 
                   // Name TextField
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              right: 8.0), // Adds spacing to the right
+                          child: _firstNameField(),
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 8.0), // Adds spacing to the left
+                          child: _lastNameField(),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: screenHeight * 0.03),
 
@@ -160,16 +200,16 @@ void _showLogoutDialog(BuildContext context) {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.email_outlined),
                       labelText: 'Email',
-                      border: OutlineInputBorder(
+                      disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    // enabled: false, // Email is not editable
+                    enabled: false, // Email is not editable
                   ),
                   SizedBox(height: screenHeight * 0.03),
 
-                  // Phone Number TextField with Flag
                   Row(
                     children: [
                       Container(
@@ -189,10 +229,10 @@ void _showLogoutDialog(BuildContext context) {
                       SizedBox(width: screenWidth * 0.03),
                       Expanded(
                         child: TextField(
-                          enabled: false,
+                          controller: _phoneNumberController,
                           decoration: InputDecoration(
                             labelText: '+92 3308963378',
-                            disabledBorder: OutlineInputBorder(
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
@@ -233,7 +273,45 @@ void _showLogoutDialog(BuildContext context) {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBarWidget(initialIndex: 1,),
+      bottomNavigationBar: BottomNavigationBarWidget(
+        initialIndex: 1,
+      ),
+    );
+  }
+
+  TextFormField _firstNameField() {
+    return TextFormField(
+      controller: _firstNameController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Enter your first name';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        hintText: 'Firstname',
+        labelText: 'Firstname',
+        prefixIcon: Icon(Icons.person_outline),
+      ),
+    );
+  }
+
+  TextFormField _lastNameField() {
+    return TextFormField(
+      controller: _lastNameController,
+      // validator: (value) {
+      //   if (value == null || value.isEmpty) {
+      //     return 'Enter your last name';
+      //   }
+      //   return null;
+      // },
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        hintText: 'Lastname',
+        labelText: 'Lastname',
+        prefixIcon: Icon(Icons.person_outline),
+      ),
     );
   }
 }

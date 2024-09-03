@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -6,8 +6,6 @@ import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactUsScreen extends StatefulWidget {
-  // final SharedPreferences prefs;
-
   const ContactUsScreen({super.key,});
 
   @override
@@ -15,10 +13,8 @@ class ContactUsScreen extends StatefulWidget {
 }
 
 class _ContactUsScreenState extends State<ContactUsScreen> {
-  String name = "", email = "";
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -27,10 +23,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
   Future<void> _loadUserData() async {
     setState(() {
-      // name = widget.prefs.getString('name') ?? 'User';
-      // _nameController.text = name;
-      // email = widget.prefs.getString('email') ?? '123@gmail.com';
-      // _emailController.text = email;
     });
   }
 

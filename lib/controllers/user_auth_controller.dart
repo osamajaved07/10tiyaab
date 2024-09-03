@@ -1,11 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors
 
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:fyp_1/services/api_service.dart';
 
 class AuthController extends GetxController {
   // final ApiService apiService =

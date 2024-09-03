@@ -336,12 +336,12 @@ class _UserRegisterState extends State<UserRegister> {
   TextFormField _lastNameField() {
     return TextFormField(
       controller: _lastNameController,
-      // validator: (value) {
-      //   if (value == null || value.isEmpty) {
-      //     return 'Enter your last name';
-      //   }
-      //   return null;
-      // },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Enter your last name';
+        }
+        return null;
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
         hintText: 'Lastname',
