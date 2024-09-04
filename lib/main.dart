@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      initialRoute: '/userLogin',
       debugShowCheckedModeBanner: false,
       title: '10tiyaab',
       theme: ThemeData(

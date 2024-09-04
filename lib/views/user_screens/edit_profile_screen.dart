@@ -1,15 +1,10 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print, prefer_final_fields, unused_element
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-
 import '../../controllers/user_auth_controller.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -23,18 +18,19 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final AuthController _authController = Get.find<AuthController>();
-  
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   XFile? _profileImage;
   final ImagePicker _picker = ImagePicker();
-  @override
-  void initState() {
-    super.initState();
+ @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
     _loadUserData();
-  }
+  });
+}
 
 Future<void> _loadUserData() async {
   try {
@@ -49,17 +45,13 @@ Future<void> _loadUserData() async {
             ? XFile(userData['profile_pic']) // Assuming profile_pic is a URL or path
             : null;
       });
-    } else {
-      setState(() {
-      });
-    }
+    } 
   } catch (e) {
-    setState(() {
-    });
+    print('Error loading user data: $e'); // Log the error
   }
 }
 
-  Future<void> _pickImage() async {
+ Future<void> _pickImage() async {
     try {
       final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
       setState(() {
@@ -75,6 +67,7 @@ Future<void> _loadUserData() async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          elevation: 8,
           title: Text("Logout"),
           content: Text("Are you sure you want to logout?"),
           actions: [
@@ -87,7 +80,7 @@ Future<void> _loadUserData() async {
             TextButton(
               onPressed: () async {
                  await _authController.logout();
-                Get.offAllNamed('/login');
+                Get.offAllNamed('/userLogin');
               },
               child: Text("Logout", style: TextStyle(color: Colors.red)),
             ),

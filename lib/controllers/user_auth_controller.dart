@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors
+// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -46,7 +46,7 @@ class AuthController extends GetxController {
         user_id = null;
 
         // Navigate to login screen or home screen
-        Get.offAllNamed('/login'); // Adjust this to your login screen route
+        Get.offAllNamed('/userLogin'); // Adjust this to your login screen route
         Get.snackbar('Success', 'Successfully logged out',
             backgroundColor: Colors.green, colorText: Colors.white);
       } else {
@@ -54,7 +54,7 @@ class AuthController extends GetxController {
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      Get.back();
+       Get.back();
       Get.snackbar('Error', 'An unexpected error occurred: $e',
           backgroundColor: Colors.red, colorText: Colors.white);
     }
