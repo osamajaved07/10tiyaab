@@ -51,14 +51,17 @@ Future<void> _loadUserData() async {
   }
 }
 
- Future<void> _pickImage() async {
+  Future<void> _pickImage() async {
     try {
       final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-      setState(() {
-        _profileImage = pickedImage;
-      });
+      if (pickedImage != null) {
+        setState(() {
+          _profileImage = pickedImage;
+        });
+      }
     } catch (e) {
       print('Error picking image: $e');
+      // You might want to show an error message to the user here
     }
   }
 
@@ -80,7 +83,7 @@ Future<void> _loadUserData() async {
             TextButton(
               onPressed: () async {
                  await _authController.logout();
-                Get.offAllNamed('/userLogin');
+                // Get.offAllNamed('/userLogin');
               },
               child: Text("Logout", style: TextStyle(color: Colors.red)),
             ),

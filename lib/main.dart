@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously, equal_keys_in_map, unnecessary_import, unused_import
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously, equal_keys_in_map, unnecessary_import, unused_import, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
@@ -22,28 +22,45 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final AuthController authController = Get.put(AuthController());
   final bool isLoggedIn = await authController.isLoggedIn();
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  final bool hasSeenSplash = await _hasSeenSplashScreen();
+   final String? lastScreen = prefs.getString('last_screen');
+  runApp(MyApp(isLoggedIn: isLoggedIn, lastScreen: lastScreen,
+  hasSeenSplash: hasSeenSplash,));
+}
+
+Future<bool> _hasSeenSplashScreen() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('hasSeenSplash') ?? false;
+}
+
+Future<void> _setHasSeenSplashScreen() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('hasSeenSplash', true);
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
+   final bool hasSeenSplash;
+    final String? lastScreen;
+
   // final SharedPreferences prefs;
-  const MyApp({super.key, required this.isLoggedIn});
+  const MyApp({super.key, required this.isLoggedIn, this.lastScreen, required this.hasSeenSplash});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/userLogin',
+     
       debugShowCheckedModeBanner: false,
       title: '10tiyaab',
       theme: ThemeData(
         primaryColor: Colors.black,
         useMaterial3: false,
       ),
-      home: SplashScreen(),
+       home: hasSeenSplash ? getHomeScreen() : SplashScreen(),
       getPages: [
         GetPage(name: '/selection', page: () => UserSelection()),
         GetPage(
@@ -87,6 +104,21 @@ class MyApp extends StatelessWidget {
             page: () => ContactUsScreen(),
             transition: Transition.fadeIn),
       ],
+    );
+  }
+    Widget getHomeScreen() {
+    return FutureBuilder<bool>(
+      future: _hasSeenSplashScreen(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.data ?? false) {
+            return UserHomeScreen(); // or any other screen based on your logic
+          } else {
+            return SplashScreen(); // should not reach here if logic is correct
+          }
+        }
+        return Center(child: CircularProgressIndicator()); // loading state
+      },
     );
   }
 }

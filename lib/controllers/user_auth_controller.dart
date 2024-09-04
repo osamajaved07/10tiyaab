@@ -13,10 +13,16 @@ class AuthController extends GetxController {
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
   String? user_id; // Nullable user_id to be set after registration
   String? accessToken;
+  String? _refreshToken;
 
   // Set access token (you might want to set it during login or some other flow)
   void setAccessToken(String token) {
     accessToken = token;
+  }
+
+  // Set refresh token
+  void setRefreshToken(String token) {
+    _refreshToken = token;
   }
 
   // Logout function
@@ -43,10 +49,11 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         // Clear access token and user_id
         accessToken = null;
+        _refreshToken = null; // Also clear refresh token
         user_id = null;
 
         // Navigate to login screen or home screen
-        Get.offAllNamed('/userLogin'); // Adjust this to your login screen route
+        Get.offAllNamed('/userLogin');
         Get.snackbar('Success', 'Successfully logged out',
             backgroundColor: Colors.green, colorText: Colors.white);
       } else {
@@ -54,7 +61,35 @@ class AuthController extends GetxController {
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-       Get.back();
+      Get.back();
+      Get.snackbar('Error', 'An unexpected error occurred: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
+    }
+  }
+
+  Future<void> refreshToken() async {
+    if (_refreshToken == null) {
+      Get.snackbar('Error', 'Refresh token is not available',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/accounts/token/refresh/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refresh': _refreshToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newAccessToken = data['access'];
+        setAccessToken(newAccessToken); // Store new access token
+      } else {
+        Get.snackbar('Error', 'Failed to refresh token',
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
       Get.snackbar('Error', 'An unexpected error occurred: $e',
           backgroundColor: Colors.red, colorText: Colors.white);
     }
@@ -76,15 +111,35 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final Map<String, dynamic> userData = jsonDecode(response.body);
+        if (userData.containsKey('first_name') &&
+            userData.containsKey('last_name') &&
+            userData.containsKey('email') &&
+            userData.containsKey('phone_no') &&
+            userData.containsKey('profile_pic')) {
+          return userData;
+        } else {
+          Get.snackbar('Error', 'Unexpected profile data format',
+              backgroundColor: Colors.red, colorText: Colors.white);
+          return null;
+        }
+      } else if (response.statusCode == 401) {
+        // Handle token refresh if the response indicates the token is expired
+        await refreshToken();
+        // Retry fetching user profile
+        return await fetchUserProfile();
       } else {
-        Get.snackbar('Error', 'Failed to load user profile',
+        Get.snackbar('Error',
+            'Failed to load user profile: ${response.statusCode} - ${response.body}',
             backgroundColor: Colors.red, colorText: Colors.white);
+        print(
+            'Failed response: ${response.body}'); // Log the response body for debugging
         return null;
       }
     } catch (e) {
       Get.snackbar('Error', 'An unexpected error occurred: $e',
           backgroundColor: Colors.red, colorText: Colors.white);
+      print('Exception: $e'); // Log the exception
       return null;
     }
   }
