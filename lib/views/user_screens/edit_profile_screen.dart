@@ -25,7 +25,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController _userNameController = TextEditingController();
 
   String? _profileImageUrl;
-  XFile? _profileImage;
   final ImagePicker _picker = ImagePicker();
   @override
   void initState() {
@@ -45,10 +44,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _lastNameController.text = userData['last_name'] ?? '';
           _emailController.text = userData['email'] ?? '';
           _phoneNumberController.text = userData['phone_no'] ?? '';
-          _profileImage = userData['profile_pic'] != null
-              ? XFile(userData[
-                  'profile_pic']) // Assuming profile_pic is a URL or path
-              : null;
         });
       }
     } catch (e) {
@@ -61,7 +56,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedImage != null) {
         setState(() {
-          _profileImage = pickedImage;
         });
       }
     } catch (e) {
