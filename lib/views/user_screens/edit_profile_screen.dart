@@ -22,34 +22,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+
+  String? _profileImageUrl;
   XFile? _profileImage;
   final ImagePicker _picker = ImagePicker();
- @override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _loadUserData();
-  });
-}
-
-Future<void> _loadUserData() async {
-  try {
-    final userData = await _authController.fetchUserProfile();
-    if (userData != null) {
-      setState(() {
-        _firstNameController.text = userData['first_name'] ?? '';
-        _lastNameController.text = userData['last_name'] ?? '';
-        _emailController.text = userData['email'] ?? '';
-        _phoneNumberController.text = userData['phone_no'] ?? '';
-        _profileImage = userData['profile_pic'] != null
-            ? XFile(userData['profile_pic']) // Assuming profile_pic is a URL or path
-            : null;
-      });
-    } 
-  } catch (e) {
-    print('Error loading user data: $e'); // Log the error
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserData();
+    });
   }
-}
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = await _authController.fetchUserProfile();
+      if (userData != null) {
+        setState(() {
+          _userNameController.text = userData['username'] ?? '';
+          _firstNameController.text = userData['first_name'] ?? '';
+          _lastNameController.text = userData['last_name'] ?? '';
+          _emailController.text = userData['email'] ?? '';
+          _phoneNumberController.text = userData['phone_no'] ?? '';
+          _profileImage = userData['profile_pic'] != null
+              ? XFile(userData[
+                  'profile_pic']) // Assuming profile_pic is a URL or path
+              : null;
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e'); // Log the error
+    }
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -82,7 +87,7 @@ Future<void> _loadUserData() async {
             ),
             TextButton(
               onPressed: () async {
-                 await _authController.logout();
+                await _authController.logout();
                 // Get.offAllNamed('/userLogin');
               },
               child: Text("Logout", style: TextStyle(color: Colors.red)),
@@ -134,10 +139,11 @@ Future<void> _loadUserData() async {
                     children: [
                       CircleAvatar(
                         radius: screenWidth * 0.18,
-                        backgroundImage: _profileImage != null
-                            ? FileImage(File(_profileImage!.path))
-                            : AssetImage('assets/images/default.png')
-                                as ImageProvider,
+                        backgroundImage: _profileImageUrl != null
+                            ? NetworkImage(
+                                'https://fyp-project-zosb.onrender.com${_profileImageUrl}')
+                            : NetworkImage(
+                                'https://fyp-project-zosb.onrender.com/media/profile_pic/default.jpg'),
                       ),
                       Positioned(
                         bottom: 0,
@@ -162,7 +168,9 @@ Future<void> _loadUserData() async {
 
                   // User Name
                   Text(
-                    "name",
+                    _userNameController.text.isNotEmpty
+                        ? _userNameController.text
+                        : 'Loading...', // Fallback text if username is not yet available
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: screenWidth * 0.05,
@@ -211,14 +219,11 @@ Future<void> _loadUserData() async {
                       Container(
                         width: screenWidth * 0.15,
                         height: screenHeight * 0.07,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.0),
                           child: Image.asset(
                             'assets/images/flag.png',
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
@@ -227,7 +232,8 @@ Future<void> _loadUserData() async {
                         child: TextField(
                           controller: _phoneNumberController,
                           decoration: InputDecoration(
-                            labelText: '+92 3308963378',
+                            prefixIcon: Icon(Icons.phone_android),
+                            labelText: 'Phone#',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

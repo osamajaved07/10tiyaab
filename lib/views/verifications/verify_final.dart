@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
@@ -141,11 +142,37 @@ class _MyVerifyState extends State<MyVerify> {
         return SingleChildScrollView(
           // Wrap content in SingleChildScrollView
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: screenWidth / 24),
+            margin: EdgeInsets.symmetric(horizontal: screenWidth / 28),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: screenHeight / 10),
+                SizedBox(height: screenHeight / 16),
+                Align(
+                  alignment: Alignment.topLeft, // Align to the top left
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.arrow_back),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Get.offNamed("/phoneverify");
+                        },
+                        child: Text(
+                          "Edit Email?",
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: screenHeight / 20,
+                ),
                 Image.asset(
                   "assets/images/logo1.png",
                   width: screenWidth * 0.4,
@@ -209,40 +236,17 @@ class _MyVerifyState extends State<MyVerify> {
                   ),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.02,
+                  height: screenHeight * 0.03,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween, // Ensure space between items
+                Column(
                   children: [
-                    Flexible(
-                      child: Row(
-                        children: [
-                          IconButton(
-                              onPressed: () {}, icon: Icon(Icons.arrow_back)),
-                          TextButton(
-                            onPressed: () {
-                              Get.offNamed("/phoneverify");
-                            },
-                            child: Text(
-                              "Edit Email?",
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.black),
-                            ),
-                          ),
-                        ],
-                      ),
+                    _resendButton(context),
+                    SizedBox(height: screenHeight / 48),
+                    Text(
+                      _start > 0 ? "Resend in $_start" : "",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
-                    Column(
-                      children: [
-                        _resendButton(context),
-                        SizedBox(height: 16),
-                        Text(
-                          _start > 0 ? "Resend in $_start" : "",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
-                    ), // Resend button at the right corner
+                    // Resend button at the right corner
                   ],
                 )
               ],
@@ -269,13 +273,16 @@ class _MyVerifyState extends State<MyVerify> {
         elevation: 5.0,
         borderRadius: BorderRadius.circular(20),
         child: Container(
+          width: MediaQuery.of(context).size.width / 1.5,
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
           decoration: BoxDecoration(
-              color: _isButtonEnabled ? tPrimaryColor : Color.fromARGB(255, 188, 188, 188),
-              borderRadius: BorderRadius.circular(20)),
+              color: _isButtonEnabled
+                  ? tPrimaryColor
+                  : Color.fromARGB(255, 188, 188, 188),
+              borderRadius: BorderRadius.circular(10)),
           child: Center(
               child: Text(
-            "Resend Code",
+            "Resend OTP",
             style: TextStyle(
                 color: ttextColor, fontSize: 16.0, fontWeight: FontWeight.bold),
           )),

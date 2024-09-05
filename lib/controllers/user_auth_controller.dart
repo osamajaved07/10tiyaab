@@ -37,13 +37,25 @@ class AuthController extends GetxController {
       barrierDismissible: false,
     );
     try {
+       final String url = '$baseUrl/accounts/logout/';
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $accessToken',
+      };
+
+// Log the headers to check if the Authorization header contains the access token
+      print('Request Headers: $headers');
+
       final response = await http.post(
-        Uri.parse('$baseUrl/accounts/logout/'),
-        headers: {
-          'Authorization': 'Bearer $accessToken!',
-          'Content-Type': 'application/json',
-        },
+        Uri.parse(url),
+        headers: headers,
       );
+      // final response = await http.post(
+      //   Uri.parse('$baseUrl/accounts/logout/'),
+      //   headers: {
+      //     'Authorization': 'Bearer $accessToken!',
+      //     'Content-Type': 'application/json',
+      //   },
+      // );
       Get.back(); // Hide the circular progress indicator
 
       if (response.statusCode == 200) {
@@ -57,6 +69,7 @@ class AuthController extends GetxController {
         Get.snackbar('Success', 'Successfully logged out',
             backgroundColor: Colors.green, colorText: Colors.white);
       } else {
+        print('Failed to logout: ${response.statusCode}');
         Get.snackbar('Error', 'Failed to logout. Please try again.',
             backgroundColor: Colors.red, colorText: Colors.white);
       }
@@ -76,15 +89,23 @@ class AuthController extends GetxController {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/accounts/token/refresh/'),
+        Uri.parse('$baseUrl/accounts/refresh-token/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refresh': _refreshToken}),
       );
+      print('Refresh token response status: ${response.statusCode}');
+      print('Refresh token response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final newAccessToken = data['access'];
         setAccessToken(newAccessToken); // Store new access token
+      } else if (response.statusCode == 401) {
+        // Handle token blacklisting
+        Get.snackbar('Error', 'Session expired. Please log in again.',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        // Redirect to login screen
+        Get.offAllNamed('/userLogin');
       } else {
         Get.snackbar('Error', 'Failed to refresh token',
             backgroundColor: Colors.red, colorText: Colors.white);
@@ -95,6 +116,7 @@ class AuthController extends GetxController {
     }
   }
 
+  // Fetch user profile function
   Future<Map<String, dynamic>?> fetchUserProfile() async {
     if (accessToken == null) {
       Get.snackbar('Error', 'Access token is not available',
@@ -103,26 +125,50 @@ class AuthController extends GetxController {
     }
 
     try {
+      // final response = await http.get(
+      //   Uri.parse('$baseUrl/accounts/profile/'),
+      //   headers: {
+      //     'Authorization': 'Bearer $accessToken!',
+
+      //   },
+      // );
+      final String url = '$baseUrl/accounts/profile/';
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $accessToken',
+      };
+
+// Log the headers to check if the Authorization header contains the access token
+      print('Request Headers: $headers');
+
       final response = await http.get(
-        Uri.parse('$baseUrl/accounts/profile/'),
-        headers: {
-          'Authorization': 'Bearer $accessToken!',
-        },
+        Uri.parse(url),
+        headers: headers,
       );
+      print("$accessToken");
+      print('Fetch user profile response status: ${response.statusCode}');
+      print('Fetch user profile response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> userData = jsonDecode(response.body);
-        if (userData.containsKey('first_name') &&
-            userData.containsKey('last_name') &&
-            userData.containsKey('email') &&
-            userData.containsKey('phone_no') &&
-            userData.containsKey('profile_pic')) {
-          return userData;
-        } else {
-          Get.snackbar('Error', 'Unexpected profile data format',
-              backgroundColor: Colors.red, colorText: Colors.white);
-          return null;
+        if (userData['profile_pic'] != null) {
+        String profilePicUrl = userData['profile_pic'];
+        if (!profilePicUrl.startsWith('https')) {
+          profilePicUrl = '$baseUrl$profilePicUrl';
         }
+        userData['profile_pic'] = profilePicUrl;
+      }
+        return userData;
+        // if (userData.containsKey('first_name') &&
+        //     userData.containsKey('last_name') &&
+        //     userData.containsKey('email') &&
+        //     userData.containsKey('phone_no') &&
+        //     userData.containsKey('profile_pic')) {
+        //   return userData;
+        // } else {
+        //   Get.snackbar('Error', 'Unexpected profile data format',
+        //       backgroundColor: Colors.red, colorText: Colors.white);
+        //   return null;
+        // }
       } else if (response.statusCode == 401) {
         // Handle token refresh if the response indicates the token is expired
         await refreshToken();
@@ -174,6 +220,13 @@ class AuthController extends GetxController {
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
+    Get.dialog(
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+      )),
+      barrierDismissible: false,
+    );
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/accounts/customer/add-phone-number/$user_id/'),
@@ -184,7 +237,7 @@ class AuthController extends GetxController {
           'phone_no': phoneNumber,
         }),
       );
-
+      Get.back();
       if (response.statusCode == 200) {
         Get.snackbar(
           'Success',
@@ -211,6 +264,7 @@ class AuthController extends GetxController {
         );
       }
     } catch (e) {
+      Get.back();
       Get.snackbar(
         'Error',
         'An unexpected error occurred: $e',
@@ -288,6 +342,13 @@ class AuthController extends GetxController {
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
+    Get.dialog(
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+      )),
+      barrierDismissible: false,
+    );
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/accounts/resend-otp/$user_id/'),
@@ -295,6 +356,7 @@ class AuthController extends GetxController {
           'Content-Type': 'application/json',
         },
       );
+      Get.back();
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'OTP resend to your email',
@@ -311,6 +373,7 @@ class AuthController extends GetxController {
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
+      Get.back();
       Get.snackbar('Error', 'An unexpected error occurred: $e',
           backgroundColor: Colors.red, colorText: Colors.white);
     }
@@ -390,6 +453,7 @@ class AuthController extends GetxController {
       if (registerResponse.statusCode == 201) {
         final Map<String, dynamic> responseData =
             jsonDecode(registerResponse.body);
+
         final dynamic userId = responseData['user_id'];
         if (userId is int) {
           user_id = userId.toString(); // Convert integer to string if necessary
@@ -398,6 +462,7 @@ class AuthController extends GetxController {
         } else {
           throw Exception('Unexpected user_id type');
         }
+
         final loginResponse = await http.post(
           Uri.parse('$baseUrl/accounts/login/'),
           body: jsonEncode({
@@ -408,10 +473,12 @@ class AuthController extends GetxController {
         );
         if (loginResponse.statusCode == 200) {
           final Map<String, dynamic> loginData = jsonDecode(loginResponse.body);
-          final String accessToken = loginData['access_token'];
+          final accessToken = loginData['access_token'];
+          final refreshToken = loginData['refresh'];
 
           // Store the access token
           setAccessToken(accessToken);
+          setRefreshToken(refreshToken);
 
           Get.snackbar('Success', 'Registration successful',
               backgroundColor: Colors.green, colorText: Colors.white);
@@ -419,14 +486,9 @@ class AuthController extends GetxController {
               '/phoneverify'); // Change '/homepage' to the desired route
         } else {
           // Handle login failure
-          Get.snackbar('Error', 'Registration failed.',
+          Get.snackbar('Error', 'Login after registration failed.',
               backgroundColor: Colors.red, colorText: Colors.white);
         }
-
-        // Get.snackbar('Success', 'Registration successful',
-        //     backgroundColor: Colors.green, colorText: Colors.white);
-        // // Navigate to next screen
-        // Get.offAllNamed("/phoneverify");
       } else {
         // Handle different status codes
         String errorMessage;
@@ -472,8 +534,16 @@ class AuthController extends GetxController {
       );
       Get.back();
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-        final dynamic userId = responseData['user_id'];
+        final Map<String, dynamic> loginData = jsonDecode(response.body);
+        final accessToken = loginData['access_token'];
+        final refreshToken = loginData['refresh'];
+        print('Access Token: $accessToken');
+        print('Refresh Token: $refreshToken');
+
+        setAccessToken(accessToken);
+        setRefreshToken(refreshToken);
+        // user_id = loginData['user_id'].toString(); // Update user_id
+        final dynamic userId = loginData['user_id'];
         if (userId is int) {
           user_id = userId.toString(); // Convert integer to string if necessary
         } else if (userId is String) {
