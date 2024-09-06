@@ -4,7 +4,6 @@ import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import '../../controllers/user_auth_controller.dart';
 
 class EditProfilePage extends StatefulWidget {

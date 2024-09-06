@@ -4,46 +4,43 @@ import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/others/selection_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key});
 
-   Future<void> _setHasSeenSplashScreen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenSplashScreen', true);
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToNextScreen();
   }
 
-  Future<void> navigateToNextScreen(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? hasSeenSplashScreen = prefs.getBool('hasSeenSplashScreen');
-    bool? isOnboardingCompleted = prefs.getBool('isOnboardingCompleted');
-
-    // Delay for 4 seconds
+  Future<void> _navigateToNextScreen() async {
     await Future.delayed(Duration(seconds: 4));
 
-     if (hasSeenSplashScreen ?? false) {
-      if (isOnboardingCompleted ?? false) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const UserSelection()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-        );
-      }
-    } else {
-      await _setHasSeenSplashScreen();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isOnboardingCompleted =
+        prefs.getBool('isOnboardingCompleted') ?? false;
+
+    if (isOnboardingCompleted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const UserSelection()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    navigateToNextScreen(context);
+    (context);
 
     return Scaffold(
       backgroundColor: Color(0xFF04BEBE),

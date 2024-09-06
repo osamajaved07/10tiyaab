@@ -22,32 +22,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
   final AuthController authController = Get.put(AuthController());
   final bool isLoggedIn = await authController.isLoggedIn();
-  final bool hasSeenSplash = await _hasSeenSplashScreen();
-   final String? lastScreen = prefs.getString('last_screen');
-  runApp(MyApp(isLoggedIn: isLoggedIn, lastScreen: lastScreen,
-  hasSeenSplash: hasSeenSplash,));
-}
-
-Future<bool> _hasSeenSplashScreen() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('hasSeenSplash') ?? false;
-}
-
-Future<void> _setHasSeenSplashScreen() async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('hasSeenSplash', true);
+  runApp(MyApp(isLoggedIn: isLoggedIn,));
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
-   final bool hasSeenSplash;
-    final String? lastScreen;
 
   // final SharedPreferences prefs;
-  const MyApp({super.key, required this.isLoggedIn, this.lastScreen, required this.hasSeenSplash});
+  const MyApp({super.key, required this.isLoggedIn,});
 
   // This widget is the root of your application.
   @override
@@ -60,7 +45,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
         useMaterial3: false,
       ),
-       home: hasSeenSplash ? getHomeScreen() : SplashScreen(),
+       home: SplashScreen(),
       getPages: [
         GetPage(name: '/selection', page: () => UserSelection()),
         GetPage(
@@ -104,21 +89,6 @@ class MyApp extends StatelessWidget {
             page: () => ContactUsScreen(),
             transition: Transition.fadeIn),
       ],
-    );
-  }
-    Widget getHomeScreen() {
-    return FutureBuilder<bool>(
-      future: _hasSeenSplashScreen(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.data ?? false) {
-            return UserHomeScreen(); // or any other screen based on your logic
-          } else {
-            return SplashScreen(); // should not reach here if logic is correct
-          }
-        }
-        return Center(child: CircularProgressIndicator()); // loading state
-      },
     );
   }
 }

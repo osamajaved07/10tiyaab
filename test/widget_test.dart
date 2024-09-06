@@ -29,7 +29,7 @@ void main() {
 
     await tester.pumpWidget(MyApp(
       isLoggedIn: isLoggedIn,
-      hasSeenSplash: hasSeenSplash,
+     
     ));
  
     expect(find.text('0'), findsOneWidget);

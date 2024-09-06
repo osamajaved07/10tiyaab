@@ -10,11 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
-  Future<void> _completeOnboarding() async {
+ Future<void> _completeOnboarding() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isOnboardingCompleted', true);
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final c = PageController();
