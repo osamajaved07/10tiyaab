@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures
+// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures, prefer_const_declarations
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -6,10 +6,9 @@ import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class AuthController extends GetxController {
-  // final ApiService apiService =
-  //     ApiService('https://fyp-project-zosb.onrender.com');
+import '../utils/custom_snackbar.dart';
 
+class AuthController extends GetxController {
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
   String? user_id; // Nullable user_id to be set after registration
   String? accessToken;
@@ -32,8 +31,10 @@ class AuthController extends GetxController {
     String? profilePicPath,
   }) async {
     if (accessToken == null) {
-      Get.snackbar('Error', 'Access token is not available',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
       return;
     }
 
@@ -66,34 +67,68 @@ class AuthController extends GetxController {
 
       // Send the request
       final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
 
       Get.back();
 
       if (response.statusCode == 200) {
-        Get.snackbar(
+        successSnackbar(
           'Success',
           'Information updated successfully',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
         );
         // Optionally refresh user profile
         await fetchUserProfile();
       } else {
-        Get.snackbar(
+        errorSnackbar(
           'Error',
           'Failed to update user information. Please try again.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.back();
-      Get.snackbar(
+      errorSnackbar(
         'Error',
         'An unexpected error occurred: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> sendFeedback(String feedback) async {
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
+      return;
+    }
+
+    Get.dialog(
+      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      barrierDismissible: false,
+    );
+    final String url = 'https://fyp-project-zosb.onrender.com/contact/us/';
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    };
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode({'feedback': feedback}),
+      );
+      Get.back();
+
+      if (response.statusCode == 200) {
+        successSnackbar('Success', 'Query sent successfully');
+      } else {
+        print('Failed to send feedback: ${response.statusCode}');
+        errorSnackbar('Error', 'Failed to send query');
+      }
+    } catch (e) {
+      Get.back();
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
       );
     }
   }
@@ -101,8 +136,10 @@ class AuthController extends GetxController {
   // Logout function
   Future<void> logout() async {
     if (accessToken == null) {
-      Get.snackbar('Error', 'Access token is not available',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
       return;
     }
     Get.dialog(
@@ -122,13 +159,7 @@ class AuthController extends GetxController {
         Uri.parse(url),
         headers: headers,
       );
-      // final response = await http.post(
-      //   Uri.parse('$baseUrl/accounts/logout/'),
-      //   headers: {
-      //     'Authorization': 'Bearer $accessToken!',
-      //     'Content-Type': 'application/json',
-      //   },
-      // );
+
       Get.back(); // Hide the circular progress indicator
 
       if (response.statusCode == 200) {
@@ -139,24 +170,32 @@ class AuthController extends GetxController {
 
         // Navigate to login screen or home screen
         Get.offAllNamed('/userLogin');
-        Get.snackbar('Success', 'Successfully logged out',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        successSnackbar(
+          'Success',
+          'Successfully logged out',
+        );
       } else {
         print('Failed to logout: ${response.statusCode}');
-        Get.snackbar('Error', 'Failed to logout. Please try again.',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          'Failed to logout. Please try again.',
+        );
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'An unexpected error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
     }
   }
 
   Future<void> refreshToken() async {
     if (_refreshToken == null) {
-      Get.snackbar('Error', 'Refresh token is not available',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'Refresh token is not available',
+      );
       return;
     }
 
@@ -175,36 +214,37 @@ class AuthController extends GetxController {
         setAccessToken(newAccessToken); // Store new access token
       } else if (response.statusCode == 401) {
         // Handle token blacklisting
-        Get.snackbar('Error', 'Session expired. Please log in again.',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          'Session expired. Please log in again.',
+        );
         // Redirect to login screen
         Get.offAllNamed('/userLogin');
       } else {
-        Get.snackbar('Error', 'Failed to refresh token',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          'Failed to refresh token',
+        );
       }
     } catch (e) {
-      Get.snackbar('Error', 'An unexpected error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
     }
   }
 
   // Fetch user profile function
   Future<Map<String, dynamic>?> fetchUserProfile() async {
     if (accessToken == null) {
-      Get.snackbar('Error', 'Access token is not available',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
       return null;
     }
 
     try {
-      // final response = await http.get(
-      //   Uri.parse('$baseUrl/accounts/profile/'),
-      //   headers: {
-      //     'Authorization': 'Bearer $accessToken!',
-
-      //   },
-      // );
       final String url = '$baseUrl/accounts/profile/';
       final Map<String, String> headers = {
         'Authorization': 'Bearer $accessToken',
@@ -231,33 +271,25 @@ class AuthController extends GetxController {
           userData['profile_pic'] = profilePicUrl;
         }
         return userData;
-        // if (userData.containsKey('first_name') &&
-        //     userData.containsKey('last_name') &&
-        //     userData.containsKey('email') &&
-        //     userData.containsKey('phone_no') &&
-        //     userData.containsKey('profile_pic')) {
-        //   return userData;
-        // } else {
-        //   Get.snackbar('Error', 'Unexpected profile data format',
-        //       backgroundColor: Colors.red, colorText: Colors.white);
-        //   return null;
-        // }
       } else if (response.statusCode == 401) {
         // Handle token refresh if the response indicates the token is expired
         await refreshToken();
         // Retry fetching user profile
         return await fetchUserProfile();
       } else {
-        Get.snackbar('Error',
-            'Failed to load user profile: ${response.statusCode} - ${response.body}',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          'Failed to load user profile: ${response.statusCode} - ${response.body}',
+        );
         print(
             'Failed response: ${response.body}'); // Log the response body for debugging
         return null;
       }
     } catch (e) {
-      Get.snackbar('Error', 'An unexpected error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
       print('Exception: $e'); // Log the exception
       return null;
     }
@@ -289,8 +321,10 @@ class AuthController extends GetxController {
 
   Future<void> addPhoneNumber(String phoneNumber) async {
     if (user_id == null) {
-      Get.snackbar('Error', 'User ID is not set.',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'User ID is not set.',
+      );
       return;
     }
     Get.dialog(
@@ -312,11 +346,9 @@ class AuthController extends GetxController {
       );
       Get.back();
       if (response.statusCode == 200) {
-        Get.snackbar(
+        successSnackbar(
           'Success',
           'Phone number added successfully',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
         );
         Future.delayed(Duration(seconds: 1), () {
           Get.toNamed("/userregisterfinal");
@@ -329,28 +361,26 @@ class AuthController extends GetxController {
         } else {
           errorMessage = 'Failed to add phone number. Please try again.';
         }
-        Get.snackbar(
+        errorSnackbar(
           'Error',
           errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.back();
-      Get.snackbar(
+      errorSnackbar(
         'Error',
         'An unexpected error occurred: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
     }
   }
 
   Future<void> addEmail(String email) async {
     if (user_id == null) {
-      Get.snackbar('Error', 'User ID is not set.',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'User ID is not set.',
+      );
       return;
     }
     Get.dialog(
@@ -373,11 +403,9 @@ class AuthController extends GetxController {
       Get.back();
 
       if (response.statusCode == 200) {
-        Get.snackbar(
+        successSnackbar(
           'Success',
           'OTP sent to your email',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
         );
         // Adding a slight delay to ensure the Snackbar is visible
         Future.delayed(Duration(seconds: 1), () {
@@ -391,28 +419,26 @@ class AuthController extends GetxController {
         } else {
           errorMessage = 'Failed to send OTP. Please try again.';
         }
-        Get.snackbar(
+        errorSnackbar(
           'Error',
           errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.back();
-      Get.snackbar(
+      errorSnackbar(
         'Error',
         'An unexpected error occurred: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
     }
   }
 
   Future<void> resendOtp() async {
     if (user_id == null) {
-      Get.snackbar('Error', 'User ID is not set.',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'User ID is not set.',
+      );
       return;
     }
     Get.dialog(
@@ -432,8 +458,10 @@ class AuthController extends GetxController {
       Get.back();
 
       if (response.statusCode == 200) {
-        Get.snackbar('Success', 'OTP resend to your email',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        successSnackbar(
+          'Success',
+          'OTP resend to your email',
+        );
       } else {
         String errorMessage;
         if (response.statusCode == 400) {
@@ -442,13 +470,17 @@ class AuthController extends GetxController {
         } else {
           errorMessage = 'Failed to resend OTP. Please try again.';
         }
-        Get.snackbar('Error', errorMessage,
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          errorMessage,
+        );
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'An unexpected error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
     }
   }
 
@@ -477,8 +509,10 @@ class AuthController extends GetxController {
       );
       Get.back();
       if (response.statusCode == 200) {
-        Get.snackbar('Success', 'Email verified successfully',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        successSnackbar(
+          'Success',
+          'Email verified successfully',
+        );
         Get.offAllNamed("/userphone");
       } else {
         String errorMessage;
@@ -488,14 +522,18 @@ class AuthController extends GetxController {
         } else {
           errorMessage = 'Failed to verify OTP. Please try again.';
         }
-        Get.snackbar('Error', errorMessage,
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          errorMessage,
+        );
         print("${response.body}");
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'An unexpected error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
     }
   }
 
@@ -553,14 +591,18 @@ class AuthController extends GetxController {
           setAccessToken(accessToken);
           setRefreshToken(refreshToken);
 
-          Get.snackbar('Success', 'Registration successful',
-              backgroundColor: Colors.green, colorText: Colors.white);
+          successSnackbar(
+            'Success',
+            'Registration successful',
+          );
           Get.offAllNamed(
               '/phoneverify'); // Change '/homepage' to the desired route
         } else {
           // Handle login failure
-          Get.snackbar('Error', 'Login after registration failed.',
-              backgroundColor: Colors.red, colorText: Colors.white);
+          errorSnackbar(
+            'Error',
+            'Login after registration failed.',
+          );
         }
       } else {
         // Handle different status codes
@@ -574,14 +616,18 @@ class AuthController extends GetxController {
         } else {
           errorMessage = 'Registration failed. Please try again.';
         }
-        Get.snackbar('Error', errorMessage,
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          errorMessage,
+        );
         print("${registerResponse.body}");
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'An unexpected error occurred. Please try again.',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred. Please try again.',
+      );
       print("$e");
     }
   }
@@ -624,8 +670,10 @@ class AuthController extends GetxController {
         } else {
           throw Exception('Unexpected user_id type');
         }
-        Get.snackbar('Success', 'Welcome back.',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        successSnackbar(
+          'Success',
+          'Welcome back.',
+        );
         // Navigate to home screen or desired page
         Get.offAllNamed("/homescreen");
       } else {
@@ -638,8 +686,10 @@ class AuthController extends GetxController {
           errorMessage = 'Login failed. Please try again.';
         }
 
-        Get.snackbar('Error', errorMessage,
-            backgroundColor: Colors.red, colorText: Colors.white);
+        errorSnackbar(
+          'Error',
+          errorMessage,
+        );
         print("${response.body}");
       }
     } catch (e) {
@@ -651,7 +701,36 @@ class AuthController extends GetxController {
   }
 
   Future<bool> isLoggedIn() async {
-    // Implement your logic to check if the user is logged in
-    return false;
+    try {
+      // Implement your logic to check if the user is logged in.
+      // For example, you might be checking for a valid token in storage.
+
+      final token = await getTokenFromStorage(); // Example token retrieval
+
+      if (token != null && await validateToken(token)) {
+        // If token exists and is valid, return true
+        return true;
+      } else {
+        // If token is null or invalid, return false
+        return false;
+      }
+    } catch (e) {
+      // Log or handle the error
+      print('Error checking login status: $e');
+
+      // Optionally, return false or handle the error as needed
+      return false;
+    }
+  }
+
+// Example helper functions (you can replace these with your own logic)
+  Future<String?> getTokenFromStorage() async {
+    // Simulate getting a token from secure storage, SharedPreferences, etc.
+    return 'your_token_here'; // Replace with your actual token logic
+  }
+
+  Future<bool> validateToken(String token) async {
+    // Simulate a token validation process, e.g., checking with a server
+    return true; // Replace with your actual validation logic
   }
 }

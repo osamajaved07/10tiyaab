@@ -92,7 +92,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             TextButton(
               onPressed: () async {
                 await _authController.logout();
-                // Get.offAllNamed('/userLogin');
               },
               child: Text("Logout", style: TextStyle(color: Colors.red)),
             ),
