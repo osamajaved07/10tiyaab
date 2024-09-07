@@ -8,9 +8,9 @@ void successSnackbar(String title, String message) {
     title,
     message,
     snackPosition: SnackPosition.TOP,
-    backgroundColor: const Color(0xFFD1D1D1),
+    backgroundColor: const Color.fromARGB(193, 161, 217, 217),
     borderColor: Colors.green,
-    borderWidth: 2,
+    borderWidth: 4,
     colorText: Colors.black,
     margin: const EdgeInsets.all(10),
     snackStyle: SnackStyle.FLOATING,
@@ -29,9 +29,9 @@ void errorSnackbar(String title, String message) {
     title,
     message,
     snackPosition: SnackPosition.TOP,
-    backgroundColor: const Color(0xFFD1D1D1),
+    backgroundColor: const Color.fromARGB(193, 161, 217, 217),
     borderColor: Colors.red,
-    borderWidth: 2,
+    borderWidth: 4,
     colorText: Colors.black,
     margin: const EdgeInsets.all(10),
     snackStyle: SnackStyle.FLOATING,
@@ -44,3 +44,11 @@ void errorSnackbar(String title, String message) {
     ],
   );
 }
+
+// _isLoading
+//                       ? Center(
+//                           child: CircularProgressIndicator(
+//                             color: Color(0xFF04BEBE),
+//                           ),
+//                         )
+//                       :

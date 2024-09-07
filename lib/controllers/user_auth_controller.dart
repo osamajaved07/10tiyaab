@@ -114,15 +114,17 @@ class AuthController extends GetxController {
       final response = await http.post(
         Uri.parse(url),
         headers: headers,
-        body: jsonEncode({'feedback': feedback}),
+        body: jsonEncode({'message': feedback}),
       );
       Get.back();
 
       if (response.statusCode == 200) {
-        successSnackbar('Success', 'Query sent successfully');
+        successSnackbar('Success', 'Message sent successfully');
       } else {
-        print('Failed to send feedback: ${response.statusCode}');
-        errorSnackbar('Error', 'Failed to send query');
+        final errorMessage = jsonDecode(response.body)['message'] ??
+            'Failed to send your message';
+        errorSnackbar(
+            'Error', errorMessage); // Display detailed error if available
       }
     } catch (e) {
       Get.back();

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:fyp_1/utils/custom_snackbar.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,21 +57,27 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       _isLoading = true;
       try {
         await _authController.sendFeedback(feedbackMessage);
-        Get.snackbar('Success', 'Feedback sent successfully',
-            backgroundColor: Colors.green, colorText: Colors.black);
+        // successSnackbar(
+        //   'Success',
+        //   'Message sent successfully',
+        // );
         _messageController.clear();
       } catch (e) {
-        print('Error sending message: $e');
-        Get.snackbar('Error', 'Failed to send message. Please try again.',
-            backgroundColor: Colors.red, colorText: Colors.black);
+        print('Error sending your message: $e');
+        // errorSnackbar(
+        //   'Error',
+        //   'Failed to send your message. Please try again.',
+        // );
       } finally {
         setState(() {
           _isLoading = false;
         });
       }
     } else {
-      Get.snackbar('Error', 'Please enter your message',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'Please enter your message',
+      );
     }
   }
 
@@ -113,7 +120,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   TextField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      labelText: 'Name',
+                      labelText: 'Username',
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -149,35 +156,29 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     // enabled: false, // Email is not editable
                   ),
                   SizedBox(height: screenHeight * 0.06),
-                  _isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF04BEBE),
-                          ),
-                        )
-                      : SizedBox(
-                          width: double.infinity,
-                          height: screenHeight * 0.06,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _sendFeedback();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF04BEBE),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              'Send',
-                              style: TextStyle(
-                                color: ttextColor,
-                                fontSize: screenWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: screenHeight * 0.06,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _sendFeedback();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF04BEBE),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                      ),
+                      child: Text(
+                        'Send',
+                        style: TextStyle(
+                          color: ttextColor,
+                          fontSize: screenWidth * 0.045,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

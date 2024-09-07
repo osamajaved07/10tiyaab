@@ -79,7 +79,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: tlightPrimaryColor,
           elevation: 8,
+          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
           title: Text("Logout"),
           content: Text("Are you sure you want to logout?"),
           actions: [
