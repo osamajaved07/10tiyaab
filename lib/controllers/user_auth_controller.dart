@@ -25,6 +25,79 @@ class AuthController extends GetxController {
     _refreshToken = token;
   }
 
+  Future<void> updateUserInfo({
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    String? profilePicPath,
+  }) async {
+    if (accessToken == null) {
+      Get.snackbar('Error', 'Access token is not available',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    Get.dialog(
+      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      barrierDismissible: false,
+    );
+
+    try {
+      // Create the request body
+      final Map<String, String> body = {
+        'first_name': firstName,
+        'last_name': lastName,
+        'phone_no': phoneNumber,
+      };
+
+      // Update user info
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl/accounts/profile/update/'),
+      )
+        ..headers['Authorization'] = 'Bearer $accessToken'
+        ..fields.addAll(body);
+
+      // If a profile picture path is provided, add it to the request
+      if (profilePicPath != null) {
+        request.files.add(
+            await http.MultipartFile.fromPath('profile_pic', profilePicPath));
+      }
+
+      // Send the request
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      Get.back();
+
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'Success',
+          'Information updated successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        // Optionally refresh user profile
+        await fetchUserProfile();
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to update user information. Please try again.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.back();
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   // Logout function
   Future<void> logout() async {
     if (accessToken == null) {
@@ -37,7 +110,7 @@ class AuthController extends GetxController {
       barrierDismissible: false,
     );
     try {
-       final String url = '$baseUrl/accounts/logout/';
+      final String url = '$baseUrl/accounts/logout/';
       final Map<String, String> headers = {
         'Authorization': 'Bearer $accessToken',
       };
@@ -151,12 +224,12 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         final Map<String, dynamic> userData = jsonDecode(response.body);
         if (userData['profile_pic'] != null) {
-        String profilePicUrl = userData['profile_pic'];
-        if (!profilePicUrl.startsWith('https')) {
-          profilePicUrl = '$baseUrl$profilePicUrl';
+          String profilePicUrl = userData['profile_pic'];
+          if (!profilePicUrl.startsWith('https')) {
+            profilePicUrl = '$baseUrl$profilePicUrl';
+          }
+          userData['profile_pic'] = profilePicUrl;
         }
-        userData['profile_pic'] = profilePicUrl;
-      }
         return userData;
         // if (userData.containsKey('first_name') &&
         //     userData.containsKey('last_name') &&

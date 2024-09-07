@@ -22,30 +22,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final AuthController authController = Get.put(AuthController());
   final bool isLoggedIn = await authController.isLoggedIn();
-  runApp(MyApp(isLoggedIn: isLoggedIn,));
+  runApp(MyApp(
+    isLoggedIn: isLoggedIn,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
 
   // final SharedPreferences prefs;
-  const MyApp({super.key, required this.isLoggedIn,});
+  const MyApp({
+    super.key,
+    required this.isLoggedIn,
+  });
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-     
       debugShowCheckedModeBanner: false,
       title: '10tiyaab',
       theme: ThemeData(
         primaryColor: Colors.black,
         useMaterial3: false,
       ),
-       home: SplashScreen(),
+      home: SplashScreen(),
       getPages: [
         GetPage(name: '/selection', page: () => UserSelection()),
         GetPage(
