@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/custom_snackbar.dart';
 
@@ -13,15 +14,29 @@ class AuthController extends GetxController {
   String? user_id; // Nullable user_id to be set after registration
   String? accessToken;
   String? _refreshToken;
+  @override
+  void onInit() {
+    super.onInit();
+    isLoggedIn();
+  }
 
   // Set access token (you might want to set it during login or some other flow)
-  void setAccessToken(String token) {
+  void setAccessToken(String token) async {
     accessToken = token;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', token);
   }
 
   // Set refresh token
-  void setRefreshToken(String token) {
+  void setRefreshToken(String token) async {
     _refreshToken = token;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('refresh_token', token);
+  }
+
+  Future<String?> getStoredAccessToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
   }
 
   Future<void> updateUserInfo({
@@ -165,6 +180,9 @@ class AuthController extends GetxController {
       Get.back(); // Hide the circular progress indicator
 
       if (response.statusCode == 200) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.remove('access_token');
+        await prefs.remove('refresh_token');
         // Clear access token and user_id
         accessToken = null;
         _refreshToken = null; // Also clear refresh token
@@ -703,36 +721,15 @@ class AuthController extends GetxController {
   }
 
   Future<bool> isLoggedIn() async {
-    try {
-      // Implement your logic to check if the user is logged in.
-      // For example, you might be checking for a valid token in storage.
+    final storedToken = await getStoredAccessToken();
 
-      final token = await getTokenFromStorage(); // Example token retrieval
-
-      if (token != null && await validateToken(token)) {
-        // If token exists and is valid, return true
-        return true;
-      } else {
-        // If token is null or invalid, return false
-        return false;
-      }
-    } catch (e) {
-      // Log or handle the error
-      print('Error checking login status: $e');
-
-      // Optionally, return false or handle the error as needed
+    if (storedToken != null) {
+      accessToken = storedToken;
+      // Get.offAllNamed('/homescreen');
+      return true;
+    } else {
+      // Get.offAllNamed('/selection');
       return false;
     }
-  }
-
-// Example helper functions (you can replace these with your own logic)
-  Future<String?> getTokenFromStorage() async {
-    // Simulate getting a token from secure storage, SharedPreferences, etc.
-    return 'your_token_here'; // Replace with your actual token logic
-  }
-
-  Future<bool> validateToken(String token) async {
-    // Simulate a token validation process, e.g., checking with a server
-    return true; // Replace with your actual validation logic
   }
 }

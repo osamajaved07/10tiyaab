@@ -47,8 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _lastNameController.text = userData['last_name'] ?? '';
           _emailController.text = userData['email'] ?? '';
           _phoneNumberController.text = userData['phone_no'] ?? '';
-          _profileImageUrl =
-              userData['profile_pic'] ?? ''; // Load profile pic URL
+          _profileImageUrl = userData['profile_pic'] ?? '';
           _isLoading = false; // Stop loading when data is fetched
         });
       }
@@ -161,8 +160,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             CircleAvatar(
                               radius: screenWidth * 0.18,
                               backgroundImage: _pickedImage != null
-                                  ? FileImage(File(_pickedImage!.path))
-                                  : NetworkImage(_profileImageUrl!)
+                                  ? FileImage(File(
+                                      _pickedImage!.path)) // Show picked image
+                                  : (_profileImageUrl != null &&
+                                              _profileImageUrl!.isNotEmpty
+                                          ? NetworkImage(
+                                              _profileImageUrl!) // Show server image
+                                          : AssetImage(
+                                              'assets/images/default_profile.png')) // Show default image
                                       as ImageProvider,
                             ),
                             Positioned(

@@ -27,19 +27,14 @@ void main() {
     bool isLoggedIn = false;
     bool hasSeenSplash = true;
 
-    await tester.pumpWidget(MyApp(
-      isLoggedIn: isLoggedIn,
-     
-    ));
- 
+    await tester.pumpWidget(MyApp());
+
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
-   
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-   
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });

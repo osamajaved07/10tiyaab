@@ -2,7 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/others/selection_screen.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../controllers/user_auth_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key});
@@ -12,6 +15,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final AuthController _authController = Get.find<AuthController>();
   @override
   void initState() {
     super.initState();
@@ -20,21 +24,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateToNextScreen() async {
     await Future.delayed(Duration(seconds: 4));
-
+    bool isLoggedIn = await _authController.isLoggedIn();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isOnboardingCompleted =
         prefs.getBool('isOnboardingCompleted') ?? false;
 
     if (isOnboardingCompleted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const UserSelection()),
-      );
+      if (isLoggedIn) {
+        Get.offAllNamed("/homescreen");
+      } else {
+        Get.offAllNamed("/selection");
+      }
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-      );
+      Get.offAllNamed('/onboarding_screen');
     }
   }
 

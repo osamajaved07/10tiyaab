@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
+import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
 import 'package:fyp_1/views/verifications/final.dart';
 import 'package:fyp_1/views/verifications/phoneinput.dart';
@@ -17,25 +18,20 @@ import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:fyp_1/views/user_screens/user_login.dart';
 import 'package:fyp_1/views/user_screens/user_registration.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final AuthController authController = Get.put(AuthController());
-  final bool isLoggedIn = await authController.isLoggedIn();
-  runApp(MyApp(
-    isLoggedIn: isLoggedIn,
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
+  // final bool isLoggedIn;
 
   // final SharedPreferences prefs;
   const MyApp({
     super.key,
-    required this.isLoggedIn,
   });
 
   // This widget is the root of your application.
@@ -49,7 +45,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: false,
       ),
       home: SplashScreen(),
+      // initialRoute: '/',
       getPages: [
+        // GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/onboarding_screen', page: () => OnboardingScreen()),
         GetPage(name: '/selection', page: () => UserSelection()),
         GetPage(
             name: '/professionalregister',

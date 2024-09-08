@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_import
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_import, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -147,10 +147,39 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     keyboardType: TextInputType.text,
                     maxLines: 5,
                     decoration: InputDecoration(
-                      labelText: '',
+                      labelText: 'Message',
                       hintText: "Type your message here...",
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade600, // Adjust hint text color
+                        fontSize: 16, // Adjust font size of hint
+                      ),
+                      filled: true, // Enable background color
+                      fillColor: Colors.grey.shade100,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Colors
+                              .grey.shade400, // Border color for enabled state
+                          width: 1.5, // Adjust border thickness
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: tPrimaryColor, // Border color when focused
+                          width: 2.0, // Thicker border when focused
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color:
+                              Colors.redAccent, // Border color for error state
+                          width: 1.5,
+                        ),
                       ),
                     ),
                     // enabled: false, // Email is not editable
