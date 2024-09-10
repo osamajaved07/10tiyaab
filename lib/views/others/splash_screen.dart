@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, use_build_context_synchronously
+// ignore_for_file: camel_case_types, use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, use_build_context_synchronously, unused_local_variable
 import 'package:flutter/material.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/others/selection_screen.dart';
@@ -24,13 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateToNextScreen() async {
     await Future.delayed(Duration(seconds: 4));
-    bool isLoggedIn = await _authController.isLoggedIn();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedin = await _authController.isLoggedIn();
     bool isOnboardingCompleted =
         prefs.getBool('isOnboardingCompleted') ?? false;
 
     if (isOnboardingCompleted) {
-      if (isLoggedIn) {
+      if (isLoggedin) {
         Get.offAllNamed("/homescreen");
       } else {
         Get.offAllNamed("/selection");

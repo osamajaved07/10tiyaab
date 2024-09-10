@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../utils/custom_snackbar.dart';
 
 class AuthController extends GetxController {
@@ -14,29 +13,34 @@ class AuthController extends GetxController {
   String? user_id; // Nullable user_id to be set after registration
   String? accessToken;
   String? _refreshToken;
+
+  final _secureStorage = const FlutterSecureStorage();
+
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    isLoggedIn();
+    await loadTokens();
+    // isLoggedIn();
   }
 
   // Set access token (you might want to set it during login or some other flow)
   void setAccessToken(String token) async {
     accessToken = token;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('access_token', token);
   }
 
   // Set refresh token
   void setRefreshToken(String token) async {
     _refreshToken = token;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('refresh_token', token);
   }
 
-  Future<String?> getStoredAccessToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('access_token');
+  Future<void> loadTokens() async {
+    accessToken = await _secureStorage.read(key: 'accessToken');
+    _refreshToken = await _secureStorage.read(key: '_refreshToken');
+  }
+
+  Future<void> storeTokens(String accessToken, String refreshToken) async {
+    await _secureStorage.write(key: 'accessToken', value: accessToken);
+    await _secureStorage.write(key: 'refreshToken', value: refreshToken);
   }
 
   Future<void> updateUserInfo({
@@ -180,15 +184,14 @@ class AuthController extends GetxController {
       Get.back(); // Hide the circular progress indicator
 
       if (response.statusCode == 200) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.remove('access_token');
-        await prefs.remove('refresh_token');
-        // Clear access token and user_id
         accessToken = null;
         _refreshToken = null; // Also clear refresh token
         user_id = null;
+        await _secureStorage.delete(key: 'accessToken');
+        await _secureStorage.delete(key: 'refreshToken');
 
         // Navigate to login screen or home screen
+
         Get.offAllNamed('/userLogin');
         successSnackbar(
           'Success',
@@ -232,6 +235,7 @@ class AuthController extends GetxController {
         final data = jsonDecode(response.body);
         final newAccessToken = data['access'];
         setAccessToken(newAccessToken); // Store new access token
+        print('Access token refreshed successfully');
       } else if (response.statusCode == 401) {
         // Handle token blacklisting
         errorSnackbar(
@@ -241,6 +245,7 @@ class AuthController extends GetxController {
         // Redirect to login screen
         Get.offAllNamed('/userLogin');
       } else {
+        print('Failed to refresh token: ${response.body}');
         errorSnackbar(
           'Error',
           'Failed to refresh token',
@@ -610,7 +615,7 @@ class AuthController extends GetxController {
           // Store the access token
           setAccessToken(accessToken);
           setRefreshToken(refreshToken);
-
+          await storeTokens(accessToken, refreshToken);
           successSnackbar(
             'Success',
             'Registration successful',
@@ -681,6 +686,8 @@ class AuthController extends GetxController {
 
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
+        await storeTokens(accessToken, refreshToken);
+
         // user_id = loginData['user_id'].toString(); // Update user_id
         final dynamic userId = loginData['user_id'];
         if (userId is int) {
@@ -694,6 +701,8 @@ class AuthController extends GetxController {
           'Success',
           'Welcome back.',
         );
+        // isLoggedIn.value = true;
+
         // Navigate to home screen or desired page
         Get.offAllNamed("/homescreen");
       } else {
@@ -721,15 +730,90 @@ class AuthController extends GetxController {
   }
 
   Future<bool> isLoggedIn() async {
-    final storedToken = await getStoredAccessToken();
+    print('accessToken: $accessToken');
+    // Retrieve stored tokens
+    accessToken = await _secureStorage.read(key: 'accessToken');
+    _refreshToken = await _secureStorage.read(key: 'refreshToken');
 
-    if (storedToken != null) {
-      accessToken = storedToken;
-      // Get.offAllNamed('/homescreen');
-      return true;
-    } else {
-      // Get.offAllNamed('/selection');
+    // Check if access token is available
+    if (accessToken == null) {
+      print('No access token found. User is not logged in.');
+      return false;
+    }
+
+    try {
+      // Always attempt to refresh the token to ensure it's up-to-date
+      // await refreshToken();
+
+      // Now check if the access token is valid
+      final response = await http.get(
+        Uri.parse('$baseUrl/accounts/profile/'),
+        headers: {'Authorization': 'Bearer $accessToken'},
+      );
+
+      if (response.statusCode == 200) {
+        // Token is valid and user is logged in
+        print('User is logged in.');
+        successSnackbar(
+          'Welcome back',
+          '',
+        );
+        return true;
+      } else if (response.statusCode == 401) {
+        // Token is expired or invalid
+        print('Token expired or invalid. User is not logged in.');
+        return false;
+      } else {
+        // Other error responses
+        print('Failed to check login status: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error checking login status: $e');
       return false;
     }
   }
+
+  // Future<bool> isLoggedIn() async {
+  //   // Check if the access token is present
+  //   if (accessToken == null) {
+  //     print('No access token found. User is not logged in.');
+  //     return false; // No token means the user is not logged in
+  //   }
+
+  //   try {
+  //     await refreshToken();
+  //     // Optionally, make a request to verify if the token is still valid
+  //     final response = await http.get(
+  //       Uri.parse('$baseUrl/accounts/profile/'),
+  //       headers: {'Authorization': 'Bearer $accessToken'},
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       // Token is valid and user is logged in
+  //       print('User is logged in.');
+  //       return true; // User is logged in
+  //     } else if (response.statusCode == 401) {
+  //       // Token is expired or invalid; attempt to refresh
+  //       print('Token expired. Attempting to refresh...');
+  //       await refreshToken(); // Refresh the token
+
+  //       // Recheck after refreshing the token
+  //       if (accessToken != null) {
+  //         print('Token refreshed successfully. User is logged in.');
+  //         return true; // Token refreshed and user is logged in
+  //       } else {
+  //         print('Failed to refresh token. User is not logged in.');
+  //         return false; // Failed to refresh token
+  //       }
+  //     } else {
+  //       // Other error responses
+  //       print('Failed to check login status: ${response.statusCode}');
+  //       return false; // Failed to check login status
+  //     }
+  //   } catch (e) {
+  //     print('Error checking login status: $e');
+  //     return false; // Error occurred
+  //   }
+  // }
 }
