@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
+import 'package:fyp_1/views/user_screens/activity_screen.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
 import 'package:fyp_1/views/verifications/final.dart';
 import 'package:fyp_1/views/verifications/phoneinput.dart';
@@ -83,6 +84,10 @@ class _MyAppState extends State<MyApp> {
         GetPage(
             name: '/homescreen',
             page: () => UserHomeScreen(),
+            transition: Transition.fadeIn),
+        GetPage(
+            name: '/activity',
+            page: () => ActivityScreen(),
             transition: Transition.fadeIn),
         GetPage(
             name: '/editprofile',

@@ -144,7 +144,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           )
         ],
-        title: Text('Edit Profile', style: TextStyle(color: Colors.black)),
+        title: Text('Profile',
+            style: TextStyle(color: Colors.black, fontSize: 24)),
         centerTitle: true,
         backgroundColor: tSecondaryColor,
         elevation: 0,

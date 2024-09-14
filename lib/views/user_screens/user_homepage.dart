@@ -62,19 +62,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           // automaticallyImplyLeading: false,
           backgroundColor: tSecondaryColor,
           elevation: 0,
-          // leading: Padding(
-          //   padding: EdgeInsets.all(8.0),
-          //   child: Center(
-          //     child: Text(
-          //       "10tiyaab", // Your desired text
-          //       style: TextStyle(
-          //         color: Colors.black,
-          //         fontWeight: FontWeight.bold,
-          //         fontSize: 18,
-          //       ),
-          //     ),
-          //   ),
-          // ),
+
           actions: [
             IconButton(
               onPressed: () {
@@ -92,7 +80,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           title: Text(
             '10tiyaab',
             style: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 28),
           ),
           // centerTitle: true,
         ),
@@ -103,7 +91,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
             return SingleChildScrollView(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: screenHeight * 0.01,
+                  ),
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
@@ -427,7 +419,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
             break;
           case 2:
             Get.toNamed(
-              '/homescreen',
+              '/activity',
             );
             break;
           case 3:
