@@ -6,7 +6,7 @@ import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../utils/custom_snackbar.dart';
+import '../utils/custom_dialog.dart';
 
 class AuthController extends GetxController {
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
@@ -92,7 +92,7 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         successSnackbar(
           'Success',
-          'Information updated successfully',
+          'Profile updated successfully',
         );
         // Optionally refresh user profile
         await fetchUserProfile();
@@ -667,7 +667,7 @@ class AuthController extends GetxController {
     );
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/accounts/login/'),
+        Uri.parse('$baseUrl/accounts/customer/login/'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -683,11 +683,9 @@ class AuthController extends GetxController {
         final refreshToken = loginData['refresh'];
         print('Access Token: $accessToken');
         print('Refresh Token: $refreshToken');
-
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         await storeTokens(accessToken, refreshToken);
-
         // user_id = loginData['user_id'].toString(); // Update user_id
         final dynamic userId = loginData['user_id'];
         if (userId is int) {
@@ -697,14 +695,14 @@ class AuthController extends GetxController {
         } else {
           throw Exception('Unexpected user_id type');
         }
+        Get.offAllNamed("/homescreen");
         successSnackbar(
           'Success',
           'Welcome back.',
         );
         // isLoggedIn.value = true;
-
+        // await Future.delayed(Duration(seconds: 4));
         // Navigate to home screen or desired page
-        Get.offAllNamed("/homescreen");
       } else {
         String errorMessage;
         if (response.statusCode == 400) {

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:fyp_1/utils/custom_dialog.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -53,13 +54,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     } catch (e) {
       print('Error loading user data: $e');
+      // setState(() {
+      //   _isLoading = false; // Stop loading even if there's an error
+      // }); // Log the error
+    } finally {
       setState(() {
-        _isLoading = false; // Stop loading even if there's an error
-      }); // Log the error
+        _isLoading = false; // Stop loading
+      });
     }
   }
 
   Future<void> _pickImage() async {
+    setState(() {
+      _isLoading = true; // Show the loading indicator
+    });
+
     try {
       final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedImage != null) {
@@ -69,7 +78,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     } catch (e) {
       print('Error picking image: $e');
+      errorSnackbar("Error", "Failed to pick image. Please try again.");
       // You might want to show an error message to the user here
+    } finally {
+      // Dismiss the loading dialog
+      setState(() {
+        _isLoading = false; // Hide the loading indicator
+      });
     }
   }
 
@@ -137,9 +152,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                  color:
-                      tPrimaryColor)) // Show loader while data is being fetched
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: tPrimaryColor),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Text("Loading...")
+                ],
+              ),
+            ) // Show loader while data is being fetched
           : LayoutBuilder(
               builder: (context, constraints) {
                 final screenWidth = constraints.maxWidth;
@@ -170,6 +193,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                               'assets/images/default_profile.png')) // Show default image
                                       as ImageProvider,
                             ),
+                            if (_isLoading) // Show loading indicator when _isLoading is true
+                              Center(
+                                child: CircularProgressIndicator(
+                                  color: tPrimaryColor,
+                                ),
+                              ),
                             Positioned(
                               bottom: 0,
                               right: 0,

@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserHomeScreen extends StatefulWidget {
   // final SharedPreferences prefs;
 
-  const UserHomeScreen({Key? key, }) : super(key: key);
+  const UserHomeScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _UserHomeScreenState createState() => _UserHomeScreenState();
@@ -50,221 +52,324 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     Get.offNamed("/userLogin");
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop:() async => false,
+      onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: tSecondaryColor,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          // automaticallyImplyLeading: false,
           backgroundColor: tSecondaryColor,
           elevation: 0,
+          // leading: Padding(
+          //   padding: EdgeInsets.all(8.0),
+          //   child: Center(
+          //     child: Text(
+          //       "10tiyaab", // Your desired text
+          //       style: TextStyle(
+          //         color: Colors.black,
+          //         fontWeight: FontWeight.bold,
+          //         fontSize: 18,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                // Define your chat icon action here
+                print('Chat icon pressed');
+              },
+              icon: Icon(
+                Icons.chat_outlined,
+                color: tPrimaryColor,
+                size: 30,
+              ),
+            ),
+            SizedBox(width: 16), // Add space between chat icon and edge
+          ],
           title: Text(
             '10tiyaab',
             style: TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
           ),
-          centerTitle: true,
+          // centerTitle: true,
         ),
         body: LayoutBuilder(
           builder: (context, constraints) {
             final screenWidth = constraints.maxWidth;
             final screenHeight = constraints.maxHeight;
-      
+
             return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: screenHeight * 0.02),
-                    // First search bar with dropdown button
-                    Container(
-                      width: screenWidth,
-                      padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.001,
-                        horizontal: screenWidth * 0.04,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          // Icon(Icons.search, color: Colors.grey),
-                          SizedBox(width: screenWidth * 0.08),
-                          Expanded(
-                            child: DropdownButton<String>(
-                              value: selectedServiceProvider,
-                              hint: Text(
-                                'Select Service Provider',
-                                style: TextStyle(
-                                  color: Color(0xFF616161),
-                                  fontSize: screenWidth * 0.045,
-                                ),
-                              ),
-                              items: ServiceProviderList.serviceProviders.map((String provider) {
-                                return DropdownMenuItem<String>(
-                                  value: provider,
-                                  child: Text(provider),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedServiceProvider = newValue;
-                                });
-                              },
-                              underline: SizedBox(),
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color: Colors.grey),
-                            ),
-                          ),
-                          
-                        ],
-                      ),
-                    ),
-      
-                    SizedBox(height: screenHeight * 0.015),
-      
-      // Second search bar
-                    Container(
-                      width: screenWidth,
-                      padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.001,
-                        horizontal: screenWidth * 0.04,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search, color: Colors.grey),
-                          SizedBox(width: screenWidth * 0.02),
-                          Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Where to?',
-                                hintStyle: TextStyle(
-                                  color: Color(0xFF616161),
-                                  fontSize: screenWidth * 0.045,
-                                ),
-                                border: InputBorder.none,
-                              ),
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: screenWidth * 0.045,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-      
-                    SizedBox(height: screenHeight * 0.03),
-                    Container(
-                      width: screenWidth,
-                      height: screenHeight * 0.2,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF04BEBE), Color(0xFF025858)],
-                          stops: [0.47, 1.0],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: screenHeight * 0.03,
-                            horizontal: screenWidth * 0.04),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
+                    child: Row(
+                      //this contain vertical line and search box
+                      children: [
+                        Column(
+                          //this contain vertical line and shapes
                           children: [
-                            Text(
-                              'Skillful Person\nBook Now →',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.05,
-                                fontWeight: FontWeight.bold,
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey, // Circle color
                               ),
                             ),
-                            Image.asset(
-                              'assets/images/worker.png',
-                              width: screenWidth * 0.3,
+                            Container(
+                              width: 2, // Line thickness
+                              height: screenHeight *
+                                  0.08, // Adjust height as needed
+                              color: Colors.grey, // Line color
+                            ),
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                color: Colors.black, // Square color
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.03),
-                    Text(
-                      'Suggestions',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.045,
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _suggestionIcon(Icons.electric_bolt, 'Electrician',),
-                        _suggestionIcon(Icons.handyman, 'Carpenter'),
-                        _suggestionIcon(Icons.plumbing, 'Plumber'),
-                        _suggestionIcon(Icons.calendar_today, 'Reserve'),
+                        SizedBox(width: screenWidth * 0.015),
+                        Expanded(
+                          child: Column(
+                            //this contain search boxes
+                            children: [
+                              Container(
+                                width: screenWidth,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.001,
+                                  horizontal: screenWidth * 0.04,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.search, color: Colors.grey),
+                                    SizedBox(width: screenWidth * 0.02),
+                                    Expanded(
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Search service provider',
+                                          hintStyle: TextStyle(
+                                            color: Color(0xFF616161),
+                                            fontSize: screenWidth * 0.045,
+                                          ),
+                                          border: InputBorder.none,
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: screenWidth * 0.045,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: screenHeight * 0.015),
+                              Container(
+                                width: screenWidth,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.001,
+                                  horizontal: screenWidth * 0.04,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.search, color: Colors.grey),
+                                    SizedBox(width: screenWidth * 0.02),
+                                    Expanded(
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Where to?',
+                                          hintStyle: TextStyle(
+                                            color: Color(0xFF616161),
+                                            fontSize: screenWidth * 0.045,
+                                          ),
+                                          border: InputBorder.none,
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: screenWidth * 0.045,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Second search bar
                       ],
                     ),
-                    SizedBox(height: screenHeight * 0.03),
-                    Text(
-                      'Around you',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.045,
-                      ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: screenHeight * 0.02),
+                        // First search bar with dropdown button
+
+                        SizedBox(height: screenHeight * 0.04),
+                        Container(
+                          width: screenWidth,
+                          height: screenHeight * 0.2,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(255, 121, 121, 121)
+                                    .withOpacity(
+                                        0.5), // Shadow color with opacity
+                                spreadRadius: 5, // Spread radius
+                                blurRadius: 7, // Blur radius
+                                offset: Offset(
+                                    0, 3), // Offset for the shadow (x, y)
+                              ),
+                            ],
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF04BEBE), Color(0xFF025858)],
+                              stops: [0.47, 1.0],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: screenHeight * 0.03,
+                                horizontal: screenWidth * 0.04),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Skillful Person\nBook Now →',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: screenWidth * 0.05,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Image.asset(
+                                  'assets/images/worker.png',
+                                  width: screenWidth * 0.3,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: screenHeight * 0.05),
+                        Text(
+                          'Suggestions',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenWidth * 0.05,
+                          ),
+                        ),
+                        SizedBox(height: screenHeight * 0.025),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                _suggestionIcon(
+                                  'assets/images/electrician.png',
+                                  'Electrician',
+                                ),
+                                SizedBox(height: screenHeight * 0.04),
+                                _suggestionIcon(
+                                    'assets/images/carpenter.png', 'Carpenter'),
+                              ],
+                            ),
+                            // SizedBox(width: screenWidth * 0.2),
+                            Column(
+                              children: [
+                                _suggestionIcon(
+                                  'assets/images/painter.png',
+                                  'Painter',
+                                ),
+                                SizedBox(height: screenHeight * 0.04),
+                                _suggestionIcon(
+                                    'assets/images/plumber.png', 'Plumber'),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                _suggestionIcon(
+                                  'assets/images/welder.png',
+                                  'Welder',
+                                ),
+                                SizedBox(height: screenHeight * 0.04),
+                                _suggestionIcon(
+                                    'assets/images/more.png', 'More'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    SizedBox(height: screenHeight * 0.02),
-                    Container(
-                      width: screenWidth,
-                      height: screenHeight * 0.25,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Image.asset(
-                        'assets/images/map.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
         ),
-        bottomNavigationBar: BottomNavigationBarWidget(initialIndex: 0,),
+        bottomNavigationBar: BottomNavigationBarWidget(
+          initialIndex: 0,
+        ),
       ),
     );
   }
 
-  Widget _suggestionIcon(IconData icon, String title) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.white,
-          child: Icon(icon, size: 30, color: Colors.black54),
+  Widget _suggestionIcon(String imagePath, String title) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 4.5,
+      height: MediaQuery.of(context).size.height / 8.5,
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: const Color.fromARGB(255, 190, 190, 190)
+              .withOpacity(0.5), // Shadow color with opacity
+          spreadRadius: 5, // Spread radius
+          blurRadius: 7, // Blur radius
+          offset: Offset(0, 3), // Offset for the shadow (x, y)
         ),
-        SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(
-            color: Colors.black54,
-          ),
+      ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              imagePath,
+              width: 40, // Adjust the size as needed
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 12),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black87,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -310,17 +415,25 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         // Navigate based on the tapped index
         switch (index) {
           case 0:
-            Get.toNamed('/homescreen',);
+            Get.toNamed(
+              '/homescreen',
+            );
 
             break;
           case 1:
-             Get.toNamed('/editprofile',);
+            Get.toNamed(
+              '/editprofile',
+            );
             break;
           case 2:
-             Get.toNamed('/homescreen',);
+            Get.toNamed(
+              '/homescreen',
+            );
             break;
           case 3:
-             Get.toNamed('/contactus',);
+            Get.toNamed(
+              '/contactus',
+            );
             break;
         }
       },
