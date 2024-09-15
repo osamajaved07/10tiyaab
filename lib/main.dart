@@ -21,6 +21,8 @@ import 'package:fyp_1/views/user_screens/user_registration.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'views/user_screens/chat_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final AuthController authController = Get.put(AuthController());
@@ -88,6 +90,10 @@ class _MyAppState extends State<MyApp> {
         GetPage(
             name: '/activity',
             page: () => ActivityScreen(),
+            transition: Transition.fadeIn),
+        GetPage(
+            name: '/chatscreen',
+            page: () => ChatScreen(),
             transition: Transition.fadeIn),
         GetPage(
             name: '/editprofile',

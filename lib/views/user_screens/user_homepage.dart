@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/service_provider_list.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
@@ -20,37 +21,8 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  String name = "";
-  String? selectedServiceProvider;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUsername();
-  }
-
-  Future<void> _loadUsername() async {
-    setState(() {
-      // name = widget.prefs.getString('name') ?? 'User';
-    });
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    // Clear user data from SharedPreferences
-    // await prefs.clear();
-
-    // Show a snackbar confirming the logout
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Logged out successfully'),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    // Navigate back to the LoginScreen
-    Get.offNamed("/userLogin");
-  }
+  final AuthController authController = Get.find<AuthController>();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +31,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       child: Scaffold(
         backgroundColor: tSecondaryColor,
         appBar: AppBar(
-          // automaticallyImplyLeading: false,
+          automaticallyImplyLeading: false,
           backgroundColor: tSecondaryColor,
           elevation: 0,
 
           actions: [
             IconButton(
               onPressed: () {
+                Get.toNamed("/chatscreen");
                 // Define your chat icon action here
                 print('Chat icon pressed');
               },
@@ -150,6 +123,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     SizedBox(width: screenWidth * 0.02),
                                     Expanded(
                                       child: TextField(
+                                        controller: _searchController,
                                         decoration: InputDecoration(
                                           hintText: 'Search service provider',
                                           hintStyle: TextStyle(
@@ -215,7 +189,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: screenHeight * 0.02),
+                        // SizedBox(height: screenHeight * 0.02),
                         // First search bar with dropdown button
 
                         SizedBox(height: screenHeight * 0.04),
@@ -288,7 +262,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     'assets/images/carpenter.png', 'Carpenter'),
                               ],
                             ),
-                            // SizedBox(width: screenWidth * 0.2),
                             Column(
                               children: [
                                 _suggestionIcon(
