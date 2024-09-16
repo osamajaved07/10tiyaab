@@ -2,59 +2,40 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_1/controllers/sp_auth_controller.dart';
 import 'package:fyp_1/views/others/home.dart';
-import 'package:fyp_1/views/professional_screens/professional_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class MazdoorLogin extends StatefulWidget {
+class ServiceProviderLogin extends StatefulWidget {
   // final SharedPreferences prefs;
-  const MazdoorLogin({super.key,});
+  const ServiceProviderLogin({
+    super.key,
+  });
 
   @override
-  State<MazdoorLogin> createState() => _MazdoorLoginState();
+  State<ServiceProviderLogin> createState() => _ServiceProviderLoginState();
 }
 
-class _MazdoorLoginState extends State<MazdoorLogin> {
-  String name = "", password = "", confirmpassword = "";
+class _ServiceProviderLoginState extends State<ServiceProviderLogin> {
+  final SpAuthController _authController = Get.find<SpAuthController>();
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
-  bool ispasswordVisible = false;
   TextEditingController _namecontroller = new TextEditingController();
   TextEditingController _passwordcontroller = new TextEditingController();
 
-  void login() {
+  void _login() async {
     if (_formkey.currentState!.validate()) {
-      String enteredName = _namecontroller.text;
-      String enteredPassword = _passwordcontroller.text;
+      String username = _namecontroller.text.trim();
+      String password = _passwordcontroller.text.trim();
 
-      // Retrieve saved email and password from SharedPreferences
-      // String savedName = widget.prefs.getString('name') ?? '';
-      // String savedPassword = widget.prefs.getString('password') ?? '';
-
-      // if (enteredName == savedName && enteredPassword == savedPassword) {
-      //   // Clear text fields
-      //   _namecontroller.clear();
-      //   _passwordcontroller.clear();
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text('Login successfully'),
-      //       backgroundColor: Colors.green,
-      //     ),
-      //   );
-
-      //   // Get.toNamed("/homescreen");
-      // } else {
-      //   // Show error message if credentials do not match
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text('Invalid name or password'),
-      //       backgroundColor: Colors.red,
-      //     ),
-      //   );
-      // }
+      // Call the login method from AuthController
+      await _authController.splogin(username, password);
+    } else {
+      Get.snackbar('Error', 'Please fill all the required fields',
+          backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 
@@ -62,7 +43,6 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      
       body: LayoutBuilder(builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
@@ -125,9 +105,6 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
                                 key: _formkey,
                                 child: Column(
                                   children: [
-                                    // SizedBox(
-                                    //   height: 16.0,
-                                    // ),
                                     Text(
                                       "Login",
                                       style: TextStyle(
@@ -139,7 +116,6 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
                                       height: 30.0,
                                     ),
                                     _nameField(),
-
                                     SizedBox(
                                       height: 20.0,
                                     ),
@@ -183,7 +159,6 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
                                 )),
                           ],
                         ),
-                        
                       ],
                     ),
                   ),
@@ -198,7 +173,7 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
 
   GestureDetector _loginButton(BuildContext context) {
     return GestureDetector(
-      onTap: login,
+      onTap: _login,
       child: Material(
         elevation: 5.0,
         borderRadius: BorderRadius.circular(20),
@@ -226,11 +201,11 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
       controller: _passwordcontroller,
       obscureText: !isPasswordVisible,
       validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Password cannot be empty';
-      }  else {
-        return null;
-      }
+        if (value == null || value.isEmpty) {
+          return 'Password cannot be empty';
+        } else {
+          return null;
+        }
       },
       // obscureText: true,
       decoration: InputDecoration(
@@ -258,15 +233,9 @@ class _MazdoorLoginState extends State<MazdoorLogin> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Name cannot be empty';
-        } 
-        // else if (!RegExp(r'^([A-Z][a-z]*)( [A-Z][a-z]*)*$').hasMatch(value)) {
-        //   return 'Names must start with capital letter and \n contain only letters and spaces.';
-        // }
-        else {
+        } else {
           return null;
         }
-
-        
       },
       decoration: InputDecoration(
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),

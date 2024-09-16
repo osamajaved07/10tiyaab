@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/login_model.dart';
 import 'package:fyp_1/views/others/home.dart';
-import 'package:fyp_1/views/professional_screens/professional_registration.dart';
+import 'package:fyp_1/views/sp_screens/professional_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
@@ -22,25 +22,24 @@ class UserLogin extends StatefulWidget {
 }
 
 class _UserLoginState extends State<UserLogin> {
-  final AuthController _authController = Get.find<AuthController>();
-  String name = "", password = "", confirmpassword = "";
+  final UserAuthController _authController = Get.find<UserAuthController>();
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
   TextEditingController _namecontroller = new TextEditingController();
   TextEditingController _passwordcontroller = new TextEditingController();
 
- void login() async {
-  if (_formkey.currentState!.validate()) {
-    String username = _namecontroller.text.trim();
-    String password = _passwordcontroller.text.trim();
+  void _login() async {
+    if (_formkey.currentState!.validate()) {
+      String username = _namecontroller.text.trim();
+      String password = _passwordcontroller.text.trim();
 
-    // Call the login method from AuthController
-    await _authController.login(username, password);
-  } else {
-    Get.snackbar('Error', 'Please fill all the required fields',
-        backgroundColor: Colors.red, colorText: Colors.white);
+      // Call the login method from AuthController
+      await _authController.login(username, password);
+    } else {
+      Get.snackbar('Error', 'Please fill all the required fields',
+          backgroundColor: Colors.red, colorText: Colors.white);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +174,7 @@ class _UserLoginState extends State<UserLogin> {
 
   GestureDetector _loginButton(BuildContext context) {
     return GestureDetector(
-      onTap: login,
+      onTap: _login,
       child: Material(
         elevation: 5.0,
         borderRadius: BorderRadius.circular(20),

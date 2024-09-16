@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../utils/custom_dialog.dart';
 
-class AuthController extends GetxController {
+class UserAuthController extends GetxController {
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
   String? user_id; // Nullable user_id to be set after registration
   String? accessToken;

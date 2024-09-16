@@ -19,7 +19,7 @@ class ContactUsScreen extends StatefulWidget {
 }
 
 class _ContactUsScreenState extends State<ContactUsScreen> {
-  final AuthController _authController = Get.find<AuthController>();
+  final UserAuthController _authController = Get.find<UserAuthController>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _messageController = TextEditingController();

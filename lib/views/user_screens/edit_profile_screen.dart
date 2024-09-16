@@ -19,7 +19,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final AuthController _authController = Get.find<AuthController>();
+  final UserAuthController _authController = Get.find<UserAuthController>();
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();

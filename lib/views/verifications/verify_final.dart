@@ -17,7 +17,7 @@ class MyVerify extends StatefulWidget {
 }
 
 class _MyVerifyState extends State<MyVerify> {
-  final AuthController _authController = Get.find<AuthController>();
+  final UserAuthController _authController = Get.find<UserAuthController>();
   bool _isButtonEnabled = false;
   late Timer _timer;
   int _start = 120;

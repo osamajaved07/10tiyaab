@@ -12,17 +12,15 @@ class EmailVerification extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-
   @override
   State<EmailVerification> createState() => _EmailVerificationState();
 }
 
 class _EmailVerificationState extends State<EmailVerification> {
-   final AuthController _authController = Get.find<AuthController>();
-   TextEditingController _emailController = TextEditingController();
+  final UserAuthController _authController = Get.find<UserAuthController>();
+  TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
-  
   void _showconfirmmessage() {
     showDialog(
       context: context,
@@ -61,7 +59,7 @@ class _EmailVerificationState extends State<EmailVerification> {
     );
   }
 
- void email() {
+  void email() {
     if (_formkey.currentState != null && _formkey.currentState!.validate()) {
       String email = _emailController.text.trim();
       _authController.addEmail(email);
@@ -74,7 +72,6 @@ class _EmailVerificationState extends State<EmailVerification> {
           backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +154,6 @@ class _EmailVerificationState extends State<EmailVerification> {
                     height: 30,
                   ),
                   Container(
-                    
                     child: _emailField(),
                   ),
                   SizedBox(
@@ -195,7 +191,7 @@ class _EmailVerificationState extends State<EmailVerification> {
     );
   }
 
-   GestureDetector _verifyButton(BuildContext context) {
+  GestureDetector _verifyButton(BuildContext context) {
     return GestureDetector(
       onTap: email,
       child: Material(

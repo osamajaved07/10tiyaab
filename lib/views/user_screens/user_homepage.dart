@@ -21,7 +21,7 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final AuthController authController = Get.find<AuthController>();
+  final UserAuthController authController = Get.find<UserAuthController>();
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -152,27 +152,32 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.search, color: Colors.grey),
-                                    SizedBox(width: screenWidth * 0.02),
-                                    Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          hintText: 'Where to?',
-                                          hintStyle: TextStyle(
-                                            color: Color(0xFF616161),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed("/mapscreen");
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.search, color: Colors.grey),
+                                      SizedBox(width: screenWidth * 0.02),
+                                      Expanded(
+                                        child: TextField(
+                                          decoration: InputDecoration(
+                                            hintText: 'Where to?',
+                                            hintStyle: TextStyle(
+                                              color: Color(0xFF616161),
+                                              fontSize: screenWidth * 0.045,
+                                            ),
+                                            border: InputBorder.none,
+                                          ),
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: screenWidth * 0.045,
                                           ),
-                                          border: InputBorder.none,
-                                        ),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: screenWidth * 0.045,
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

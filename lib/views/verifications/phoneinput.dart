@@ -14,7 +14,7 @@ class PhoneNumberInputPage extends StatefulWidget {
 }
 
 class _PhoneNumberInputPageState extends State<PhoneNumberInputPage> {
-  final AuthController _authController = Get.find<AuthController>();
+  final UserAuthController _authController = Get.find<UserAuthController>();
   TextEditingController _phoneController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 

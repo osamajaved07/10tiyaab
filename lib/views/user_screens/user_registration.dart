@@ -14,7 +14,7 @@ class UserRegister extends StatefulWidget {
 }
 
 class _UserRegisterState extends State<UserRegister> {
-  final AuthController _authController = Get.put(AuthController());
+  final UserAuthController _authController = Get.put(UserAuthController());
 
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
@@ -40,7 +40,8 @@ class _UserRegisterState extends State<UserRegister> {
             backgroundColor: Colors.red, colorText: Colors.white);
         return;
       } else {
-        _authController.register(username, firstName, lastName, password, confirmPassword);
+        _authController.register(
+            username, firstName, lastName, password, confirmPassword);
       }
     } else {
       Get.snackbar('Error', 'Please fill all the required fields',
