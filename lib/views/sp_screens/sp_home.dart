@@ -27,6 +27,11 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
       body: LayoutBuilder(builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
+        final containerWidth =
+            constraints.maxWidth * 0.35; // Adjust for padding
+        final containerHeight =
+            constraints.maxHeight * 0.12; // Adjust height to maintain aspect
+
         return SingleChildScrollView(
           child: Container(
               height: screenHeight,
@@ -98,12 +103,22 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                             height: screenHeight * 0.06,
                           ),
                           Container(
-                            // width: screenWidth * 0.5,
-                            // height: screenHeight * 0,
                             padding: EdgeInsets.symmetric(
                                 vertical: screenHeight * 0.02,
                                 horizontal: screenWidth * 0.05),
                             decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color.fromARGB(
+                                            255, 121, 121, 121)
+                                        .withOpacity(
+                                            0.5), // Shadow color with opacity
+                                    spreadRadius: 5, // Spread radius
+                                    blurRadius: 7, // Blur radius
+                                    offset: Offset(
+                                        0, 3), // Offset for the shadow (x, y)
+                                  ),
+                                ],
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12)),
                             child: Row(
@@ -112,14 +127,20 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                                 Text(
                                   "Provider type:",
                                   style: TextStyle(
-                                      fontSize: screenHeight * 0.027,
+                                      fontSize: screenHeight * 0.024,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.grey[700]),
+                                ),
+                                Container(
+                                  height: screenHeight *
+                                      0.03, // Adjust height as needed
+                                  width: 2, // Width of the divider line
+                                  color: Colors.grey[400], // Line color
                                 ),
                                 Text(
                                   "Plumber",
                                   style: TextStyle(
-                                      fontSize: screenHeight * 0.03,
+                                      fontSize: screenHeight * 0.027,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.grey[800]),
                                 )
@@ -151,13 +172,300 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.025),
+                          SizedBox(height: screenHeight * 0.06),
+
+                          //-----------first row of containers
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                width: containerWidth,
+                                height: containerHeight,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      tPrimaryColor,
+                                      const Color.fromARGB(255, 3, 141, 141)
+                                          .withOpacity(0.4),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromARGB(
+                                              255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                      spreadRadius: 5, // Spread radius
+                                      blurRadius: 7, // Blur radius
+                                      offset: Offset(
+                                          0, 3), // Offset for the shadow (x, y)
+                                    ),
+                                  ],
+                                  // color: tPrimaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Rs 100",
+                                          style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 239, 239, 239),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: screenWidth * 0.05,
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          "assets/images/earning.png",
+                                          width: screenWidth * 0.08,
+                                          height: screenWidth * 0.08,
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: containerHeight * 0.17,
+                                    ),
+                                    Text(
+                                      'Total earning',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: containerWidth * 0.13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                width: containerWidth,
+                                height: containerHeight,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      tPrimaryColor,
+                                      const Color.fromARGB(255, 3, 141, 141)
+                                          .withOpacity(0.4),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromARGB(
+                                              255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                      spreadRadius: 5, // Spread radius
+                                      blurRadius: 7, // Blur radius
+                                      offset: Offset(
+                                          0, 3), // Offset for the shadow (x, y)
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "5.0",
+                                          style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 239, 239, 239),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: screenWidth * 0.05,
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          "assets/images/rating.png",
+                                          width: screenWidth * 0.08,
+                                          height: screenWidth * 0.08,
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: containerHeight * 0.17,
+                                    ),
+                                    Text(
+                                      'Ratings',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: containerWidth * 0.13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          //-----------second row of containers
+
+                          SizedBox(height: screenHeight * 0.05),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                width: containerWidth,
+                                height: containerHeight,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      tPrimaryColor,
+                                      const Color.fromARGB(255, 3, 141, 141)
+                                          .withOpacity(0.4),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromARGB(
+                                              255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                      spreadRadius: 5, // Spread radius
+                                      blurRadius: 7, // Blur radius
+                                      offset: Offset(
+                                          0, 3), // Offset for the shadow (x, y)
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "8.0",
+                                          style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 239, 239, 239),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: screenWidth * 0.05,
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          "assets/images/verified.png",
+                                          width: screenWidth * 0.08,
+                                          height: screenWidth * 0.08,
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: containerHeight * 0.17,
+                                    ),
+                                    Text(
+                                      'Jobs completed',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: containerWidth * 0.119,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                width: containerWidth,
+                                height: containerHeight,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      tPrimaryColor,
+                                      const Color.fromARGB(255, 3, 141, 141)
+                                          .withOpacity(0.4),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromARGB(
+                                              255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                      spreadRadius: 5, // Spread radius
+                                      blurRadius: 7, // Blur radius
+                                      offset: Offset(
+                                          0, 3), // Offset for the shadow (x, y)
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "2.0",
+                                          style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 239, 239, 239),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: screenWidth * 0.05,
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          "assets/images/pending.png",
+                                          width: screenWidth * 0.08,
+                                          height: screenWidth * 0.08,
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: containerHeight * 0.17,
+                                    ),
+                                    Text(
+                                      'Pending jobs',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: containerWidth * 0.13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
                   ),
                   Positioned(
-                      top: screenHeight / 10,
+                      top: screenHeight / 12,
                       left: 0,
                       right: 0,
                       child: Container(
