@@ -96,11 +96,17 @@ class SpAuthController extends GetxController {
         final Map<String, dynamic> loginData = jsonDecode(response.body);
         final accessToken = loginData['access_token'];
         final refreshToken = loginData['refresh'];
+        final userType = loginData['user_type'];
+        final serviceProviderUsername = loginData['username'];
+        print('User Type: $userType');
         print('Access Token: $accessToken');
         print('Refresh Token: $refreshToken');
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         await storeTokens(accessToken, refreshToken);
+        await _secureStorage.write(key: 'user_type', value: userType);
+        await _secureStorage.write(
+            key: 'username', value: serviceProviderUsername);
         // user_id = loginData['user_id'].toString(); // Update user_id
         final dynamic userId = loginData['user_id'];
         if (userId is int) {

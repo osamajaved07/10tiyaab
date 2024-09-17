@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/login_model.dart';
 import 'package:fyp_1/views/others/home.dart';
-import 'package:fyp_1/views/sp_screens/professional_registration.dart';
+import 'package:fyp_1/views/sp_screens/sp_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';

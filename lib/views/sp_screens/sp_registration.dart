@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
-import 'package:fyp_1/views/sp_screens/professional_login.dart';
+import 'package:fyp_1/views/sp_screens/sp_login.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
