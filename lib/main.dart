@@ -58,7 +58,8 @@ class _MyAppState extends State<MyApp> {
       home: SplashScreen(),
       // initialRoute: '/',
       getPages: [
-        // GetPage(name: '/', page: () => SplashScreen()),
+//--------------------Customer screens------------------------------
+
         GetPage(name: '/onboarding_screen', page: () => OnboardingScreen()),
         GetPage(name: '/selection', page: () => UserSelection()),
 
@@ -106,6 +107,8 @@ class _MyAppState extends State<MyApp> {
             name: '/contactus',
             page: () => ContactUsScreen(),
             transition: Transition.fadeIn),
+
+//--------------------Map screens------------------------------
         GetPage(
             name: '/mapscreen',
             page: () => MapScreen(),

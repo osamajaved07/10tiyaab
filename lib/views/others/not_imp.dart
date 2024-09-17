@@ -1,135 +1,94 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:get/get.dart';
+// // import 'package:permission_handler/permission_handler.dart';
 
-// import '../../utils/colors.dart';
+// Future<void> _getCurrentLocation() async {
+//   bool serviceEnabled;
+//   LocationPermission permission;
 
-// class SpHomeScreen extends StatefulWidget {
-//   const SpHomeScreen({super.key});
+//   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+//   if (!serviceEnabled) {
+//     // Show a dialog to ask the user to enable location services
+//     _showLocationDialog(
+//       context,
+//       'Location services are disabled. Please enable them in settings.',
+//       openLocationSettings: true,
+//     );
+//     return;
+//   }
 
-//   @override
-//   State<SpHomeScreen> createState() => _SpHomeScreenState();
+//   permission = await Geolocator.checkPermission();
+//   if (permission == LocationPermission.denied) {
+//     permission = await Geolocator.requestPermission();
+//     if (permission == LocationPermission.denied) {
+//       // Permissions are denied. Show a dialog to ask the user to enable permissions in settings
+//       _showLocationDialog(
+//         context,
+//         'Location permissions are denied. Please allow permissions in settings.',
+//         openAppSettings: true,
+//       );
+//       return;
+//     }
+//   }
+
+//   if (permission == LocationPermission.deniedForever) {
+//     // Permissions are permanently denied, handle accordingly by directing to settings
+//     _showLocationDialog(
+//       context,
+//       'Location permissions are permanently denied. Please enable them in settings.',
+//       openAppSettings: true,
+//     );
+//     return;
+//   }
+
+//   try {
+//     _currentPosition = await Geolocator.getCurrentPosition();
+//     setState(() {
+//       _initialCameraPosition = CameraPosition(
+//         target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+//         zoom: 14.4746,
+//       );
+//     });
+
+//     final GoogleMapController controller = await _controller.future;
+//     controller.animateCamera(
+//       CameraUpdate.newCameraPosition(
+//         _initialCameraPosition,
+//       ),
+//     );
+//   } catch (e) {
+//     print("Error getting location: $e");
+//   }
 // }
 
-// class _SpHomeScreenState extends State<SpHomeScreen> {
-//   final FlutterSecureStorage storage = FlutterSecureStorage();
 
-//   Future<String> _getUsername() async {
-//     final username = await storage.read(key: 'username');
-//     return username ?? 'User'; // Default to 'User' if username is not found
-//   }
+// import 'package:permission_handler/permission_handler.dart';
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       extendBodyBehindAppBar: true,
-//       body: LayoutBuilder(builder: (context, constraints) {
-//         final screenWidth = constraints.maxWidth;
-//         final screenHeight = constraints.maxHeight;
-//         return SingleChildScrollView(
-//           child: Container(
-//             height: screenHeight,
-//             child: Stack(
-//               children: [
-//                 Container(
-//                   width: screenWidth,
-//                   height: screenHeight / 2.5,
-//                   decoration: BoxDecoration(
-//                     gradient: LinearGradient(
-//                       begin: Alignment.topLeft,
-//                       end: Alignment.bottomRight,
-//                       colors: [
-//                         tPrimaryColor,
-//                         tPrimaryColor.withOpacity(0.4),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   margin: EdgeInsets.only(top: screenHeight / 6),
-//                   height: screenHeight / 1,
-//                   width: screenWidth,
-//                   decoration: BoxDecoration(
-//                     color: tlightPrimaryColor,
-//                     borderRadius: BorderRadius.only(
-//                       topLeft: Radius.circular(40),
-//                       topRight: Radius.circular(40),
-//                     ),
-//                   ),
-//                   child: Padding(
-//                     padding: EdgeInsets.symmetric(horizontal: screenWidth / 15),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       mainAxisAlignment: MainAxisAlignment.start,
-//                       children: [
-//                         SizedBox(
-//                           height: screenHeight / 30,
-//                         ),
-//                         FutureBuilder<String>(
-//                           future: _getUsername(),
-//                           builder: (context, snapshot) {
-//                             if (snapshot.connectionState == ConnectionState.waiting) {
-//                               return Center(child: CircularProgressIndicator());
-//                             } else if (snapshot.hasError) {
-//                               return Text('Error loading username');
-//                             } else {
-//                               final username = snapshot.data ?? 'User';
-//                               return Text(
-//                                 "Hello $username",
-//                                 style: TextStyle(
-//                                   fontSize: screenHeight * 0.028,
-//                                   fontWeight: FontWeight.bold,
-//                                 ),
-//                               );
-//                             }
-//                           },
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//                 Positioned(
-//                   top: screenHeight / 10,
-//                   left: 0,
-//                   right: 0,
-//                   child: Container(
-//                     margin: EdgeInsets.symmetric(horizontal: screenWidth / 30),
-//                     child: Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text(
-//                           "Dashboard",
-//                           style: TextStyle(
-//                             fontSize: screenHeight * 0.035,
-//                             color: ttextColor,
-//                             fontWeight: FontWeight.bold,
-//                           ),
-//                         ),
-//                         Row(
-//                           children: [
-//                             IconButton(
-//                               onPressed: () {
-//                                 print("Chat button pressed");
-//                               },
-//                               icon: Icon(Icons.chat_outlined),
-//                             ),
-//                             IconButton(
-//                               onPressed: () {
-//                                 print("Notification button pressed");
-//                               },
-//                               icon: Icon(Icons.notifications_none_outlined),
-//                             ),
-//                           ],
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
+// void _showLocationDialog(BuildContext context, String message,
+//     {bool openAppSettings = false, bool openLocationSettings = false}) {
+//   showDialog(
+//     context: context,
+//     builder: (context) {
+//       return AlertDialog(
+//         title: Text('Location Access Required'),
+//         content: Text(message),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.of(context).pop(),
+//             child: Text('Cancel'),
 //           ),
-//         );
-//       }),
-//     );
-//   }
+//           TextButton(
+//             onPressed: () async {
+//               Navigator.of(context).pop();
+//               if (openAppSettings) {
+//                 await openAppSettings(); // Open app settings
+//               }
+//               if (openLocationSettings) {
+//                 await Geolocator.openLocationSettings(); // Open location settings
+//               }
+//             },
+//             child: Text('Open Settings'),
+//           ),
+//         ],
+//       );
+//     },
+//   );
 // }

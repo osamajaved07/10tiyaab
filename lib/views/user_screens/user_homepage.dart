@@ -145,7 +145,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               Container(
                                 width: screenWidth,
                                 padding: EdgeInsets.symmetric(
-                                  vertical: screenHeight * 0.001,
+                                  vertical: screenHeight * 0.016,
                                   horizontal: screenWidth * 0.04,
                                 ),
                                 decoration: BoxDecoration(
@@ -160,20 +160,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     children: [
                                       Icon(Icons.search, color: Colors.grey),
                                       SizedBox(width: screenWidth * 0.02),
-                                      Expanded(
-                                        child: TextField(
-                                          decoration: InputDecoration(
-                                            hintText: 'Where to?',
-                                            hintStyle: TextStyle(
-                                              color: Color(0xFF616161),
-                                              fontSize: screenWidth * 0.045,
-                                            ),
-                                            border: InputBorder.none,
-                                          ),
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: screenWidth * 0.045,
-                                          ),
+                                      Text(
+                                        "Where to?",
+                                        style: TextStyle(
+                                          color: Color(0xFF616161),
+                                          fontSize: screenWidth * 0.045,
                                         ),
                                       ),
                                     ],

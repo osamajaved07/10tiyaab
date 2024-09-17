@@ -248,7 +248,7 @@ class UserAuthController extends GetxController {
         print('Failed to refresh token: ${response.body}');
         errorSnackbar(
           'Error',
-          'Failed to refresh token',
+          'Unexpected error occurred',
         );
       }
     } catch (e) {
@@ -264,8 +264,9 @@ class UserAuthController extends GetxController {
     if (accessToken == null) {
       errorSnackbar(
         'Error',
-        'Access token is not available',
+        'An unexpected error occurred',
       );
+      print("Access token is not available");
       return null;
     }
 
@@ -534,11 +535,11 @@ class UserAuthController extends GetxController {
       );
       Get.back();
       if (response.statusCode == 200) {
+        Get.offAllNamed("/userphone");
         successSnackbar(
           'Success',
           'Email verified successfully',
         );
-        Get.offAllNamed("/userphone");
       } else {
         String errorMessage;
         if (response.statusCode == 400) {
@@ -600,7 +601,7 @@ class UserAuthController extends GetxController {
         }
 
         final loginResponse = await http.post(
-          Uri.parse('$baseUrl/accounts/login/'),
+          Uri.parse('$baseUrl/accounts/customer/login/'),
           body: jsonEncode({
             'username': username,
             'password': password,
@@ -616,12 +617,12 @@ class UserAuthController extends GetxController {
           setAccessToken(accessToken);
           setRefreshToken(refreshToken);
           await storeTokens(accessToken, refreshToken);
+
+          Get.offAllNamed('/phoneverify');
           successSnackbar(
             'Success',
             'Registration successful',
-          );
-          Get.offAllNamed(
-              '/phoneverify'); // Change '/homepage' to the desired route
+          ); // Change '/homepage' to the desired route
         } else {
           // Handle login failure
           errorSnackbar(

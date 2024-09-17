@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, use_super_parameters, unused_field, prefer_final_fields, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 
@@ -106,6 +107,10 @@ class _PhoneNumberInputPageState extends State<PhoneNumberInputPage> {
         }
         return null;
       },
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly, // Allows only numeric input
+        LengthLimitingTextInputFormatter(10), // Limits input to 10 digits
+      ],
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
         hintText: '3XXXXXXXXX',

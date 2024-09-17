@@ -189,9 +189,9 @@ class _MyVerifyState extends State<MyVerify> {
                   height: 10,
                 ),
                 Text(
-                  "Enter 6 digits verification code we have sent to your email",
+                  "Enter 6 digits verification code we have sent\n to your email",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: screenHeight * 0.021,
                   ),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
