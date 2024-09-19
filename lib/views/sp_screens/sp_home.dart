@@ -58,409 +58,563 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(40),
                             topRight: Radius.circular(40))),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth / 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: screenHeight / 30,
-                          ),
-                          FutureBuilder<String>(
-                            future: _getUsername(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Text('Error loading username');
-                              } else {
-                                final username = snapshot.data ?? 'User';
-                                return Text(
-                                  "Hello $username",
-                                  style: TextStyle(
-                                    fontSize: screenHeight * 0.029,
-                                    fontWeight: FontWeight.bold,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth / 15,
+                            vertical: screenHeight * 0.03),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                                // height: screenHeight / 30,
+                                ),
+                            FutureBuilder<String>(
+                              future: _getUsername(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Text('Error loading username');
+                                } else {
+                                  final username = snapshot.data ?? 'User';
+                                  return Text(
+                                    "Hello $username",
+                                    style: TextStyle(
+                                      fontSize: screenHeight * 0.029,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.02,
+                            ),
+                            Text(
+                              "Welcome back!",
+                              style: TextStyle(
+                                  fontSize: screenHeight * 0.022,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700]),
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.06,
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.02,
+                                  horizontal: screenWidth * 0.05),
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromARGB(
+                                              255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                      spreadRadius: 5, // Spread radius
+                                      blurRadius: 7, // Blur radius
+                                      offset: Offset(
+                                          0, 3), // Offset for the shadow (x, y)
+                                    ),
+                                  ],
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Provider type:",
+                                    style: TextStyle(
+                                        fontSize: screenHeight * 0.024,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey[700]),
                                   ),
-                                );
-                              }
-                            },
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.02,
-                          ),
-                          Text(
-                            "Welcome back!",
-                            style: TextStyle(
-                                fontSize: screenHeight * 0.022,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey[700]),
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.06,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: screenHeight * 0.02,
-                                horizontal: screenWidth * 0.05),
-                            decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(
-                                            255, 121, 121, 121)
-                                        .withOpacity(
-                                            0.5), // Shadow color with opacity
-                                    spreadRadius: 5, // Spread radius
-                                    blurRadius: 7, // Blur radius
-                                    offset: Offset(
-                                        0, 3), // Offset for the shadow (x, y)
+                                  Container(
+                                    height: screenHeight *
+                                        0.03, // Adjust height as needed
+                                    width: 2, // Width of the divider line
+                                    color: Colors.grey[400], // Line color
                                   ),
+                                  Text(
+                                    "Plumber",
+                                    style: TextStyle(
+                                        fontSize: screenHeight * 0.027,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey[800]),
+                                  )
                                 ],
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Row(
+                              ),
+                            ),
+                            SizedBox(height: screenHeight * 0.05),
+                            Center(
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.snackbar("Start earning", "");
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: screenHeight * 0.02,
+                                      horizontal: screenWidth * 0.05),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 2, color: Colors.black54),
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Text(
+                                    'Start earning →',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenWidth * 0.05,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: screenHeight * 0.06),
+
+                            //-----------first row of containers
+
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "Provider type:",
-                                  style: TextStyle(
-                                      fontSize: screenHeight * 0.024,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey[700]),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  width: containerWidth,
+                                  height: containerHeight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        tPrimaryColor,
+                                        const Color.fromARGB(255, 3, 141, 141)
+                                            .withOpacity(0.4),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(
+                                                255, 121, 121, 121)
+                                            .withOpacity(
+                                                0.5), // Shadow color with opacity
+                                        spreadRadius: 5, // Spread radius
+                                        blurRadius: 7, // Blur radius
+                                        offset: Offset(0,
+                                            3), // Offset for the shadow (x, y)
+                                      ),
+                                    ],
+                                    // color: tPrimaryColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Rs 100",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 239, 239, 239),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.05,
+                                            ),
+                                          ),
+                                          Image.asset(
+                                            "assets/images/earning.png",
+                                            width: screenWidth * 0.08,
+                                            height: screenWidth * 0.08,
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: containerHeight * 0.17,
+                                      ),
+                                      Text(
+                                        'Total earning',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: containerWidth * 0.13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 Container(
-                                  height: screenHeight *
-                                      0.03, // Adjust height as needed
-                                  width: 2, // Width of the divider line
-                                  color: Colors.grey[400], // Line color
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  width: containerWidth,
+                                  height: containerHeight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        tPrimaryColor,
+                                        const Color.fromARGB(255, 3, 141, 141)
+                                            .withOpacity(0.4),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(
+                                                255, 121, 121, 121)
+                                            .withOpacity(
+                                                0.5), // Shadow color with opacity
+                                        spreadRadius: 5, // Spread radius
+                                        blurRadius: 7, // Blur radius
+                                        offset: Offset(0,
+                                            3), // Offset for the shadow (x, y)
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "5.0",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 239, 239, 239),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.05,
+                                            ),
+                                          ),
+                                          Image.asset(
+                                            "assets/images/rating.png",
+                                            width: screenWidth * 0.08,
+                                            height: screenWidth * 0.08,
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: containerHeight * 0.17,
+                                      ),
+                                      Text(
+                                        'Ratings',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: containerWidth * 0.13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Text(
-                                  "Plumber",
-                                  style: TextStyle(
-                                      fontSize: screenHeight * 0.027,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey[800]),
-                                )
                               ],
                             ),
-                          ),
-                          SizedBox(height: screenHeight * 0.05),
-                          Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                Get.snackbar("Start earning", "");
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: screenHeight * 0.02,
-                                    horizontal: screenWidth * 0.05),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 2, color: Colors.black54),
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Text(
-                                  'Start earning →',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: screenWidth * 0.05,
+
+                            //-----------second row of containers
+
+                            SizedBox(height: screenHeight * 0.05),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  width: containerWidth,
+                                  height: containerHeight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        tPrimaryColor,
+                                        const Color.fromARGB(255, 3, 141, 141)
+                                            .withOpacity(0.4),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(
+                                                255, 121, 121, 121)
+                                            .withOpacity(
+                                                0.5), // Shadow color with opacity
+                                        spreadRadius: 5, // Spread radius
+                                        blurRadius: 7, // Blur radius
+                                        offset: Offset(0,
+                                            3), // Offset for the shadow (x, y)
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "8.0",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 239, 239, 239),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.05,
+                                            ),
+                                          ),
+                                          Image.asset(
+                                            "assets/images/verified.png",
+                                            width: screenWidth * 0.08,
+                                            height: screenWidth * 0.08,
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: containerHeight * 0.17,
+                                      ),
+                                      Text(
+                                        'Jobs completed',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: containerWidth * 0.119,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  width: containerWidth,
+                                  height: containerHeight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        tPrimaryColor,
+                                        const Color.fromARGB(255, 3, 141, 141)
+                                            .withOpacity(0.4),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(
+                                                255, 121, 121, 121)
+                                            .withOpacity(
+                                                0.5), // Shadow color with opacity
+                                        spreadRadius: 5, // Spread radius
+                                        blurRadius: 7, // Blur radius
+                                        offset: Offset(0,
+                                            3), // Offset for the shadow (x, y)
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "2.0",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 239, 239, 239),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.05,
+                                            ),
+                                          ),
+                                          Image.asset(
+                                            "assets/images/pending.png",
+                                            width: screenWidth * 0.08,
+                                            height: screenWidth * 0.08,
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: containerHeight * 0.17,
+                                      ),
+                                      Text(
+                                        'Pending jobs',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: containerWidth * 0.13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(height: screenHeight * 0.06),
 
-                          //-----------first row of containers
+                            //-----------third row of containers
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 8),
-                                width: containerWidth,
-                                height: containerHeight,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      tPrimaryColor,
-                                      const Color.fromARGB(255, 3, 141, 141)
-                                          .withOpacity(0.4),
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color.fromARGB(
-                                              255, 121, 121, 121)
-                                          .withOpacity(
-                                              0.5), // Shadow color with opacity
-                                      spreadRadius: 5, // Spread radius
-                                      blurRadius: 7, // Blur radius
-                                      offset: Offset(
-                                          0, 3), // Offset for the shadow (x, y)
-                                    ),
-                                  ],
-                                  // color: tPrimaryColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Rs 100",
-                                          style: TextStyle(
-                                            color: const Color.fromARGB(
-                                                255, 239, 239, 239),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: screenWidth * 0.05,
-                                          ),
-                                        ),
-                                        Image.asset(
-                                          "assets/images/earning.png",
-                                          width: screenWidth * 0.08,
-                                          height: screenWidth * 0.08,
-                                        )
+                            SizedBox(height: screenHeight * 0.05),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  width: containerWidth,
+                                  height: containerHeight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        tPrimaryColor,
+                                        const Color.fromARGB(255, 3, 141, 141)
+                                            .withOpacity(0.4),
                                       ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
                                     ),
-                                    SizedBox(
-                                      height: containerHeight * 0.17,
-                                    ),
-                                    Text(
-                                      'Total earning',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: containerWidth * 0.13,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(
+                                                255, 121, 121, 121)
+                                            .withOpacity(
+                                                0.5), // Shadow color with opacity
+                                        spreadRadius: 5, // Spread radius
+                                        blurRadius: 7, // Blur radius
+                                        offset: Offset(0,
+                                            3), // Offset for the shadow (x, y)
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 8),
-                                width: containerWidth,
-                                height: containerHeight,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      tPrimaryColor,
-                                      const Color.fromARGB(255, 3, 141, 141)
-                                          .withOpacity(0.4),
                                     ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color.fromARGB(
-                                              255, 121, 121, 121)
-                                          .withOpacity(
-                                              0.5), // Shadow color with opacity
-                                      spreadRadius: 5, // Spread radius
-                                      blurRadius: 7, // Blur radius
-                                      offset: Offset(
-                                          0, 3), // Offset for the shadow (x, y)
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "5.0",
-                                          style: TextStyle(
-                                            color: const Color.fromARGB(
-                                                255, 239, 239, 239),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: screenWidth * 0.05,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "36",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 239, 239, 239),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.05,
+                                            ),
                                           ),
-                                        ),
-                                        Image.asset(
-                                          "assets/images/rating.png",
-                                          width: screenWidth * 0.08,
-                                          height: screenWidth * 0.08,
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: containerHeight * 0.17,
-                                    ),
-                                    Text(
-                                      'Ratings',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: containerWidth * 0.13,
+                                          Image.asset(
+                                            "assets/images/coin.png",
+                                            width: screenWidth * 0.08,
+                                            height: screenWidth * 0.08,
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          //-----------second row of containers
-
-                          SizedBox(height: screenHeight * 0.05),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 8),
-                                width: containerWidth,
-                                height: containerHeight,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      tPrimaryColor,
-                                      const Color.fromARGB(255, 3, 141, 141)
-                                          .withOpacity(0.4),
+                                      SizedBox(
+                                        height: containerHeight * 0.17,
+                                      ),
+                                      Text(
+                                        'Coins',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: containerWidth * 0.119,
+                                        ),
+                                      ),
                                     ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color.fromARGB(
-                                              255, 121, 121, 121)
-                                          .withOpacity(
-                                              0.5), // Shadow color with opacity
-                                      spreadRadius: 5, // Spread radius
-                                      blurRadius: 7, // Blur radius
-                                      offset: Offset(
-                                          0, 3), // Offset for the shadow (x, y)
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "8.0",
-                                          style: TextStyle(
-                                            color: const Color.fromARGB(
-                                                255, 239, 239, 239),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: screenWidth * 0.05,
-                                          ),
-                                        ),
-                                        Image.asset(
-                                          "assets/images/verified.png",
-                                          width: screenWidth * 0.08,
-                                          height: screenWidth * 0.08,
-                                        )
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  width: containerWidth,
+                                  height: containerHeight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        tPrimaryColor,
+                                        const Color.fromARGB(255, 3, 141, 141)
+                                            .withOpacity(0.4),
                                       ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
                                     ),
-                                    SizedBox(
-                                      height: containerHeight * 0.17,
-                                    ),
-                                    Text(
-                                      'Jobs completed',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: containerWidth * 0.119,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(
+                                                255, 121, 121, 121)
+                                            .withOpacity(
+                                                0.5), // Shadow color with opacity
+                                        spreadRadius: 5, // Spread radius
+                                        blurRadius: 7, // Blur radius
+                                        offset: Offset(0,
+                                            3), // Offset for the shadow (x, y)
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 8),
-                                width: containerWidth,
-                                height: containerHeight,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      tPrimaryColor,
-                                      const Color.fromARGB(255, 3, 141, 141)
-                                          .withOpacity(0.4),
                                     ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color.fromARGB(
-                                              255, 121, 121, 121)
-                                          .withOpacity(
-                                              0.5), // Shadow color with opacity
-                                      spreadRadius: 5, // Spread radius
-                                      blurRadius: 7, // Blur radius
-                                      offset: Offset(
-                                          0, 3), // Offset for the shadow (x, y)
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "2.0",
-                                          style: TextStyle(
-                                            color: const Color.fromARGB(
-                                                255, 239, 239, 239),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: screenWidth * 0.05,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "0",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 239, 239, 239),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.05,
+                                            ),
                                           ),
-                                        ),
-                                        Image.asset(
-                                          "assets/images/pending.png",
-                                          width: screenWidth * 0.08,
-                                          height: screenWidth * 0.08,
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: containerHeight * 0.17,
-                                    ),
-                                    Text(
-                                      'Pending jobs',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: containerWidth * 0.13,
+                                          Image.asset(
+                                            "assets/images/wallet.png",
+                                            width: screenWidth * 0.08,
+                                            height: screenWidth * 0.08,
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(
+                                        height: containerHeight * 0.17,
+                                      ),
+                                      Text(
+                                        'Wallet',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: containerWidth * 0.13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -503,23 +657,23 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
               )),
         );
       }),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomBar(
         initialIndex: 0,
       ),
     );
   }
 }
 
-class BottomNavigationBar extends StatefulWidget {
+class BottomBar extends StatefulWidget {
   final int initialIndex;
 
-  BottomNavigationBar({required this.initialIndex});
+  BottomBar({required this.initialIndex});
 
   @override
-  _BottomNavigationBarState createState() => _BottomNavigationBarState();
+  _BottomBarState createState() => _BottomBarState();
 }
 
-class _BottomNavigationBarState extends State<BottomNavigationBar> {
+class _BottomBarState extends State<BottomBar> {
   int _currentIndex = 0;
 
   @override
@@ -557,17 +711,17 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> {
             break;
           case 1:
             Get.toNamed(
-              '',
+              '/editSpProfile',
             );
             break;
           case 2:
             Get.toNamed(
-              '',
+              '/spactivity',
             );
             break;
           case 3:
             Get.toNamed(
-              '',
+              '/spcontact',
             );
             break;
         }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fyp_1/main.dart';
 import 'package:fyp_1/utils/colors.dart';
-
 import 'package:get/get.dart';
 
 class UserSelection extends StatelessWidget {
@@ -19,19 +18,17 @@ class UserSelection extends StatelessWidget {
         builder: (context, constraints) {
           final screenWidth = constraints.maxWidth;
           final screenHeight = constraints.maxHeight;
-
           return Stack(
             children: [
               Positioned(
-                top: screenHeight / 5,
+                top: screenHeight / 8,
                 left: screenWidth / 2 -
                     (screenWidth * 0.225), // Center horizontally
                 child: Image.asset(
                   "assets/images/logo1.png",
-                  width:
-                      screenWidth * 0.45, // Adjusted width for responsiveness
+                  width: screenWidth * 0.5, // Adjusted width for responsiveness
                   height:
-                      screenHeight * 0.2, // Adjusted height for responsiveness
+                      screenHeight * 0.28, // Adjusted height for responsiveness
                 ),
               ),
               Positioned(

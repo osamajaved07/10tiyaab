@@ -43,7 +43,7 @@ class SpAuthController extends GetxController {
     await _secureStorage.write(key: 'refreshToken', value: refreshToken);
   }
 
-// format message function
+// ----------------- format message function ------------------
   String formatErrorMessage(Map<String, dynamic> errorResponse) {
     StringBuffer formattedMessage = StringBuffer();
     errorResponse.forEach((key, value) {
@@ -71,7 +71,53 @@ class SpAuthController extends GetxController {
     return formattedMessage.toString().trim();
   }
 
-  // Service provider login function
+  Future<void> refreshToken() async {
+    if (_refreshToken == null) {
+      errorSnackbar(
+        'Error',
+        'Refresh token is not available',
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/accounts/refresh-token/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refresh': _refreshToken}),
+      );
+      print('Refresh token response status: ${response.statusCode}');
+      print('Refresh token response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newAccessToken = data['access'];
+        setAccessToken(newAccessToken); // Store new access token
+        print('Access token refreshed successfully');
+      } else if (response.statusCode == 401) {
+        // Handle token blacklisting
+        errorSnackbar(
+          'Error',
+          'Session expired. Please log in again.',
+        );
+        // Redirect to login screen
+        Get.offAllNamed('/userLogin');
+      } else {
+        print('Failed to refresh token: ${response.body}');
+        errorSnackbar(
+          'Error',
+          'Unexpected error occurred',
+        );
+      }
+    } catch (e) {
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+  //--------- Service provider login function ----------------
   Future<void> splogin(String username, String password) async {
     Get.dialog(
       Center(
@@ -190,6 +236,66 @@ class SpAuthController extends GetxController {
     } catch (e) {
       print('Error checking login status: $e');
       return false;
+    }
+  }
+
+//----------logout function--------------
+
+  Future<void> splogout() async {
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
+      return;
+    }
+    Get.dialog(
+      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      barrierDismissible: false,
+    );
+    try {
+      final String url = '$baseUrl/accounts/logout/';
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $accessToken',
+      };
+
+// Log the headers to check if the Authorization header contains the access token
+      print('Request Headers: $headers');
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+      );
+
+      Get.back(); // Hide the circular progress indicator
+
+      if (response.statusCode == 200) {
+        accessToken = null;
+        _refreshToken = null; // Also clear refresh token
+        user_id = null;
+        await _secureStorage.delete(key: 'accessToken');
+        await _secureStorage.delete(key: 'refreshToken');
+
+        // Navigate to login screen or home screen
+
+        Get.offAllNamed('/professionalLogin');
+        successSnackbar(
+          'Success',
+          'Successfully logged out',
+        );
+      } else {
+        print('Failed to logout: ${response.statusCode}');
+        errorSnackbar(
+          'Error',
+          'Failed to logout. Please try again.',
+        );
+      }
+    } catch (e) {
+      Get.back();
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
     }
   }
 }

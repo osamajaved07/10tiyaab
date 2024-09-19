@@ -2,8 +2,9 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -24,6 +25,8 @@ class _MapScreenState extends State<MapScreen> {
   );
 
   late Position _currentPosition;
+  bool _isMapLoading = true; // Tracks map loading state
+  final TextEditingController _locationController = TextEditingController();
 
   @override
   void initState() {
@@ -73,11 +76,26 @@ class _MapScreenState extends State<MapScreen> {
 
     try {
       _currentPosition = await Geolocator.getCurrentPosition();
+      // Use reverse geocoding to get address from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = placemarks[0]; // Get the first result
+
+      // Construct a user-friendly address
+      String address =
+          "${place.street}, ${place.subLocality}, ${place.locality}";
+
+      // Set the address in the TextField
+      _locationController.text = address;
+      // _locationController.text =
+      //     "${_currentPosition.latitude}, ${_currentPosition.longitude}"; // Set current location in the text field
       setState(() {
         _initialCameraPosition = CameraPosition(
           target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
           zoom: 14.4746,
         );
+        _isMapLoading = false;
       });
 
       final GoogleMapController controller = await _controller.future;
@@ -89,21 +107,44 @@ class _MapScreenState extends State<MapScreen> {
     } catch (e) {
       print("Error getting location: $e");
     }
-    // _currentPosition = await Geolocator.getCurrentPosition();
+  }
 
-    // setState(() {
-    //   _initialCameraPosition = CameraPosition(
-    //     target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
-    //     zoom: 14.4746,
-    //   );
-    // });
+  Future<void> _searchLocation(String location) async {
+    try {
+      List<Location> locations = await locationFromAddress(
+          location); // Use geocoding to convert address to lat/lng
+      if (locations.isNotEmpty) {
+        Location newLocation = locations.first;
+        LatLng newLatLng = LatLng(newLocation.latitude, newLocation.longitude);
 
-    // final GoogleMapController controller = await _controller.future;
-    // controller.animateCamera(
-    //   CameraUpdate.newCameraPosition(
-    //     _initialCameraPosition,
-    //   ),
-    // );
+        final GoogleMapController controller = await _controller.future;
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: newLatLng, zoom: 14.4746),
+          ),
+        );
+
+        // Update the current position and the text field
+        setState(() {
+          _currentPosition = Position(
+            latitude: newLatLng.latitude,
+            longitude: newLatLng.longitude,
+            timestamp: DateTime.now(),
+            accuracy: 1.0,
+            altitude: 1.0,
+            heading: 1.0,
+            speed: 1.0,
+            speedAccuracy: 1.0,
+            altitudeAccuracy: 1.0, // Add altitudeAccuracy
+            headingAccuracy: 1.0,
+          );
+          _locationController.text =
+              "${newLatLng.latitude}, ${newLatLng.longitude}";
+        });
+      }
+    } catch (e) {
+      print("Error searching location: $e");
+    }
   }
 
   void _showLocationDialog(BuildContext context, String message,
@@ -139,60 +180,123 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Move the camera to the user's current location
-  Future<void> _goToUserLocation() async {
-    try {
-      _currentPosition = await Geolocator.getCurrentPosition();
-      final GoogleMapController controller = await _controller.future;
-      if (controller != null) {
-        controller.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target:
-                  LatLng(_currentPosition.latitude, _currentPosition.longitude),
-              zoom: 14.4746,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (e is PlatformException) {
-        print("Error moving camera: ${e.message}");
-      } else {
-        print("Unknown error: $e");
-      }
-    }
-  }
+  // Future<void> _goToUserLocation() async {
+  //   try {
+  //     _currentPosition = await Geolocator.getCurrentPosition();
+  //     final GoogleMapController controller = await _controller.future;
+  //     if (controller != null) {
+  //       controller.animateCamera(
+  //         CameraUpdate.newCameraPosition(
+  //           CameraPosition(
+  //             target:
+  //                 LatLng(_currentPosition.latitude, _currentPosition.longitude),
+  //             zoom: 14.4746,
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (e is PlatformException) {
+  //       print("Error moving camera: ${e.message}");
+  //     } else {
+  //       print("Unknown error: $e");
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutBuilder(builder: (context, constraints) {
-        final screenWidth = constraints.maxWidth;
-        final screenHeight = constraints.maxHeight;
-        return Stack(
-          children: [
-            GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: _initialCameraPosition,
-              myLocationEnabled: true, // Show the user's location on the map
-              myLocationButtonEnabled:
-                  false, // Disable the built-in location button
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-            ),
-            Positioned(
-              bottom: screenHeight * 0.13,
-              right: screenWidth * 0.02,
-              child: FloatingActionButton(
-                onPressed: _goToUserLocation,
-                child: Icon(Icons.my_location),
-                backgroundColor: tPrimaryColor,
-              ),
-            ),
-          ],
-        );
-      }),
+      body: _isMapLoading
+          ? Center(
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator(), Text("Loading...")],
+            )) // Show loading spinner while map is loading
+          : LayoutBuilder(builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final screenHeight = constraints.maxHeight;
+              return Stack(
+                children: [
+                  GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: _initialCameraPosition,
+                    myLocationEnabled:
+                        true, // Show the user's location on the map
+                    myLocationButtonEnabled:
+                        false, // Disable the built-in location button
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                  ),
+                  Positioned(
+                    top: screenHeight * 0.08,
+                    left: 5,
+                    right: 20,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: Icon(Icons.arrow_back)),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      const Color.fromARGB(255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                  spreadRadius: 5, // Spread radius
+                                  blurRadius: 7, // Blur radius
+                                  offset: Offset(
+                                      0, 3), // Offset for the shadow (x, y)
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _locationController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                hintText: 'Search location',
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.search),
+                                  onPressed: () {
+                                    _searchLocation(_locationController
+                                        .text); // Search location on pressing the search icon
+                                  },
+                                ),
+                              ),
+                              onSubmitted: (value) {
+                                _searchLocation(
+                                    value); // Search location when the user submits the location
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: screenHeight * 0.13,
+                    right: screenWidth * 0.02,
+                    child: FloatingActionButton(
+                      onPressed: _getCurrentLocation,
+                      child: Icon(Icons.my_location),
+                      backgroundColor: tPrimaryColor,
+                    ),
+                  ),
+                ],
+              );
+            }),
     );
   }
 }

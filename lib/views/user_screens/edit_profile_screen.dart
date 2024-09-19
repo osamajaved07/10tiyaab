@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/utils/custom_dialog.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
@@ -285,8 +286,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                             SizedBox(width: screenWidth * 0.03),
                             Expanded(
-                              child: TextField(
+                              child: TextFormField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter
+                                      .digitsOnly, // Allows only numeric input
+                                  LengthLimitingTextInputFormatter(
+                                      10), // Limits input to 10 digits
+                                ],
                                 controller: _phoneNumberController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your phone number';
+                                  } else if (!RegExp(r'^[3]\d{9}$')
+                                      .hasMatch(value)) {
+                                    return 'Enter your valid phone number';
+                                  }
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(Icons.phone_android),
                                   labelText: 'Phone#',
@@ -340,6 +356,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextFormField _firstNameField() {
     return TextFormField(
       controller: _firstNameController,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+            RegExp(r'[a-zA-Z]')), // Allow only alphabets
+        LengthLimitingTextInputFormatter(8), // Limits input to 10 characters
+      ],
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Enter your first name';
@@ -358,12 +379,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextFormField _lastNameField() {
     return TextFormField(
       controller: _lastNameController,
-      // validator: (value) {
-      //   if (value == null || value.isEmpty) {
-      //     return 'Enter your last name';
-      //   }
-      //   return null;
-      // },
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+            RegExp(r'[a-zA-Z]')), // Allow only alphabets
+        LengthLimitingTextInputFormatter(8), // Limits input to 10 characters
+      ],
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Enter your last name';
+        }
+        return null;
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
         hintText: 'Lastname',

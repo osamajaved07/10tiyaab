@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures, prefer_const_declarations
+// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures, prefer_const_declarations, dead_code
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -753,10 +753,10 @@ class UserAuthController extends GetxController {
       if (response.statusCode == 200) {
         // Token is valid and user is logged in
         print('User is logged in.');
-        successSnackbar(
-          'Welcome back',
-          '',
-        );
+        // successSnackbar(
+        //   'Welcome back',
+        //   '',
+        // );
         return true;
       } else if (response.statusCode == 401) {
         // Token is expired or invalid
@@ -772,47 +772,4 @@ class UserAuthController extends GetxController {
       return false;
     }
   }
-
-  // Future<bool> isLoggedIn() async {
-  //   // Check if the access token is present
-  //   if (accessToken == null) {
-  //     print('No access token found. User is not logged in.');
-  //     return false; // No token means the user is not logged in
-  //   }
-
-  //   try {
-  //     await refreshToken();
-  //     // Optionally, make a request to verify if the token is still valid
-  //     final response = await http.get(
-  //       Uri.parse('$baseUrl/accounts/profile/'),
-  //       headers: {'Authorization': 'Bearer $accessToken'},
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       // Token is valid and user is logged in
-  //       print('User is logged in.');
-  //       return true; // User is logged in
-  //     } else if (response.statusCode == 401) {
-  //       // Token is expired or invalid; attempt to refresh
-  //       print('Token expired. Attempting to refresh...');
-  //       await refreshToken(); // Refresh the token
-
-  //       // Recheck after refreshing the token
-  //       if (accessToken != null) {
-  //         print('Token refreshed successfully. User is logged in.');
-  //         return true; // Token refreshed and user is logged in
-  //       } else {
-  //         print('Failed to refresh token. User is not logged in.');
-  //         return false; // Failed to refresh token
-  //       }
-  //     } else {
-  //       // Other error responses
-  //       print('Failed to check login status: ${response.statusCode}');
-  //       return false; // Failed to check login status
-  //     }
-  //   } catch (e) {
-  //     print('Error checking login status: $e');
-  //     return false; // Error occurred
-  //   }
-  // }
 }

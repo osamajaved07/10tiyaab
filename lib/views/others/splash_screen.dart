@@ -25,12 +25,18 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNextScreen() async {
-    await Future.delayed(Duration(seconds: 4));
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedin = await _authController.isLoggedIn();
-    bool isspLoggedin = await _spauthController.isspLoggedIn();
-    bool isOnboardingCompleted =
+    await Future.delayed(Duration(seconds: 8));
+    final prefs = await SharedPreferences.getInstance();
+    final bool isOnboardingCompleted =
         prefs.getBool('isOnboardingCompleted') ?? false;
+    final isLoggedinFuture = _authController.isLoggedIn();
+    final isspLoggedinFuture = _spauthController.isspLoggedIn();
+    // Wait for both login checks simultaneously
+    final bool isLoggedin = await isLoggedinFuture;
+    final bool isspLoggedin = await isspLoggedinFuture;
+
+    // bool isLoggedin = await _authController.isLoggedIn();
+    // bool isspLoggedin = await _spauthController.isspLoggedIn();
 
     if (isOnboardingCompleted) {
       if (isLoggedin) {
@@ -53,9 +59,10 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Color(0xFF04BEBE),
       body: Center(
         child: Image.asset(
-          'assets/images/Logo.png',
-          width: 350,
-          height: 350,
+          'assets/images/logo1.png',
+          width: MediaQuery.of(context).size.width *
+              0.6, // Adjusted width for responsiveness
+          height: MediaQuery.of(context).size.height * 0.3,
         ),
       ),
     );

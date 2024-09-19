@@ -2,16 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
-import 'package:fyp_1/views/user_screens/user_homepage.dart';
+import 'package:fyp_1/views/sp_screens/sp_home.dart';
 
-class ActivityScreen extends StatefulWidget {
-  const ActivityScreen({super.key});
+class SpActivityScreen extends StatefulWidget {
+  const SpActivityScreen({super.key});
 
   @override
-  State<ActivityScreen> createState() => _ActivityScreenState();
+  State<SpActivityScreen> createState() => _SpActivityScreenState();
 }
 
-class _ActivityScreenState extends State<ActivityScreen>
+class _SpActivityScreenState extends State<SpActivityScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   @override
@@ -67,7 +67,7 @@ class _ActivityScreenState extends State<ActivityScreen>
           ],
         );
       }),
-      bottomNavigationBar: BottomNavigationBarWidget(
+      bottomNavigationBar: BottomBar(
         initialIndex: 2,
       ),
     );

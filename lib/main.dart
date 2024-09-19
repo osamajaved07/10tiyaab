@@ -5,6 +5,9 @@ import 'package:fyp_1/controllers/sp_auth_controller.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/views/map/map_screen.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
+import 'package:fyp_1/views/sp_screens/edit_sp_profile.dart';
+import 'package:fyp_1/views/sp_screens/sp_act_screen.dart';
+import 'package:fyp_1/views/sp_screens/sp_contact.dart';
 import 'package:fyp_1/views/sp_screens/sp_home.dart';
 import 'package:fyp_1/views/user_screens/activity_screen.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
@@ -129,6 +132,21 @@ class _MyAppState extends State<MyApp> {
         GetPage(
             name: '/sphome',
             page: () => SpHomeScreen(),
+            transition: Transition.fadeIn),
+
+        GetPage(
+            name: '/editSpProfile',
+            page: () => EditSpProfilePage(),
+            transition: Transition.fadeIn),
+
+        GetPage(
+            name: '/spactivity',
+            page: () => SpActivityScreen(),
+            transition: Transition.fadeIn),
+
+        GetPage(
+            name: '/spcontact',
+            page: () => SpContactUsScreen(),
             transition: Transition.fadeIn),
       ],
     );
