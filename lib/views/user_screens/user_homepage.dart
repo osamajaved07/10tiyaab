@@ -81,6 +81,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        extendBody: true,
         backgroundColor: tSecondaryColor,
         appBar: AppBar(
           automaticallyImplyLeading: false,

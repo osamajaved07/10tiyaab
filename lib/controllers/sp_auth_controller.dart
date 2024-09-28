@@ -143,16 +143,21 @@ class SpAuthController extends GetxController {
         final accessToken = loginData['access_token'];
         final refreshToken = loginData['refresh'];
         final userType = loginData['user_type'];
+        final skill = loginData['skill'];
         final serviceProviderUsername = loginData['username'];
-        print('User Type: $userType');
+        print('Service Provider Name: $serviceProviderUsername');
+        print('Service Provider Type: $skill');
+        print('Type: $userType');
         print('Access Token: $accessToken');
         print('Refresh Token: $refreshToken');
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         await storeTokens(accessToken, refreshToken);
-        await _secureStorage.write(key: 'user_type', value: userType);
+        await _secureStorage.write(key: 'skill', value: skill);
         await _secureStorage.write(
             key: 'username', value: serviceProviderUsername);
+        await _secureStorage.write(key: 'user_type', value: userType);
+
         // user_id = loginData['user_id'].toString(); // Update user_id
         final dynamic userId = loginData['user_id'];
         if (userId is int) {
@@ -239,6 +244,183 @@ class SpAuthController extends GetxController {
     }
   }
 
+//----------Fetch profile--------------
+
+  Future<Map<String, dynamic>?> fetchUserProfile() async {
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred',
+      );
+      print("Access token is not available");
+      return null;
+    }
+
+    try {
+      final String url = '$baseUrl/accounts/profile/';
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $accessToken',
+      };
+
+// Log the headers to check if the Authorization header contains the access token
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: headers,
+      );
+      print("$accessToken");
+      print('Fetch user profile response status: ${response.statusCode}');
+      print('Fetch user profile response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> userData = jsonDecode(response.body);
+        if (userData['profile_pic'] != null) {
+          String profilePicUrl = userData['profile_pic'];
+          if (!profilePicUrl.startsWith('https')) {
+            profilePicUrl = '$baseUrl$profilePicUrl';
+          }
+          userData['profile_pic'] = profilePicUrl;
+        }
+        return userData;
+      } else if (response.statusCode == 401) {
+        // Handle token refresh if the response indicates the token is expired
+        await refreshToken();
+        // Retry fetching user profile
+        return await fetchUserProfile();
+      } else {
+        errorSnackbar(
+          'Error',
+          'Failed to load user profile: ${response.statusCode} - ${response.body}',
+        );
+        print(
+            'Failed response: ${response.body}'); // Log the response body for debugging
+        return null;
+      }
+    } catch (e) {
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
+      print('Exception: $e'); // Log the exception
+      return null;
+    }
+  }
+
+//----------Send Feedback--------------
+
+  Future<void> sendFeedback(String feedback) async {
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
+      return;
+    }
+
+    Get.dialog(
+      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      barrierDismissible: false,
+    );
+    final String url = 'https://fyp-project-zosb.onrender.com/contact/us/';
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    };
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode({'message': feedback}),
+      );
+      Get.back();
+
+      if (response.statusCode == 200) {
+        successSnackbar('Success', 'Message sent successfully');
+      } else {
+        final errorMessage = jsonDecode(response.body)['message'] ??
+            'Failed to send your message';
+        errorSnackbar(
+            'Error', errorMessage); // Display detailed error if available
+      }
+    } catch (e) {
+      Get.back();
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
+    }
+  }
+
+//----------Update Information--------------
+
+  Future<void> updateUserInfo({
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    String? profilePicPath,
+  }) async {
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'Access token is not available',
+      );
+      return;
+    }
+
+    Get.dialog(
+      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      barrierDismissible: false,
+    );
+
+    try {
+      // Create the request body
+      final Map<String, String> body = {
+        'first_name': firstName,
+        'last_name': lastName,
+        'phone_no': phoneNumber,
+      };
+
+      // Update user info
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl/accounts/profile/update/'),
+      )
+        ..headers['Authorization'] = 'Bearer $accessToken'
+        ..fields.addAll(body);
+
+      // If a profile picture path is provided, add it to the request
+      if (profilePicPath != null) {
+        request.files.add(
+            await http.MultipartFile.fromPath('profile_pic', profilePicPath));
+      }
+
+      // Send the request
+      final response = await request.send();
+
+      Get.back();
+
+      if (response.statusCode == 200) {
+        successSnackbar(
+          'Success',
+          'Profile updated successfully',
+        );
+        // Optionally refresh user profile
+        await fetchUserProfile();
+      } else {
+        errorSnackbar(
+          'Error',
+          'Failed to update user information. Please try again.',
+        );
+      }
+    } catch (e) {
+      Get.back();
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+      );
+    }
+  }
+
 //----------logout function--------------
 
   Future<void> splogout() async {
@@ -274,6 +456,7 @@ class SpAuthController extends GetxController {
         _refreshToken = null; // Also clear refresh token
         user_id = null;
         await _secureStorage.delete(key: 'accessToken');
+
         await _secureStorage.delete(key: 'refreshToken');
 
         // Navigate to login screen or home screen

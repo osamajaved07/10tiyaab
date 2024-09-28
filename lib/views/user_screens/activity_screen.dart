@@ -29,6 +29,7 @@ class _ActivityScreenState extends State<ActivityScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
         title: Text('Activity',

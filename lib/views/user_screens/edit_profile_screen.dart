@@ -131,6 +131,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
         actions: [

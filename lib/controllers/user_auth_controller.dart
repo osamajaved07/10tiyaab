@@ -760,6 +760,7 @@ class UserAuthController extends GetxController {
         return true;
       } else if (response.statusCode == 401) {
         // Token is expired or invalid
+
         print('Token expired or invalid. User is not logged in.');
         return false;
       } else {

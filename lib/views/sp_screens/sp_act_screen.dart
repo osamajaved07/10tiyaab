@@ -29,6 +29,7 @@ class _SpActivityScreenState extends State<SpActivityScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
         title: Text('Activity',

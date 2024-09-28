@@ -23,6 +23,7 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _skillController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _userNameController = TextEditingController();
 
@@ -30,6 +31,41 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
   XFile? _pickedImage;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = true; // Loading indicator
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserData();
+    });
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = await _authController.fetchUserProfile();
+      if (userData != null) {
+        setState(() {
+          _userNameController.text = userData['username'] ?? '';
+          _firstNameController.text = userData['first_name'] ?? '';
+          _lastNameController.text = userData['last_name'] ?? '';
+          _emailController.text = userData['email'] ?? '';
+          _skillController.text = userData['skills'] ?? '';
+          _phoneNumberController.text = userData['phone_no'] ?? '';
+          _profileImageUrl = userData['profile_pic'] ?? '';
+          _isLoading = false; // Stop loading when data is fetched
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      // setState(() {
+      //   _isLoading = false; // Stop loading even if there's an error
+      // }); // Log the error
+    } finally {
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
+    }
+  }
 
   Future<void> _pickImage() async {
     setState(() {
@@ -84,9 +120,20 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
     );
   }
 
+  void _updateProfile() async {
+    String profilePicPath = _pickedImage?.path ?? '';
+    await _authController.updateUserInfo(
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      phoneNumber: _phoneNumberController.text,
+      profilePicPath: profilePicPath.isNotEmpty ? profilePicPath : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBody: true,
         backgroundColor: tSecondaryColor,
         appBar: AppBar(
           actions: [
@@ -108,179 +155,229 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
           elevation: 0,
           automaticallyImplyLeading: false,
         ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            final screenWidth = constraints.maxWidth;
-            final screenHeight = constraints.maxHeight;
-
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
+        body: _isLoading
+            ? Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: screenHeight * 0.05),
-
-                    // Profile Picture Section
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: screenWidth * 0.18,
-                          backgroundImage: _pickedImage != null
-                              ? FileImage(
-                                  File(_pickedImage!.path)) // Show picked image
-
-                              : AssetImage(
-                                      'assets/images/default.png') // Show default image
-                                  as ImageProvider,
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              padding: EdgeInsets.all(screenWidth * 0.02),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.grey, width: 2),
-                              ),
-                              child: Icon(Icons.camera_alt,
-                                  size: screenWidth * 0.05),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
-
-                    // User Name
-                    Text(
-                      'Username', // Fallback text if username is not yet available
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.05,
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.04),
-
-                    // Name TextField
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                right: 8.0), // Adds spacing to the right
-                            child: _firstNameField(),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0), // Adds spacing to the left
-                            child: _lastNameField(),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.03),
-
-                    // Email TextField
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email_outlined),
-                        labelText: '123@gmail.com',
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      enabled: false, // Email is not editable
-                    ),
-                    SizedBox(height: screenHeight * 0.03),
-
-                    Row(
-                      children: [
-                        Container(
-                          width: screenWidth * 0.15,
-                          height: screenHeight * 0.07,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: Image.asset(
-                              'assets/images/flag.png',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: screenWidth * 0.03),
-                        Expanded(
-                          child: TextFormField(
-                            inputFormatters: [
-                              FilteringTextInputFormatter
-                                  .digitsOnly, // Allows only numeric input
-                              LengthLimitingTextInputFormatter(
-                                  10), // Limits input to 10 digits
-                            ],
-                            controller: _phoneNumberController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your phone number';
-                              } else if (!RegExp(r'^[3]\d{9}$')
-                                  .hasMatch(value)) {
-                                return 'Enter your valid phone number';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.phone_android),
-                              labelText: 'Phone#',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            keyboardType: TextInputType.phone,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.05),
-
-                    // Update Button
+                    CircularProgressIndicator(color: tPrimaryColor),
                     SizedBox(
-                      width: double.infinity,
-                      height: screenHeight * 0.06,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // _updateProfile();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF04BEBE),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          'Update',
-                          style: TextStyle(
-                            color: ttextColor,
-                            fontSize: screenWidth * 0.045,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      height: 16,
                     ),
+                    Text("Loading...")
                   ],
                 ),
+              ) // Show loader while data is being fetched
+            : LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = constraints.maxWidth;
+                  final screenHeight = constraints.maxHeight;
+
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: screenHeight * 0.05),
+
+                          // Profile Picture Section
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: screenWidth * 0.18,
+                                backgroundImage: _pickedImage != null
+                                    ? FileImage(File(_pickedImage!
+                                        .path)) // Show picked image
+                                    : (_profileImageUrl != null &&
+                                                _profileImageUrl!.isNotEmpty
+                                            ? NetworkImage(
+                                                _profileImageUrl!) // Show server image
+                                            : AssetImage(
+                                                'assets/images/default_profile.png')) // Show default image
+                                        as ImageProvider,
+                              ),
+                              if (_isLoading) // Show loading indicator when _isLoading is true
+                                Center(
+                                  child: CircularProgressIndicator(
+                                    color: tPrimaryColor,
+                                  ),
+                                ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: _pickImage,
+                                  child: Container(
+                                    padding: EdgeInsets.all(screenWidth * 0.02),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.grey, width: 2),
+                                    ),
+                                    child: Icon(Icons.camera_alt,
+                                        size: screenWidth * 0.05),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+
+                          // User Name
+                          Text(
+                            _userNameController.text.isNotEmpty
+                                ? _userNameController.text
+                                : 'Loading...', // Fallback text if username is not yet available
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: screenWidth * 0.05,
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.04),
+
+                          // Name TextField
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 8.0), // Adds spacing to the right
+                                  child: _firstNameField(),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0), // Adds spacing to the left
+                                  child: _lastNameField(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: screenHeight * 0.03),
+
+                          // Email TextField
+                          emailField(),
+                          SizedBox(height: screenHeight * 0.03),
+                          skillField(),
+                          SizedBox(height: screenHeight * 0.03),
+                          Row(
+                            children: [
+                              Container(
+                                width: screenWidth * 0.15,
+                                height: screenHeight * 0.07,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  child: Image.asset(
+                                    'assets/images/flag.png',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.03),
+                              Expanded(
+                                child: phonenumberField(),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: screenHeight * 0.05),
+
+                          // Update Button
+                          updateButton(screenHeight, screenWidth),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
         bottomNavigationBar: BottomBar(
           initialIndex: 1,
         ));
+  }
+
+  SizedBox updateButton(double screenHeight, double screenWidth) {
+    return SizedBox(
+      width: double.infinity,
+      height: screenHeight * 0.06,
+      child: ElevatedButton(
+        onPressed: () {
+          _updateProfile();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFF04BEBE),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: Text(
+          'Update',
+          style: TextStyle(
+            color: ttextColor,
+            fontSize: screenWidth * 0.045,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  TextField emailField() {
+    return TextField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.email_outlined),
+        labelText: 'Email',
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      enabled: false, // Email is not editable
+    );
+  }
+
+  TextField skillField() {
+    return TextField(
+      controller: _skillController,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.work_outline_sharp),
+        labelText: 'Skill',
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      enabled: false, // Email is not editable
+    );
+  }
+
+  TextFormField phonenumberField() {
+    return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly, // Allows only numeric input
+        LengthLimitingTextInputFormatter(10), // Limits input to 10 digits
+      ],
+      controller: _phoneNumberController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your phone number';
+        } else if (!RegExp(r'^[3]\d{9}$').hasMatch(value)) {
+          return 'Enter your valid phone number';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.phone_android),
+        labelText: 'Phone#',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      keyboardType: TextInputType.phone,
+    );
   }
 
   TextFormField _firstNameField() {

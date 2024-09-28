@@ -84,6 +84,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
         backgroundColor: tSecondaryColor,
@@ -149,9 +150,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                             disabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             labelText: 'Email',
-                            // border: OutlineInputBorder(
-                            //   borderRadius: BorderRadius.circular(10),
-                            // ),
                           ),
                           enabled: false, // Email is not editable
                         ),

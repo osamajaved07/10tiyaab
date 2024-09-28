@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,6 +20,18 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
   Future<String> _getUsername() async {
     final username = await storage.read(key: 'username');
     return username ?? 'User'; // Default to 'User' if username is not found
+  }
+
+  Future<String> _getSkill() async {
+    final skill = await storage.read(key: 'skill');
+    return skill ?? 'Unknown Skill'; // Default to 'Unknown Skill' if not found
+  }
+
+  // Fetch both username and skill together
+  Future<Map<String, String>> _getUserInfo() async {
+    final username = await _getUsername();
+    final skill = await _getSkill();
+    return {'username': username, 'skill': skill};
   }
 
   void _showLogoutDialog(BuildContext context) {
@@ -54,6 +68,7 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       extendBodyBehindAppBar: true,
       body: LayoutBuilder(builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
@@ -98,20 +113,21 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SizedBox(
-                                // height: screenHeight / 30,
-                                ),
-                            FutureBuilder<String>(
-                              future: _getUsername(),
+                            FutureBuilder<Map<String, String>>(
+                              future: _getUserInfo(),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
                                   return Center(
-                                      child: CircularProgressIndicator());
+                                      child: CircularProgressIndicator(
+                                    color: tlightPrimaryColor,
+                                  ));
                                 } else if (snapshot.hasError) {
-                                  return Text('Error loading username');
+                                  return Text('Error loading info');
                                 } else {
-                                  final username = snapshot.data ?? 'User';
+                                  final username =
+                                      snapshot.data?['username'] ?? 'User';
+
                                   return Text(
                                     "Hello $username",
                                     style: TextStyle(
@@ -171,13 +187,26 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                                     width: 2, // Width of the divider line
                                     color: Colors.grey[400], // Line color
                                   ),
-                                  Text(
-                                    "Plumber",
-                                    style: TextStyle(
-                                        fontSize: screenHeight * 0.027,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey[800]),
-                                  )
+                                  FutureBuilder<String>(
+                                      future: _getSkill(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text('Error loading skill');
+                                        } else {
+                                          final skill =
+                                              snapshot.data ?? 'Unknown Skill';
+                                          return Text(
+                                            skill,
+                                            style: TextStyle(
+                                                fontSize: screenHeight * 0.027,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.grey[800]),
+                                          );
+                                        }
+                                      })
                                 ],
                               ),
                             ),
@@ -718,7 +747,7 @@ class _BottomBarState extends State<BottomBar> {
   Widget build(BuildContext context) {
     return CurvedNavigationBar(
       index: _currentIndex,
-      backgroundColor: tlightPrimaryColor,
+      backgroundColor: Colors.transparent,
       color: Colors.white,
       buttonBackgroundColor: tPrimaryColor,
       height: 60,
