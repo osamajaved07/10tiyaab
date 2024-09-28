@@ -20,6 +20,37 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
     return username ?? 'User'; // Default to 'User' if username is not found
   }
 
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: tlightPrimaryColor,
+          elevation: 8,
+          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text("Confirmation"),
+          content: Text("Are you sure you want to start earning?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(); // Close the dialog
+              },
+              child: Text("No", style: TextStyle(color: Colors.red)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.offNamed(
+                  '/spmap',
+                );
+              },
+              child: Text("Yes", style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,11 +181,12 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                                 ],
                               ),
                             ),
+
                             SizedBox(height: screenHeight * 0.05),
                             Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.snackbar("Start earning", "");
+                                  _showLogoutDialog(context);
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(

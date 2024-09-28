@@ -6,6 +6,7 @@ import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/views/map/map_screen.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/sp_screens/edit_sp_profile.dart';
+import 'package:fyp_1/views/sp_screens/map_screen.dart';
 import 'package:fyp_1/views/sp_screens/sp_act_screen.dart';
 import 'package:fyp_1/views/sp_screens/sp_contact.dart';
 import 'package:fyp_1/views/sp_screens/sp_home.dart';
@@ -27,7 +28,6 @@ import 'package:fyp_1/views/user_screens/user_registration.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'views/user_screens/chat_screen.dart';
 
 void main() async {
@@ -147,6 +147,11 @@ class _MyAppState extends State<MyApp> {
         GetPage(
             name: '/spcontact',
             page: () => SpContactUsScreen(),
+            transition: Transition.fadeIn),
+
+        GetPage(
+            name: '/spmap',
+            page: () => SpMapScreen(),
             transition: Transition.fadeIn),
       ],
     );

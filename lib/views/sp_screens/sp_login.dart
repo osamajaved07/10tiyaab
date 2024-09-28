@@ -23,8 +23,23 @@ class _ServiceProviderLoginState extends State<ServiceProviderLogin> {
   final SpAuthController _authController = Get.find<SpAuthController>();
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
+  bool isButtonEnabled = false;
   TextEditingController _namecontroller = new TextEditingController();
   TextEditingController _passwordcontroller = new TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _namecontroller.addListener(_validateFields);
+    _passwordcontroller.addListener(_validateFields);
+  }
+
+  void _validateFields() {
+    setState(() {
+      isButtonEnabled = _namecontroller.text.isNotEmpty &&
+          _passwordcontroller.text.isNotEmpty;
+    });
+  }
 
   void _login() async {
     if (_formkey.currentState!.validate()) {
@@ -173,7 +188,7 @@ class _ServiceProviderLoginState extends State<ServiceProviderLogin> {
 
   GestureDetector _loginButton(BuildContext context) {
     return GestureDetector(
-      onTap: _login,
+      onTap: isButtonEnabled ? _login : null,
       child: Material(
         elevation: 5.0,
         borderRadius: BorderRadius.circular(20),
