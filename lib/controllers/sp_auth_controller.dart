@@ -1,5 +1,4 @@
 // ignore_for_file: unused_field
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -11,7 +10,7 @@ import 'package:get/get.dart';
 class SpAuthController extends GetxController {
   final String baseUrl = 'https://fyp-project-zosb.onrender.com';
   String? user_id; // Nullable user_id to be set after registration
-  String? accessToken;
+  String? _accessToken;
   String? _refreshToken;
 
   final _secureStorage = const FlutterSecureStorage();
@@ -25,7 +24,7 @@ class SpAuthController extends GetxController {
 
   // Set access token (you might want to set it during login or some other flow)
   void setAccessToken(String token) async {
-    accessToken = token;
+    _accessToken = token;
   }
 
   // Set refresh token
@@ -34,7 +33,7 @@ class SpAuthController extends GetxController {
   }
 
   Future<void> loadTokens() async {
-    accessToken = await _secureStorage.read(key: 'accessToken');
+    _accessToken = await _secureStorage.read(key: 'accessToken');
     _refreshToken = await _secureStorage.read(key: '_refreshToken');
   }
 
@@ -101,7 +100,7 @@ class SpAuthController extends GetxController {
           'Session expired. Please log in again.',
         );
         // Redirect to login screen
-        Get.offAllNamed('/userLogin');
+        Get.offAllNamed('/professionalLogin');
       } else {
         print('Failed to refresh token: ${response.body}');
         errorSnackbar(
@@ -200,17 +199,16 @@ class SpAuthController extends GetxController {
   }
 
   Future<bool> isspLoggedIn() async {
-    print('accessToken: $accessToken');
+    print('accessToken: $_accessToken');
     // Retrieve stored tokens
-    accessToken = await _secureStorage.read(key: 'accessToken');
+    _accessToken = await _secureStorage.read(key: 'accessToken');
     _refreshToken = await _secureStorage.read(key: 'refreshToken');
 
     // Check if access token is available
-    if (accessToken == null) {
-      print('No access token found. User is not logged in.');
+    if (_accessToken == null) {
+      print('No access token found. Sp is not logged in.');
       return false;
     }
-
     try {
       // Always attempt to refresh the token to ensure it's up-to-date
       // await refreshToken();
@@ -218,17 +216,24 @@ class SpAuthController extends GetxController {
       // Now check if the access token is valid
       final response = await http.get(
         Uri.parse('$baseUrl/accounts/profile/'),
-        headers: {'Authorization': 'Bearer $accessToken'},
+        headers: {'Authorization': 'Bearer $_accessToken'},
       );
 
       if (response.statusCode == 200) {
-        // Token is valid and user is logged in
-        print('User is logged in.');
-        successSnackbar(
-          'Welcome back',
-          '',
-        );
-        return true;
+        final String? userType = await _secureStorage.read(key: 'user_type');
+
+        // Check if user_type is "customer"
+        if (userType == 'service_provider') {
+          print('User is logged in as a service provider.');
+          successSnackbar(
+            'Welcome back',
+            '',
+          );
+          return true; // User is logged in and is a sp
+        } else {
+          print('User is logged in but is not a sp. User type: $userType');
+          return false; // User is logged in but not a customer
+        }
       } else if (response.statusCode == 401) {
         // Token is expired or invalid
         print('Token expired or invalid. User is not logged in.');
@@ -247,7 +252,7 @@ class SpAuthController extends GetxController {
 //----------Fetch profile--------------
 
   Future<Map<String, dynamic>?> fetchUserProfile() async {
-    if (accessToken == null) {
+    if (_accessToken == null) {
       errorSnackbar(
         'Error',
         'An unexpected error occurred',
@@ -259,7 +264,7 @@ class SpAuthController extends GetxController {
     try {
       final String url = '$baseUrl/accounts/profile/';
       final Map<String, String> headers = {
-        'Authorization': 'Bearer $accessToken',
+        'Authorization': 'Bearer $_accessToken',
       };
 
 // Log the headers to check if the Authorization header contains the access token
@@ -268,7 +273,7 @@ class SpAuthController extends GetxController {
         Uri.parse(url),
         headers: headers,
       );
-      print("$accessToken");
+      print("$_accessToken");
       print('Fetch user profile response status: ${response.statusCode}');
       print('Fetch user profile response body: ${response.body}');
 
@@ -309,7 +314,7 @@ class SpAuthController extends GetxController {
 //----------Send Feedback--------------
 
   Future<void> sendFeedback(String feedback) async {
-    if (accessToken == null) {
+    if (_accessToken == null) {
       errorSnackbar(
         'Error',
         'Access token is not available',
@@ -324,7 +329,7 @@ class SpAuthController extends GetxController {
     final String url = 'https://fyp-project-zosb.onrender.com/contact/us/';
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
+      'Authorization': 'Bearer $_accessToken',
     };
     try {
       final response = await http.post(
@@ -359,7 +364,7 @@ class SpAuthController extends GetxController {
     required String phoneNumber,
     String? profilePicPath,
   }) async {
-    if (accessToken == null) {
+    if (_accessToken == null) {
       errorSnackbar(
         'Error',
         'Access token is not available',
@@ -385,7 +390,7 @@ class SpAuthController extends GetxController {
         'PUT',
         Uri.parse('$baseUrl/accounts/profile/update/'),
       )
-        ..headers['Authorization'] = 'Bearer $accessToken'
+        ..headers['Authorization'] = 'Bearer $_accessToken'
         ..fields.addAll(body);
 
       // If a profile picture path is provided, add it to the request
@@ -424,7 +429,7 @@ class SpAuthController extends GetxController {
 //----------logout function--------------
 
   Future<void> splogout() async {
-    if (accessToken == null) {
+    if (_accessToken == null) {
       errorSnackbar(
         'Error',
         'Access token is not available',
@@ -438,7 +443,7 @@ class SpAuthController extends GetxController {
     try {
       final String url = '$baseUrl/accounts/logout/';
       final Map<String, String> headers = {
-        'Authorization': 'Bearer $accessToken',
+        'Authorization': 'Bearer $_accessToken',
       };
 
 // Log the headers to check if the Authorization header contains the access token
@@ -452,7 +457,7 @@ class SpAuthController extends GetxController {
       Get.back(); // Hide the circular progress indicator
 
       if (response.statusCode == 200) {
-        accessToken = null;
+        _accessToken = null;
         _refreshToken = null; // Also clear refresh token
         user_id = null;
         await _secureStorage.delete(key: 'accessToken');

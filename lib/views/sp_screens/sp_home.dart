@@ -69,7 +69,7 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       body: LayoutBuilder(builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
@@ -97,6 +97,7 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: screenHeight / 6),
+                    // padding: EdgeInsets.only(bottom: screenHeight * 0.07),
                     height: screenHeight / 1,
                     width: screenWidth,
                     decoration: BoxDecoration(
@@ -270,7 +271,6 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                                             3), // Offset for the shadow (x, y)
                                       ),
                                     ],
-                                    // color: tPrimaryColor,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Column(
@@ -674,6 +674,9 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                                 ),
                               ],
                             ),
+                            SizedBox(
+                              height: 60,
+                            )
                           ],
                         ),
                       ),

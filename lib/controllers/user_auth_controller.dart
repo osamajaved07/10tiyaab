@@ -682,12 +682,14 @@ class UserAuthController extends GetxController {
         final Map<String, dynamic> loginData = jsonDecode(response.body);
         final accessToken = loginData['access_token'];
         final refreshToken = loginData['refresh'];
+        final userType = loginData['user_type'];
+        print('Type: $userType');
         print('Access Token: $accessToken');
         print('Refresh Token: $refreshToken');
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         await storeTokens(accessToken, refreshToken);
-        // user_id = loginData['user_id'].toString(); // Update user_id
+        await _secureStorage.write(key: 'user_type', value: userType);
         final dynamic userId = loginData['user_id'];
         if (userId is int) {
           user_id = userId.toString(); // Convert integer to string if necessary
@@ -729,10 +731,11 @@ class UserAuthController extends GetxController {
   }
 
   Future<bool> isLoggedIn() async {
-    print('accessToken: $accessToken');
+    // print('accessToken: $accessToken');
     // Retrieve stored tokens
     accessToken = await _secureStorage.read(key: 'accessToken');
     _refreshToken = await _secureStorage.read(key: 'refreshToken');
+    // final userType = await _secureStorage.read(key: 'user_type');
 
     // Check if access token is available
     if (accessToken == null) {
@@ -741,24 +744,33 @@ class UserAuthController extends GetxController {
     }
 
     try {
-      // Always attempt to refresh the token to ensure it's up-to-date
-      // await refreshToken();
-
-      // Now check if the access token is valid
       final response = await http.get(
         Uri.parse('$baseUrl/accounts/profile/'),
         headers: {'Authorization': 'Bearer $accessToken'},
       );
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Token is valid and user is logged in
-        print('User is logged in.');
-        // successSnackbar(
-        //   'Welcome back',
-        //   '',
-        // );
-        return true;
-      } else if (response.statusCode == 401) {
+        // Token is valid, now check user_type from secure storage
+        final String? userType = await _secureStorage.read(key: 'user_type');
+
+        // Check if user_type is "customer"
+        if (userType == 'customer') {
+          print('User is logged in as a customer.');
+          successSnackbar(
+            'Welcome back',
+            '',
+          );
+          return true; // User is logged in and is a customer
+        } else {
+          print(
+              'User is logged in but is not a customer. User type: $userType');
+          return false; // User is logged in but not a customer
+        }
+      }
+      // return true;
+      else if (response.statusCode == 401) {
         // Token is expired or invalid
 
         print('Token expired or invalid. User is not logged in.');

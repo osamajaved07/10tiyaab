@@ -189,7 +189,9 @@ class _SpMapScreenState extends State<SpMapScreen> {
               child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
+                CircularProgressIndicator(
+                  color: tPrimaryColor,
+                ),
                 SizedBox(
                   height: 8,
                 ),

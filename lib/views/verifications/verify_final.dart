@@ -1,9 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously, use_super_parameters
-
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
@@ -48,64 +45,6 @@ class _MyVerifyState extends State<MyVerify> {
       }
     });
   }
-
-  // Future<void> _showLoadingDialog() async {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) {
-  //       return Dialog(
-  //         backgroundColor: Colors.transparent,
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Lottie.asset('assets/lottie/loading.json',
-  //                 width: 200, height: 200),
-  //             SizedBox(height: 20),
-  //             Text("Verifying...", style: TextStyle(color: Colors.white)),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-
-  //   // Simulate a network call
-  //   await Future.delayed(Duration(seconds: 3));
-
-  //   Navigator.pop(context); // Remove the loading dialog
-
-  //   _showSuccessDialog();
-  // }
-
-  // Future<void> _showSuccessDialog() async {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) {
-  //       return Dialog(
-  //         backgroundColor: Colors.transparent,
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Lottie.asset('assets/lottie/verify.json',
-  //                 width: 400, height: 400),
-  //             SizedBox(height: 20),
-  //             Text("Verification Complete!",
-  //                 style: TextStyle(color: Colors.white)),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-
-  //   // Simulate some delay
-  //   await Future.delayed(Duration(seconds: 2));
-
-  //   Navigator.pop(context); // Remove the success dialog
-
-  //   // Navigate to the home screen
-  //   Get.offNamed("/homescreen");
-  // }
 
   @override
   Widget build(BuildContext context) {

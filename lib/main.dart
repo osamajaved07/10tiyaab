@@ -11,6 +11,7 @@ import 'package:fyp_1/views/sp_screens/sp_act_screen.dart';
 import 'package:fyp_1/views/sp_screens/sp_contact.dart';
 import 'package:fyp_1/views/sp_screens/sp_home.dart';
 import 'package:fyp_1/views/user_screens/activity_screen.dart';
+import 'package:fyp_1/views/user_screens/chat_screens/chat_home.dart';
 import 'package:fyp_1/views/verifications/email_verify.dart';
 import 'package:fyp_1/views/verifications/final.dart';
 import 'package:fyp_1/views/verifications/phoneinput.dart';
@@ -28,7 +29,7 @@ import 'package:fyp_1/views/user_screens/user_registration.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'views/user_screens/chat_screen.dart';
+import 'views/user_screens/chat_screens/chat_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,7 +101,7 @@ class _MyAppState extends State<MyApp> {
             transition: Transition.fadeIn),
         GetPage(
             name: '/chatscreen',
-            page: () => ChatScreen(),
+            page: () => ChatHome(),
             transition: Transition.fadeIn),
         GetPage(
             name: '/editprofile',
