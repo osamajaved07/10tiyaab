@@ -1,5 +1,4 @@
 // ignore_for_file: unnecessary_null_comparison
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -8,14 +7,14 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+class UserMapScreen extends StatefulWidget {
+  const UserMapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<UserMapScreen> createState() => _UserMapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _UserMapScreenState extends State<UserMapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -138,8 +137,8 @@ class _MapScreenState extends State<MapScreen> {
             altitudeAccuracy: 1.0, // Add altitudeAccuracy
             headingAccuracy: 1.0,
           );
-          _locationController.text =
-              "${newLatLng.latitude}, ${newLatLng.longitude}";
+          // _locationController.text =
+          //     "${newLatLng.latitude}, ${newLatLng.longitude}";
         });
       }
     } catch (e) {
@@ -157,12 +156,12 @@ class _MapScreenState extends State<MapScreen> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Get.back,
               child: Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop();
+                Get.toNamed("/homescreen");
                 if (openAppSettings) {
                   await openAppSettings; // Open app settings
                 }
@@ -179,31 +178,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  // Move the camera to the user's current location
-  // Future<void> _goToUserLocation() async {
-  //   try {
-  //     _currentPosition = await Geolocator.getCurrentPosition();
-  //     final GoogleMapController controller = await _controller.future;
-  //     if (controller != null) {
-  //       controller.animateCamera(
-  //         CameraUpdate.newCameraPosition(
-  //           CameraPosition(
-  //             target:
-  //                 LatLng(_currentPosition.latitude, _currentPosition.longitude),
-  //             zoom: 14.4746,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     if (e is PlatformException) {
-  //       print("Error moving camera: ${e.message}");
-  //     } else {
-  //       print("Unknown error: $e");
-  //     }
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -211,7 +185,15 @@ class _MapScreenState extends State<MapScreen> {
           ? Center(
               child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [CircularProgressIndicator(), Text("Loading...")],
+              children: [
+                CircularProgressIndicator(
+                  color: tPrimaryColor,
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text("Loading...")
+              ],
             )) // Show loading spinner while map is loading
           : LayoutBuilder(builder: (context, constraints) {
               final screenWidth = constraints.maxWidth;
@@ -259,6 +241,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                             child: TextField(
                               controller: _locationController,
+                              enabled: false,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.white,
