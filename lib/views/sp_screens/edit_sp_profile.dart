@@ -227,36 +227,11 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
                           SizedBox(height: screenHeight * 0.02),
 
                           // User Name
-                          Text(
-                            _userNameController.text.isNotEmpty
-                                ? _userNameController.text
-                                : 'Loading...', // Fallback text if username is not yet available
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: screenWidth * 0.05,
-                            ),
-                          ),
+                          userName(screenWidth),
                           SizedBox(height: screenHeight * 0.04),
 
                           // Name TextField
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 8.0), // Adds spacing to the right
-                                  child: _firstNameField(),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 8.0), // Adds spacing to the left
-                                  child: _lastNameField(),
-                                ),
-                              ),
-                            ],
-                          ),
+                          nameField(),
                           SizedBox(height: screenHeight * 0.03),
 
                           // Email TextField
@@ -269,11 +244,17 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
                               Container(
                                 width: screenWidth * 0.15,
                                 height: screenHeight * 0.07,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Image.asset(
-                                    'assets/images/flag.png',
-                                    fit: BoxFit.contain,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  elevation: 4,
+                                  shadowColor: Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.asset(
+                                      'assets/images/flag.png',
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -287,6 +268,9 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
 
                           // Update Button
                           updateButton(screenHeight, screenWidth),
+                          SizedBox(
+                            height: 12,
+                          )
                         ],
                       ),
                     ),
@@ -298,85 +282,160 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
         ));
   }
 
-  SizedBox updateButton(double screenHeight, double screenWidth) {
-    return SizedBox(
-      width: double.infinity,
-      height: screenHeight * 0.06,
-      child: ElevatedButton(
-        onPressed: () {
-          _updateProfile();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF04BEBE),
-          shape: RoundedRectangleBorder(
+  Row nameField() {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(right: 8.0), // Adds spacing to the right
+            child: Material(
+                color: Colors.white,
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(18),
+                child: _firstNameField()),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 8.0), // Adds spacing to the left
+            child: Material(
+                color: Colors.white,
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(18),
+                child: _lastNameField()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Text userName(double screenWidth) {
+    return Text(
+      _userNameController.text.isNotEmpty
+          ? _userNameController.text
+          : 'Loading...', // Fallback text if username is not yet available
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: screenWidth * 0.05,
+      ),
+    );
+  }
+
+  Material updateButton(double screenHeight, double screenWidth) {
+    return Material(
+      elevation: 12,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: SizedBox(
+        width: double.infinity,
+        height: screenHeight * 0.06,
+        child: ElevatedButton(
+          onPressed: () {
+            _updateProfile();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF04BEBE),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'Update',
+            style: TextStyle(
+              color: ttextColor,
+              fontSize: screenWidth * 0.045,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Material emailField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextField(
+        controller: _emailController,
+        style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.email_outlined),
+          labelText: 'Email',
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: Text(
-          'Update',
-          style: TextStyle(
-            color: ttextColor,
-            fontSize: screenWidth * 0.045,
-            fontWeight: FontWeight.bold,
+        enabled: false, // Email is not editable
+      ),
+    );
+  }
+
+  Material skillField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextField(
+        style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+        controller: _skillController,
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.work_outline_sharp),
+          labelText: 'Skill',
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
+        enabled: false, // Email is not editable
       ),
     );
   }
 
-  TextField emailField() {
-    return TextField(
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.email_outlined),
-        labelText: 'Email',
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+  Material phonenumberField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly, // Allows only numeric input
+          LengthLimitingTextInputFormatter(10), // Limits input to 10 digits
+        ],
+        controller: _phoneNumberController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your phone number';
+          } else if (!RegExp(r'^[3]\d{9}$').hasMatch(value)) {
+            return 'Enter your valid phone number';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.phone_android),
+          labelText: 'Phone#',
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10), // Black border color
+            borderRadius: BorderRadius.circular(18),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black45),
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
+        keyboardType: TextInputType.phone,
       ),
-      enabled: false, // Email is not editable
-    );
-  }
-
-  TextField skillField() {
-    return TextField(
-      controller: _skillController,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.work_outline_sharp),
-        labelText: 'Skill',
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      enabled: false, // Email is not editable
-    );
-  }
-
-  TextFormField phonenumberField() {
-    return TextFormField(
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly, // Allows only numeric input
-        LengthLimitingTextInputFormatter(10), // Limits input to 10 digits
-      ],
-      controller: _phoneNumberController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your phone number';
-        } else if (!RegExp(r'^[3]\d{9}$').hasMatch(value)) {
-          return 'Enter your valid phone number';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.phone_android),
-        labelText: 'Phone#',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      keyboardType: TextInputType.phone,
     );
   }
 
@@ -395,7 +454,13 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
         return null;
       },
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black45),
+          borderRadius: BorderRadius.circular(12),
+        ),
         hintText: 'Firstname',
         labelText: 'Firstname',
         prefixIcon: Icon(Icons.person_outline),
@@ -418,7 +483,13 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
         return null;
       },
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black45),
+          borderRadius: BorderRadius.circular(12),
+        ),
         hintText: 'Lastname',
         labelText: 'Lastname',
         prefixIcon: Icon(Icons.person_outline),

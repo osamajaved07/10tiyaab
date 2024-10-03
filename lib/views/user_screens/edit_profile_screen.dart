@@ -55,9 +55,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     } catch (e) {
       print('Error loading user data: $e');
-      // setState(() {
-      //   _isLoading = false; // Stop loading even if there's an error
-      // }); // Log the error
     } finally {
       setState(() {
         _isLoading = false; // Stop loading
@@ -181,167 +178,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         SizedBox(height: screenHeight * 0.05),
 
                         // Profile Picture Section
-                        Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: screenWidth * 0.18,
-                              backgroundImage: _pickedImage != null
-                                  ? FileImage(File(
-                                      _pickedImage!.path)) // Show picked image
-                                  : (_profileImageUrl != null &&
-                                              _profileImageUrl!.isNotEmpty
-                                          ? NetworkImage(
-                                              _profileImageUrl!) // Show server image
-                                          : AssetImage(
-                                              'assets/images/default_profile.png')) // Show default image
-                                      as ImageProvider,
-                            ),
-                            if (_isLoading) // Show loading indicator when _isLoading is true
-                              Center(
-                                child: CircularProgressIndicator(
-                                  color: tPrimaryColor,
-                                ),
-                              ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: _pickImage,
-                                child: Container(
-                                  padding: EdgeInsets.all(screenWidth * 0.02),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: Colors.grey, width: 2),
-                                  ),
-                                  child: Icon(Icons.camera_alt,
-                                      size: screenWidth * 0.05),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        picUpload(screenWidth),
                         SizedBox(height: screenHeight * 0.02),
 
                         // User Name
-                        Text(
-                          _userNameController.text.isNotEmpty
-                              ? _userNameController.text
-                              : 'Loading...', // Fallback text if username is not yet available
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: screenWidth * 0.05,
-                          ),
-                        ),
+                        userNameField(screenWidth),
                         SizedBox(height: screenHeight * 0.04),
 
                         // Name TextField
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 8.0), // Adds spacing to the right
-                                child: _firstNameField(),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0), // Adds spacing to the left
-                                child: _lastNameField(),
-                              ),
-                            ),
-                          ],
-                        ),
+                        nameField(),
                         SizedBox(height: screenHeight * 0.03),
 
                         // Email TextField
-                        TextField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.email_outlined),
-                            labelText: 'Email',
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          enabled: false, // Email is not editable
-                        ),
+                        emailField(),
                         SizedBox(height: screenHeight * 0.03),
 
-                        Row(
-                          children: [
-                            Container(
-                              width: screenWidth * 0.15,
-                              height: screenHeight * 0.07,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12.0),
-                                child: Image.asset(
-                                  'assets/images/flag.png',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: screenWidth * 0.03),
-                            Expanded(
-                              child: TextFormField(
-                                inputFormatters: [
-                                  FilteringTextInputFormatter
-                                      .digitsOnly, // Allows only numeric input
-                                  LengthLimitingTextInputFormatter(
-                                      10), // Limits input to 10 digits
-                                ],
-                                controller: _phoneNumberController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your phone number';
-                                  } else if (!RegExp(r'^[3]\d{9}$')
-                                      .hasMatch(value)) {
-                                    return 'Enter your valid phone number';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.phone_android),
-                                  labelText: 'Phone#',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                keyboardType: TextInputType.phone,
-                              ),
-                            ),
-                          ],
-                        ),
+                        phoneNumberField(screenWidth, screenHeight),
                         SizedBox(height: screenHeight * 0.05),
 
                         // Update Button
+                        updateButton(screenHeight, screenWidth),
                         SizedBox(
-                          width: double.infinity,
-                          height: screenHeight * 0.06,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _updateProfile();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF04BEBE),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              'Update',
-                              style: TextStyle(
-                                color: ttextColor,
-                                fontSize: screenWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
+                          height: 12,
+                        )
                       ],
                     ),
                   ),
@@ -351,6 +210,204 @@ class _EditProfilePageState extends State<EditProfilePage> {
       bottomNavigationBar: BottomNavigationBarWidget(
         initialIndex: 1,
       ),
+    );
+  }
+
+  Material updateButton(double screenHeight, double screenWidth) {
+    return Material(
+      elevation: 12,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: SizedBox(
+        width: double.infinity,
+        height: screenHeight * 0.06,
+        child: ElevatedButton(
+          onPressed: () {
+            _updateProfile();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF04BEBE),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'Update',
+            style: TextStyle(
+              color: ttextColor,
+              fontSize: screenWidth * 0.045,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row phoneNumberField(double screenWidth, double screenHeight) {
+    return Row(
+      children: [
+        Container(
+          width: screenWidth * 0.15,
+          height: screenHeight * 0.07,
+          child: Material(
+            color: Colors.transparent,
+            elevation: 4,
+            shadowColor: Colors.grey.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Image.asset(
+                'assets/images/flag.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: screenWidth * 0.03),
+        Expanded(
+          child: Material(
+            color: Colors.white,
+            elevation: 4,
+            shadowColor: Colors.grey.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(12),
+            child: TextFormField(
+              inputFormatters: [
+                FilteringTextInputFormatter
+                    .digitsOnly, // Allows only numeric input
+                LengthLimitingTextInputFormatter(
+                    10), // Limits input to 10 digits
+              ],
+              controller: _phoneNumberController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your phone number';
+                } else if (!RegExp(r'^[3]\d{9}$').hasMatch(value)) {
+                  return 'Enter your valid phone number';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.phone_android),
+                labelText: 'Phone#',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black45),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              keyboardType: TextInputType.phone,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Material emailField() {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      child: TextField(
+        controller: _emailController,
+        style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.email_outlined),
+          labelText: 'Email',
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
+        enabled: false, // Email is not editable
+      ),
+    );
+  }
+
+  Row nameField() {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(right: 8.0), // Adds spacing to the right
+            child: Material(
+                color: Colors.white,
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(18),
+                child: _firstNameField()),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 8.0), // Adds spacing to the left
+            child: Material(
+                color: Colors.white,
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(18),
+                child: _lastNameField()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Text userNameField(double screenWidth) {
+    return Text(
+      _userNameController.text.isNotEmpty
+          ? _userNameController.text
+          : 'Loading...', // Fallback text if username is not yet available
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: screenWidth * 0.05,
+      ),
+    );
+  }
+
+  Stack picUpload(double screenWidth) {
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: screenWidth * 0.18,
+          backgroundImage: _pickedImage != null
+              ? FileImage(File(_pickedImage!.path)) // Show picked image
+              : (_profileImageUrl != null && _profileImageUrl!.isNotEmpty
+                      ? NetworkImage(_profileImageUrl!) // Show server image
+                      : AssetImage(
+                          'assets/images/default_profile.png')) // Show default image
+                  as ImageProvider,
+        ),
+        if (_isLoading) // Show loading indicator when _isLoading is true
+          Center(
+            child: CircularProgressIndicator(
+              color: tPrimaryColor,
+            ),
+          ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: _pickImage,
+            child: Container(
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey, width: 2),
+              ),
+              child: Icon(Icons.camera_alt, size: screenWidth * 0.05),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -369,7 +426,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return null;
       },
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black45),
+          borderRadius: BorderRadius.circular(12),
+        ),
         hintText: 'Firstname',
         labelText: 'Firstname',
         prefixIcon: Icon(Icons.person_outline),
@@ -392,7 +455,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return null;
       },
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black45),
+          borderRadius: BorderRadius.circular(12),
+        ),
         hintText: 'Lastname',
         labelText: 'Lastname',
         prefixIcon: Icon(Icons.person_outline),

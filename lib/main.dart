@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/sp_auth_controller.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
+import 'package:fyp_1/views/user_screens/map_screen/job_details_screen.dart';
 import 'package:fyp_1/views/user_screens/map_screen/map_screen.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/sp_screens/edit_sp_profile.dart';
@@ -112,10 +113,15 @@ class _MyAppState extends State<MyApp> {
             page: () => ContactUsScreen(),
             transition: Transition.fadeIn),
 
-//--------------------Map screens------------------------------
+//--------------------User Map screens------------------------------
         GetPage(
             name: '/mapscreen',
             page: () => UserMapScreen(),
+            transition: Transition.fadeIn),
+
+        GetPage(
+            name: '/jobdetail',
+            page: () => JobDetails(),
             transition: Transition.fadeIn),
 
 //--------------------Service provider screens------------------------------

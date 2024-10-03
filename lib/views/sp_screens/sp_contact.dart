@@ -134,96 +134,13 @@ class _SpContactUsScreenState extends State<SpContactUsScreen> {
                           ),
                         ),
                         SizedBox(height: screenHeight * 0.04),
-                        TextField(
-                          controller: _nameController,
-                          decoration: InputDecoration(
-                            labelText: 'Username',
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          enabled: false,
-                        ),
+                        nameField(),
                         SizedBox(height: screenHeight * 0.03),
-                        TextField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            disabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            labelText: 'Email',
-                          ),
-                          enabled: false, // Email is not editable
-                        ),
+                        emailField(),
                         SizedBox(height: screenHeight * 0.03),
-                        TextField(
-                          controller: _messageController,
-                          keyboardType: TextInputType.text,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            labelText: 'Message',
-                            hintText: "Type your message here...",
-                            hintStyle: TextStyle(
-                              color: Colors
-                                  .grey.shade600, // Adjust hint text color
-                              fontSize: 16, // Adjust font size of hint
-                            ),
-                            filled: true, // Enable background color
-                            fillColor: Colors.grey.shade100,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors.grey
-                                    .shade400, // Border color for enabled state
-                                width: 1.5, // Adjust border thickness
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color:
-                                    tPrimaryColor, // Border color when focused
-                                width: 2.0, // Thicker border when focused
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors
-                                    .redAccent, // Border color for error state
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          // enabled: false, // Email is not editable
-                        ),
+                        messageField(),
                         SizedBox(height: screenHeight * 0.06),
-                        SizedBox(
-                          width: double.infinity,
-                          height: screenHeight * 0.06,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _sendFeedback();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF04BEBE),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              'Send',
-                              style: TextStyle(
-                                color: ttextColor,
-                                fontSize: screenWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
+                        sendButton(screenHeight, screenWidth),
                       ],
                     ),
                   ),
@@ -232,6 +149,129 @@ class _SpContactUsScreenState extends State<SpContactUsScreen> {
             ),
       bottomNavigationBar: BottomBar(
         initialIndex: 3,
+      ),
+    );
+  }
+
+  Material sendButton(double screenHeight, double screenWidth) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      child: SizedBox(
+        width: double.infinity,
+        height: screenHeight * 0.06,
+        child: ElevatedButton(
+          onPressed: () {
+            _sendFeedback();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF04BEBE),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'Send',
+            style: TextStyle(
+              color: ttextColor,
+              fontSize: screenWidth * 0.045,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Material messageField() {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      child: TextField(
+        controller: _messageController,
+        keyboardType: TextInputType.text,
+        maxLines: 5,
+        decoration: InputDecoration(
+          labelText: 'Message',
+          hintText: "Type your message here...",
+          hintStyle: TextStyle(
+            color: Colors.grey.shade600, // Adjust hint text color
+            fontSize: 16, // Adjust font size of hint
+          ),
+          filled: true, // Enable background color
+          fillColor: Colors.grey.shade100,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Colors.grey.shade400, // Border color for enabled state
+              width: 1.5, // Adjust border thickness
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: tPrimaryColor, // Border color when focused
+              width: 2.0, // Thicker border when focused
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Colors.redAccent, // Border color for error state
+              width: 1.5,
+            ),
+          ),
+        ),
+        // enabled: false, // Email is not editable
+      ),
+    );
+  }
+
+  Material emailField() {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      child: TextField(
+        controller: _emailController,
+        style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black12),
+              borderRadius: BorderRadius.circular(10)),
+          labelText: 'Email',
+        ),
+        enabled: false, // Email is not editable
+      ),
+    );
+  }
+
+  Material nameField() {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      child: TextField(
+        controller: _nameController,
+        style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+        decoration: InputDecoration(
+          labelText: 'Username',
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        enabled: false,
       ),
     );
   }

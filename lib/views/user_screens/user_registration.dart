@@ -115,7 +115,7 @@ class _UserRegisterState extends State<UserRegister> {
                                   "Register",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 24,
+                                      fontSize: tlargefontsize(context),
                                       color: Colors.black54),
                                 ),
                                 SizedBox(
@@ -210,18 +210,18 @@ class _UserRegisterState extends State<UserRegister> {
       onTap: register,
       child: Material(
         elevation: 5.0,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0),
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: tPrimaryColor, borderRadius: BorderRadius.circular(20)),
+              color: tPrimaryColor, borderRadius: BorderRadius.circular(12)),
           child: Center(
               child: Text(
             "Register",
             style: TextStyle(
                 color: ttextColor,
-                fontSize: 20.0,
+                fontSize: tmidfontsize(context),
                 fontFamily: 'Poppins1',
                 fontWeight: FontWeight.bold),
           )),
@@ -230,124 +230,154 @@ class _UserRegisterState extends State<UserRegister> {
     );
   }
 
-  TextFormField _confirmpasswordField() {
-    return TextFormField(
-      controller: _confirmPasswordController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter password';
-        } else if (value.length < 8) {
-          return 'Password must be at least 8 characters';
-        } else {
-          return null;
-        }
-      },
-      obscureText: !ispasswordVisible,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-        hintText: 'Confirm password',
-        labelText: 'Confirm password',
-        prefixIcon: Icon(Icons.lock_outlined),
-        suffixIcon: IconButton(
-          icon: Icon(
-            ispasswordVisible ? Icons.visibility : Icons.visibility_off,
+  Material _confirmpasswordField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _confirmPasswordController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter password';
+          } else if (value.length < 8) {
+            return 'Password must be at least 8 characters';
+          } else {
+            return null;
+          }
+        },
+        obscureText: !ispasswordVisible,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          hintText: 'Confirm password',
+          labelText: 'Confirm password',
+          prefixIcon: Icon(Icons.lock_outlined),
+          suffixIcon: IconButton(
+            icon: Icon(
+              ispasswordVisible ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: () {
+              setState(() {
+                ispasswordVisible = !ispasswordVisible; // Toggle visibility
+              });
+            },
           ),
-          onPressed: () {
-            setState(() {
-              ispasswordVisible = !ispasswordVisible; // Toggle visibility
-            });
-          },
         ),
       ),
     );
   }
 
-  TextFormField _passwordField() {
-    return TextFormField(
-      controller: _passwordController,
-      obscureText: !isPasswordVisible,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter password';
-        } else if (value.length < 8) {
-          return 'Password must be at least 8 characters';
-        } else if (!RegExp(
-                r'^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[a-z\d@$!%*#?&]{8,}$')
-            .hasMatch(value)) {
-          return 'Password must contain at least one letter,\none number, and one special character';
-        } else {
-          return null;
-        }
-      },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-        hintText: 'Password',
-        labelText: 'Password',
-        prefixIcon: Icon(Icons.lock_outlined),
-        suffixIcon: IconButton(
-          icon: Icon(
-            isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+  Material _passwordField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _passwordController,
+        obscureText: !isPasswordVisible,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter password';
+          } else if (value.length < 8) {
+            return 'Password must be at least 8 characters';
+          } else if (!RegExp(
+                  r'^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[a-z\d@$!%*#?&]{8,}$')
+              .hasMatch(value)) {
+            return 'Password must contain at least one letter,\none number, and one special character';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          hintText: 'Password',
+          labelText: 'Password',
+          prefixIcon: Icon(Icons.lock_outlined),
+          suffixIcon: IconButton(
+            icon: Icon(
+              isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: () {
+              setState(() {
+                isPasswordVisible = !isPasswordVisible; // Toggle visibility
+              });
+            },
           ),
-          onPressed: () {
-            setState(() {
-              isPasswordVisible = !isPasswordVisible; // Toggle visibility
-            });
-          },
         ),
       ),
     );
   }
 
-  TextFormField _userNameField() {
-    return TextFormField(
-      controller: _userNameController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your username';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-        hintText: 'Username',
-        labelText: 'Username',
-        prefixIcon: Icon(Icons.person_outline),
+  Material _userNameField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _userNameController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your username';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          hintText: 'Username',
+          labelText: 'Username',
+          prefixIcon: Icon(Icons.person_outline),
+        ),
       ),
     );
   }
 
-  TextFormField _firstNameField() {
-    return TextFormField(
-      controller: _firstNameController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Enter your first name';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-        hintText: 'Firstname',
-        labelText: 'Firstname',
-        prefixIcon: Icon(Icons.person_outline),
+  Material _firstNameField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _firstNameController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Enter your first name';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          hintText: 'Firstname',
+          labelText: 'Firstname',
+          prefixIcon: Icon(Icons.person_outline),
+        ),
       ),
     );
   }
 
-  TextFormField _lastNameField() {
-    return TextFormField(
-      controller: _lastNameController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Enter your last name';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-        hintText: 'Lastname',
-        labelText: 'Lastname',
-        prefixIcon: Icon(Icons.person_outline),
+  Material _lastNameField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _lastNameController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Enter your last name';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          hintText: 'Lastname',
+          labelText: 'Lastname',
+          prefixIcon: Icon(Icons.person_outline),
+        ),
       ),
     );
   }

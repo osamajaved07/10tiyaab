@@ -124,7 +124,7 @@ class _ServiceProviderLoginState extends State<ServiceProviderLogin> {
                                       "Login",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 24,
+                                          fontSize: tlargefontsize(context),
                                           color: Colors.black54),
                                     ),
                                     SizedBox(
@@ -191,18 +191,18 @@ class _ServiceProviderLoginState extends State<ServiceProviderLogin> {
       onTap: isButtonEnabled ? _login : null,
       child: Material(
         elevation: 5.0,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0),
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: tPrimaryColor, borderRadius: BorderRadius.circular(20)),
+              color: tPrimaryColor, borderRadius: BorderRadius.circular(12)),
           child: Center(
               child: Text(
             "LOGIN",
             style: TextStyle(
                 color: ttextColor,
-                fontSize: 18.0,
+                fontSize: tmidfontsize(context),
                 fontFamily: 'Poppins1',
                 fontWeight: FontWeight.bold),
           )),
@@ -211,52 +211,64 @@ class _ServiceProviderLoginState extends State<ServiceProviderLogin> {
     );
   }
 
-  TextFormField _passwordField() {
-    return TextFormField(
-      controller: _passwordcontroller,
-      obscureText: !isPasswordVisible,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Password cannot be empty';
-        } else {
-          return null;
-        }
-      },
-      // obscureText: true,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-        hintText: 'Password',
-        labelText: 'Password',
-        prefixIcon: Icon(Icons.lock_outlined),
-        suffixIcon: IconButton(
-          icon: Icon(
-            isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+  Material _passwordField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _passwordcontroller,
+        obscureText: !isPasswordVisible,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Password cannot be empty';
+          } else {
+            return null;
+          }
+        },
+        // obscureText: true,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          hintText: 'Password',
+          labelText: 'Password',
+          prefixIcon: Icon(Icons.lock_outlined),
+          suffixIcon: IconButton(
+            icon: Icon(
+              isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: () {
+              setState(() {
+                isPasswordVisible = !isPasswordVisible; // Toggle visibility
+              });
+            },
           ),
-          onPressed: () {
-            setState(() {
-              isPasswordVisible = !isPasswordVisible; // Toggle visibility
-            });
-          },
         ),
       ),
     );
   }
 
-  TextFormField _nameField() {
-    return TextFormField(
-      controller: _namecontroller,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Name cannot be empty';
-        } else {
-          return null;
-        }
-      },
-      decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-          hintText: 'John Doe',
-          labelText: 'Name',
-          prefixIcon: Icon(Icons.person_outline)),
+  Material _nameField() {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.5),
+      borderRadius: BorderRadius.circular(18),
+      child: TextFormField(
+        controller: _namecontroller,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Name cannot be empty';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+            hintText: 'John Doe',
+            labelText: 'Name',
+            prefixIcon: Icon(Icons.person_outline)),
+      ),
     );
   }
 }

@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_null_comparison
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:fyp_1/utils/custom_dialog.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,6 +28,7 @@ class _UserMapScreenState extends State<UserMapScreen> {
   late Position _currentPosition;
   bool _isMapLoading = true; // Tracks map loading state
   final TextEditingController _locationController = TextEditingController();
+  final UserAuthController _authController = Get.find<UserAuthController>();
 
   @override
   void initState() {
@@ -86,10 +89,13 @@ class _UserMapScreenState extends State<UserMapScreen> {
           "${place.street}, ${place.subLocality}, ${place.locality}";
 
       // Set the address in the TextField
-      _locationController.text = address;
+
+      // _locationController.text = address;
+
       // _locationController.text =
       //     "${_currentPosition.latitude}, ${_currentPosition.longitude}"; // Set current location in the text field
       setState(() {
+        _locationController.text = address;
         _initialCameraPosition = CameraPosition(
           target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
           zoom: 14.4746,
@@ -105,6 +111,16 @@ class _UserMapScreenState extends State<UserMapScreen> {
       );
     } catch (e) {
       print("Error getting location: $e");
+    }
+  }
+
+  Future<void> _saveLocation() async {
+    if (_currentPosition != null) {
+      await _authController.sendUserLocation(
+          _currentPosition.latitude, _currentPosition.longitude);
+      // Get.toNamed("page");
+    } else {
+      errorSnackbar("Error", "Failed to get current location.");
     }
   }
 
@@ -211,75 +227,123 @@ class _UserMapScreenState extends State<UserMapScreen> {
                       _controller.complete(controller);
                     },
                   ),
+                  showLocationField(screenHeight),
+                  getCurrentLocation(screenHeight, screenWidth),
                   Positioned(
-                    top: screenHeight * 0.08,
-                    left: 5,
-                    right: 20,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            icon: Icon(Icons.arrow_back)),
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color:
-                                      const Color.fromARGB(255, 121, 121, 121)
-                                          .withOpacity(
-                                              0.5), // Shadow color with opacity
-                                  spreadRadius: 5, // Spread radius
-                                  blurRadius: 7, // Blur radius
-                                  offset: Offset(
-                                      0, 3), // Offset for the shadow (x, y)
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              controller: _locationController,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                                hintText: 'Search location',
-                                suffixIcon: IconButton(
-                                  icon: Icon(Icons.search),
-                                  onPressed: () {
-                                    _searchLocation(_locationController
-                                        .text); // Search location on pressing the search icon
-                                  },
-                                ),
-                              ),
-                              onSubmitted: (value) {
-                                _searchLocation(
-                                    value); // Search location when the user submits the location
-                              },
+                    bottom: screenHeight * 0.04,
+                    left: screenWidth * 0.19,
+                    right: screenWidth * 0.19,
+                    child: Material(
+                      elevation: 12,
+                      shadowColor: Colors.grey.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(18),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              tPrimaryColor,
+                              const Color.fromARGB(255, 52, 235, 235)
+                            ], // Your gradient colors
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ElevatedButton(
+                          onPressed:
+                              _saveLocation, // Call the save location function
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
+                          child: Text(
+                            'Confirm location',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: tsecondarytextColor,
+                                fontSize: tmidfontsize(context)),
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: screenHeight * 0.13,
-                    right: screenWidth * 0.02,
-                    child: FloatingActionButton(
-                      onPressed: _getCurrentLocation,
-                      child: Icon(Icons.my_location),
-                      backgroundColor: tPrimaryColor,
+                      ),
                     ),
                   ),
                 ],
               );
             }),
+    );
+  }
+
+  Positioned getCurrentLocation(double screenHeight, double screenWidth) {
+    return Positioned(
+      bottom: screenHeight * 0.13,
+      right: screenWidth * 0.02,
+      child: FloatingActionButton(
+        onPressed: _getCurrentLocation,
+        child: Icon(Icons.my_location),
+        backgroundColor: tPrimaryColor,
+      ),
+    );
+  }
+
+  Positioned showLocationField(double screenHeight) {
+    return Positioned(
+      top: screenHeight * 0.06,
+      left: 5,
+      right: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+              onPressed: () {
+                Get.toNamed("/homescreen");
+              },
+              icon: Icon(Icons.arrow_back)),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 121, 121, 121)
+                        .withOpacity(0.5), // Shadow color with opacity
+                    spreadRadius: 5, // Spread radius
+                    blurRadius: 7, // Blur radius
+                    offset: Offset(0, 3), // Offset for the shadow (x, y)
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _locationController,
+                style:
+                    TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+                enabled: false,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  hintText: 'Search location',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      _searchLocation(_locationController
+                          .text); // Search location on pressing the search icon
+                    },
+                  ),
+                ),
+                onSubmitted: (value) {
+                  _searchLocation(
+                      value); // Search location when the user submits the location
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

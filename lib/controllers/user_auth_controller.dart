@@ -724,8 +724,10 @@ class UserAuthController extends GetxController {
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'An unexpected error occurred. Please try again.',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred. Please try again.',
+      );
       print("$e");
     }
   }
@@ -783,6 +785,45 @@ class UserAuthController extends GetxController {
     } catch (e) {
       print('Error checking login status: $e');
       return false;
+    }
+  }
+
+  Future<void> sendUserLocation(double latitude, double longitude) async {
+    Get.dialog(
+      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      barrierDismissible: false,
+    );
+
+    try {
+      // Make a POST request to send the location
+      final response = await http.post(
+        Uri.parse("$baseUrl/api/save-location/"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode({
+          'latitude': latitude,
+          'longitude': longitude,
+        }),
+      );
+      Get.back();
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Location successfully sent to server.');
+        // Get.back();
+        successSnackbar('Success', 'Location updated successfully.');
+        Get.offNamed("/jobdetail");
+      } else {
+        // Get.back();
+        print('Response body: ${response.body}');
+        errorSnackbar('Error', 'Failed to set destination.');
+      }
+    } catch (e) {
+      Get.back();
+      print('Error sending location: $e');
+      errorSnackbar('Error', 'Something went wrong.');
     }
   }
 }

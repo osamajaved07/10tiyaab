@@ -41,12 +41,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     _filteredProviders = [];
   }
 
-  // @override
-  // void dispose() {
-  //   _searchController.dispose();
-  //   super.dispose();
-  // }
-
   void _onSearchChanged(String query) {
     setState(() {
       _showSuggestions = query.isNotEmpty;
@@ -73,6 +67,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       _filteredProviders.clear();
       _showSuggestions = false;
       _isWhereToEnabled = true;
+
+      FocusScope.of(context).unfocus(); // Closes the keyboard
     });
   }
 
@@ -171,72 +167,79 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           child: Column(
                             //this contain search boxes
                             children: [
-                              Container(
-                                width: screenWidth,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenHeight * 0.001,
-                                  horizontal: screenWidth * 0.04,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  children: [
-                                    SizedBox(width: screenWidth * 0.02),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          TextField(
-                                            controller: _searchController,
-                                            decoration: InputDecoration(
-                                              hintText:
-                                                  'Search service provider',
-                                              hintStyle: TextStyle(
-                                                color: Color(0xFF616161),
+                              Material(
+                                color: Colors.white,
+                                elevation: 4,
+                                shadowColor: Colors.grey.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(18),
+                                child: Container(
+                                  width: screenWidth,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: screenHeight * 0.001,
+                                    horizontal: screenWidth * 0.04,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(width: screenWidth * 0.02),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            TextField(
+                                              controller: _searchController,
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                    'Search service provider',
+                                                hintStyle: TextStyle(
+                                                  color: Color(0xFF616161),
+                                                  fontSize: screenWidth * 0.045,
+                                                ),
+                                                border: InputBorder.none,
+                                              ),
+                                              style: TextStyle(
+                                                color: Colors.black,
                                                 fontSize: screenWidth * 0.045,
                                               ),
-                                              border: InputBorder.none,
+                                              onChanged: _onSearchChanged,
                                             ),
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: screenWidth * 0.045,
-                                            ),
-                                            onChanged: _onSearchChanged,
-                                          ),
-                                          if (_showSuggestions &&
-                                              _filteredProviders.isNotEmpty)
-                                            Container(
-                                              height:
-                                                  100, // Adjust the height as needed
-                                              child: ListView.builder(
-                                                itemCount:
-                                                    _filteredProviders.length,
-                                                itemBuilder: (context, index) {
-                                                  return ListTile(
-                                                    title: Text(
-                                                        _filteredProviders[
-                                                            index]),
-                                                    onTap: () =>
-                                                        _selectSuggestion(
-                                                            _filteredProviders[
-                                                                index]),
-                                                  );
-                                                },
+                                            if (_showSuggestions &&
+                                                _filteredProviders.isNotEmpty)
+                                              Container(
+                                                height:
+                                                    100, // Adjust the height as needed
+                                                child: ListView.builder(
+                                                  itemCount:
+                                                      _filteredProviders.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return ListTile(
+                                                      title: Text(
+                                                          _filteredProviders[
+                                                              index]),
+                                                      onTap: () =>
+                                                          _selectSuggestion(
+                                                              _filteredProviders[
+                                                                  index]),
+                                                    );
+                                                  },
+                                                ),
                                               ),
-                                            ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.clear),
-                                      onPressed: _clearSearch,
-                                    ),
-                                  ],
+                                      IconButton(
+                                        icon: Icon(Icons.clear),
+                                        onPressed: _clearSearch,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               SizedBox(height: screenHeight * 0.015),
@@ -246,31 +249,37 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         Get.toNamed("/mapscreen");
                                       }
                                     : null, // Disable tap if not enabled
-                                child: Container(
-                                  width: screenWidth,
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: screenHeight * 0.016,
-                                    horizontal: screenWidth * 0.04,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: _isWhereToEnabled
-                                        ? Colors.white
-                                        : Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.location_on_outlined,
-                                          color: Colors.grey),
-                                      SizedBox(width: screenWidth * 0.02),
-                                      Text(
-                                        "Where to?",
-                                        style: TextStyle(
-                                          color: Color(0xFF616161),
-                                          fontSize: screenWidth * 0.045,
+                                child: Material(
+                                  color: Colors.white,
+                                  elevation: 4,
+                                  shadowColor: Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(18),
+                                  child: Container(
+                                    width: screenWidth,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: screenHeight * 0.016,
+                                      horizontal: screenWidth * 0.04,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _isWhereToEnabled
+                                          ? Colors.white
+                                          : Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.location_on_outlined,
+                                            color: Colors.grey),
+                                        SizedBox(width: screenWidth * 0.02),
+                                        Text(
+                                          "Where to?",
+                                          style: TextStyle(
+                                            color: Color(0xFF616161),
+                                            fontSize: screenWidth * 0.045,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -292,49 +301,57 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         // First search bar with dropdown button
 
                         SizedBox(height: screenHeight * 0.04),
-                        Container(
-                          width: screenWidth,
-                          height: screenHeight * 0.2,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color.fromARGB(255, 121, 121, 121)
-                                    .withOpacity(
-                                        0.5), // Shadow color with opacity
-                                spreadRadius: 5, // Spread radius
-                                blurRadius: 7, // Blur radius
-                                offset: Offset(
-                                    0, 3), // Offset for the shadow (x, y)
-                              ),
-                            ],
-                            gradient: LinearGradient(
-                              colors: [Color(0xFF04BEBE), Color(0xFF025858)],
-                              stops: [0.47, 1.0],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: screenHeight * 0.03,
-                                horizontal: screenWidth * 0.04),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Skillful Person\nBook Now →',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: screenWidth * 0.05,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Image.asset(
-                                  'assets/images/worker.png',
-                                  width: screenWidth * 0.3,
+                        Material(
+                          color: Colors.white,
+                          elevation: 4,
+                          shadowColor: Colors.grey.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(18),
+                          child: Container(
+                            width: screenWidth,
+                            height: screenHeight * 0.2,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      const Color.fromARGB(255, 121, 121, 121)
+                                          .withOpacity(
+                                              0.5), // Shadow color with opacity
+                                  spreadRadius: 5, // Spread radius
+                                  blurRadius: 7, // Blur radius
+                                  offset: Offset(
+                                      0, 3), // Offset for the shadow (x, y)
                                 ),
                               ],
+                              gradient: LinearGradient(
+                                colors: [Color(0xFF04BEBE), Color(0xFF025858)],
+                                stops: [0.47, 1.0],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.03,
+                                  horizontal: screenWidth * 0.04),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Skillful Person\nBook Now →',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: screenWidth * 0.05,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Image.asset(
+                                    'assets/images/worker.png',
+                                    width: screenWidth * 0.3,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

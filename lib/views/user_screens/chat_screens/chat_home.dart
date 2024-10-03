@@ -36,7 +36,9 @@ class ChatHome extends StatelessWidget {
       body: ListView.builder(
         itemCount: chats.length,
         itemBuilder: (context, index) {
-          return ChatItemWidget(chatItem: chats[index]);
+          return ChatItemWidget(
+            chatItem: chats[index],
+          );
         },
       ),
     );
