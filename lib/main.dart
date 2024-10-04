@@ -7,7 +7,7 @@ import 'package:fyp_1/views/user_screens/map_screen/job_details_screen.dart';
 import 'package:fyp_1/views/user_screens/map_screen/map_screen.dart';
 import 'package:fyp_1/views/others/onboarding_screen.dart';
 import 'package:fyp_1/views/sp_screens/edit_sp_profile.dart';
-import 'package:fyp_1/views/sp_screens/map_screen.dart';
+import 'package:fyp_1/views/sp_screens/map_screens/map_screen.dart';
 import 'package:fyp_1/views/sp_screens/sp_act_screen.dart';
 import 'package:fyp_1/views/sp_screens/sp_contact.dart';
 import 'package:fyp_1/views/sp_screens/sp_home.dart';

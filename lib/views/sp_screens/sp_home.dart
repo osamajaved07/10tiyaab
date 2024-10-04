@@ -97,7 +97,7 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: screenHeight / 6),
-                    // padding: EdgeInsets.only(bottom: screenHeight * 0.07),
+                    padding: EdgeInsets.only(top: screenHeight * 0.03),
                     height: screenHeight / 1,
                     width: screenWidth,
                     decoration: BoxDecoration(
@@ -108,8 +108,9 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth / 15,
-                            vertical: screenHeight * 0.03),
+                          horizontal: screenWidth / 15,
+                          // vertical: screenHeight * 0.03
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -675,7 +676,7 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                               ],
                             ),
                             SizedBox(
-                              height: 60,
+                              height: 80,
                             )
                           ],
                         ),

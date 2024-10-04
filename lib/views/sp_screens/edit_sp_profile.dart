@@ -134,27 +134,8 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         extendBody: true,
+        extendBodyBehindAppBar: true,
         backgroundColor: tSecondaryColor,
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                _showLogoutDialog(context);
-              },
-              icon: Icon(
-                Icons.logout_outlined,
-                color: tPrimaryColor,
-                size: 32,
-              ),
-            )
-          ],
-          title: Text('Profile',
-              style: TextStyle(color: Colors.black, fontSize: 24)),
-          centerTitle: true,
-          backgroundColor: tSecondaryColor,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-        ),
         body: _isLoading
             ? Center(
                 child: Column(
@@ -174,103 +155,71 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
                   final screenHeight = constraints.maxHeight;
 
                   return SingleChildScrollView(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Container(
+                      height: screenHeight,
+                      child: Stack(
                         children: [
-                          SizedBox(height: screenHeight * 0.05),
-
-                          // Profile Picture Section
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: screenWidth * 0.18,
-                                backgroundImage: _pickedImage != null
-                                    ? FileImage(File(_pickedImage!
-                                        .path)) // Show picked image
-                                    : (_profileImageUrl != null &&
-                                                _profileImageUrl!.isNotEmpty
-                                            ? NetworkImage(
-                                                _profileImageUrl!) // Show server image
-                                            : AssetImage(
-                                                'assets/images/default_profile.png')) // Show default image
-                                        as ImageProvider,
-                              ),
-                              if (_isLoading) // Show loading indicator when _isLoading is true
-                                Center(
-                                  child: CircularProgressIndicator(
-                                    color: tPrimaryColor,
-                                  ),
-                                ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: GestureDetector(
-                                  onTap: _pickImage,
-                                  child: Container(
-                                    padding: EdgeInsets.all(screenWidth * 0.02),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: Colors.grey, width: 2),
-                                    ),
-                                    child: Icon(Icons.camera_alt,
-                                        size: screenWidth * 0.05),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          Container(
+                            padding: EdgeInsets.only(
+                                top: 45.0, left: 20.0, right: 20.0),
+                            height: screenHeight / 3.1,
+                            width: screenWidth,
+                            decoration: BoxDecoration(
+                                color: const Color.fromARGB(84, 4, 190, 190),
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.elliptical(
+                                        MediaQuery.of(context).size.width,
+                                        105.0))),
                           ),
-                          SizedBox(height: screenHeight * 0.02),
+                          Positioned(
+                              right: 0,
+                              top: screenHeight * 0.035,
+                              child: IconButton(
+                                  onPressed: () {
+                                    _showLogoutDialog(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.logout_outlined,
+                                    color: ttextColor,
+                                    size: 32,
+                                  ))),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.08,
+                                vertical: screenHeight * 0.08),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // SizedBox(height: screenHeight * 0.05),
 
-                          // User Name
-                          userName(screenWidth),
-                          SizedBox(height: screenHeight * 0.04),
+                                // Profile Picture Section
+                                picUpload(screenWidth),
+                                SizedBox(height: screenHeight * 0.02),
 
-                          // Name TextField
-                          nameField(),
-                          SizedBox(height: screenHeight * 0.03),
+                                // User Name
+                                userName(screenWidth),
+                                SizedBox(height: screenHeight * 0.04),
 
-                          // Email TextField
-                          emailField(),
-                          SizedBox(height: screenHeight * 0.03),
-                          skillField(),
-                          SizedBox(height: screenHeight * 0.03),
-                          Row(
-                            children: [
-                              Container(
-                                width: screenWidth * 0.15,
-                                height: screenHeight * 0.07,
-                                child: Material(
-                                  color: Colors.transparent,
-                                  elevation: 4,
-                                  shadowColor: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    child: Image.asset(
-                                      'assets/images/flag.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: screenWidth * 0.03),
-                              Expanded(
-                                child: phonenumberField(),
-                              ),
-                            ],
+                                // Name TextField
+                                nameField(),
+                                SizedBox(height: screenHeight * 0.03),
+
+                                // Email TextField
+                                emailField(),
+                                SizedBox(height: screenHeight * 0.03),
+                                skillField(),
+                                SizedBox(height: screenHeight * 0.03),
+                                phoneNumberField(screenWidth, screenHeight),
+                                SizedBox(height: screenHeight * 0.05),
+
+                                // Update Button
+                                updateButton(screenHeight, screenWidth),
+                                SizedBox(
+                                  height: 12,
+                                )
+                              ],
+                            ),
                           ),
-                          SizedBox(height: screenHeight * 0.05),
-
-                          // Update Button
-                          updateButton(screenHeight, screenWidth),
-                          SizedBox(
-                            height: 12,
-                          )
                         ],
                       ),
                     ),
@@ -280,6 +229,73 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
         bottomNavigationBar: BottomBar(
           initialIndex: 1,
         ));
+  }
+
+  Row phoneNumberField(double screenWidth, double screenHeight) {
+    return Row(
+      children: [
+        Container(
+          width: screenWidth * 0.15,
+          height: screenHeight * 0.07,
+          child: Material(
+            color: Colors.transparent,
+            elevation: 4,
+            shadowColor: Colors.grey.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Image.asset(
+                'assets/images/flag.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: screenWidth * 0.03),
+        Expanded(
+          child: phonenumberField(),
+        ),
+      ],
+    );
+  }
+
+  Stack picUpload(double screenWidth) {
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: screenWidth * 0.18,
+          backgroundImage: _pickedImage != null
+              ? FileImage(File(_pickedImage!.path)) // Show picked image
+              : (_profileImageUrl != null && _profileImageUrl!.isNotEmpty
+                      ? NetworkImage(_profileImageUrl!) // Show server image
+                      : AssetImage(
+                          'assets/images/default_profile.png')) // Show default image
+                  as ImageProvider,
+        ),
+        if (_isLoading) // Show loading indicator when _isLoading is true
+          Center(
+            child: CircularProgressIndicator(
+              color: tPrimaryColor,
+            ),
+          ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: _pickImage,
+            child: Container(
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey, width: 2),
+              ),
+              child: Icon(Icons.camera_alt, size: screenWidth * 0.05),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Row nameField() {

@@ -37,103 +37,110 @@ class UserSelection extends StatelessWidget {
                 right: 0,
                 child: FractionallySizedBox(
                   widthFactor: 1.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 65, 64, 64)
-                              .withOpacity(0.5), // Shadow color
-                          spreadRadius: 5, // Spread radius
-                          blurRadius: 7, // Blur radius
-                          offset: Offset(0, 3), // Shadow position (x, y)
+                  child: Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(40),
+                    elevation: 4,
+                    shadowColor: Colors.grey.withOpacity(0.5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromARGB(255, 65, 64, 64)
+                                .withOpacity(0.5), // Shadow color
+                            spreadRadius: 5, // Spread radius
+                            blurRadius: 7, // Blur radius
+                            offset: Offset(0, 3), // Shadow position (x, y)
+                          ),
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
                         ),
-                      ],
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
                       ),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                    height: screenHeight / 2.66,
-                    child: Column(
-                      children: [
-                        Text(
-                          "Choose to continue",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 16), // Add some space
-                        Text(
-                          "Please select any option to continue.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        SizedBox(height: 50), // Adjust spacing as needed
-                        SizedBox(
-                          width: screenWidth *
-                              0.8, // Adjusted width for responsiveness
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // MazdoorIdStateChecker();
-                              Get.toNamed('/professionalLogin');
-                              // Navigator.pushNamed(context, '/professionalLogin');
-                            },
-                            child: Text(
-                              "Continue as Service Provider",
-                              style: TextStyle(
-                                color: ttextColor,
-                                fontSize: 18.0,
-                                fontFamily: 'Poppins1',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: tPrimaryColor, // Text color
-                              shadowColor: Colors.grey, // Shadow color
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                      height: screenHeight / 2.66,
+                      child: Column(
+                        children: [
+                          Text(
+                            "Choose to continue",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              color: Colors.black,
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16),
-                        SizedBox(
-                          width: screenWidth *
-                              0.8, // Adjusted width for responsiveness
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.toNamed('/userLogin');
-                            },
-                            child: Text(
-                              "Continue as Customer",
-                              style: TextStyle(
-                                color: ttextColor,
-                                fontSize: 18.0,
-                                fontFamily: 'Poppins1',
-                                fontWeight: FontWeight.bold,
-                              ),
+                          SizedBox(height: 16), // Add some space
+                          Text(
+                            "Please select any option to continue.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
                             ),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: tPrimaryColor, // Text color
-                              shadowColor: Colors.grey, // Shadow color
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                          ),
+                          SizedBox(height: 50), // Adjust spacing as needed
+                          SizedBox(
+                            width: screenWidth *
+                                0.8, // Adjusted width for responsiveness
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // MazdoorIdStateChecker();
+                                Get.toNamed('/professionalLogin');
+                                // Navigator.pushNamed(context, '/professionalLogin');
+                              },
+                              child: Text(
+                                "Continue as Service Provider",
+                                style: TextStyle(
+                                  color: ttextColor,
+                                  fontSize: 18.0,
+                                  fontFamily: 'Poppins1',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: tPrimaryColor, // Text color
+                                shadowColor: Colors.grey, // Shadow color
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 16),
+                          SizedBox(
+                            width: screenWidth *
+                                0.8, // Adjusted width for responsiveness
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.toNamed('/userLogin');
+                              },
+                              child: Text(
+                                "Continue as Customer",
+                                style: TextStyle(
+                                  color: ttextColor,
+                                  fontSize: 18.0,
+                                  fontFamily: 'Poppins1',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: tPrimaryColor, // Text color
+                                shadowColor: Colors.grey, // Shadow color
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
