@@ -176,10 +176,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         Container(
                           padding: EdgeInsets.only(
                               top: 45.0, left: 20.0, right: 20.0),
-                          height: screenHeight / 3.1,
+                          height: screenHeight / 5.5,
                           width: screenWidth,
                           decoration: BoxDecoration(
-                              color: const Color.fromARGB(84, 4, 190, 190),
+                              color: Colors.grey[300],
                               borderRadius: BorderRadius.vertical(
                                   bottom: Radius.elliptical(
                                       MediaQuery.of(context).size.width,

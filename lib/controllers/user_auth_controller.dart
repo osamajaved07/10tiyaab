@@ -813,8 +813,8 @@ class UserAuthController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Location successfully sent to server.');
         // Get.back();
-        successSnackbar('Success', 'Location updated successfully.');
         Get.offNamed("/jobdetail");
+        successSnackbar('Success', 'Your location saved successfully.');
       } else {
         // Get.back();
         print('Response body: ${response.body}');

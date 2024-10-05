@@ -29,11 +29,18 @@ class _UserMapScreenState extends State<UserMapScreen> {
   bool _isMapLoading = true; // Tracks map loading state
   final TextEditingController _locationController = TextEditingController();
   final UserAuthController _authController = Get.find<UserAuthController>();
+  String? _selectedServiceProvider; // To store the passed service provider
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments != null) {
+      _selectedServiceProvider =
+          arguments['serviceProvider'] ?? "Unknown Provider";
+      print("Selected Service Provider: $_selectedServiceProvider");
+    }
   }
 
   // Function to get the current location of the user
@@ -118,7 +125,8 @@ class _UserMapScreenState extends State<UserMapScreen> {
     if (_currentPosition != null) {
       await _authController.sendUserLocation(
           _currentPosition.latitude, _currentPosition.longitude);
-      // Get.toNamed("page");
+      print(
+          "Saved location for Service Provider: $_selectedServiceProvider"); // Log the selected service provider
     } else {
       errorSnackbar("Error", "Failed to get current location.");
     }

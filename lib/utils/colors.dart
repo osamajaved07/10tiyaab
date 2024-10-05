@@ -13,6 +13,10 @@ const tErrorColor = Color(0xFFF03738);
 const kDefaultPadding = 20.0;
 
 // font size for text
+double tverysmallfontsize(BuildContext context) {
+  return MediaQuery.of(context).size.width * 0.037;
+}
+
 double tsmallfontsize(BuildContext context) {
   return MediaQuery.of(context).size.width * 0.04;
 } // Set a constant value

@@ -1,19 +1,65 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, unused_element
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:fyp_1/utils/custom_dialog.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class JobDetails extends StatefulWidget {
-  const JobDetails({super.key});
+  const JobDetails({
+    super.key,
+  });
 
   @override
   State<JobDetails> createState() => _JobDetailsState();
 }
 
 class _JobDetailsState extends State<JobDetails> {
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _minPriceController =
+      TextEditingController(text: "400");
+  TextEditingController _maxPriceController =
+      TextEditingController(text: "10000");
+  TextEditingController _descriptionController = TextEditingController();
+
+  double _minPrice = 400.0;
+  double _maxPrice = 10000.0;
+
+  final ImagePicker _picker = ImagePicker();
+  List<File> _selectedImages = [];
+  late String _selectedServiceProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments != null) {
+      _selectedServiceProvider =
+          arguments['serviceProvider'] ?? "Unknown Provider";
+      print("Selected Service Provider: $_selectedServiceProvider");
+    }
+    // _selectedServiceProvider = Get.arguments['serviceProvider'];
+    // // Print the selected service provider ID for debugging
+    // print("Selected Service Provider: $_selectedServiceProvider");
+  }
+
+  Future<void> _pickImages() async {
+    final List<XFile>? images = await _picker.pickMultiImage();
+
+    if (images != null && images.length + _selectedImages.length <= 10) {
+      setState(() {
+        _selectedImages
+            .addAll(images.map((image) => File(image.path)).toList());
+      });
+    } else if (images != null && images.length + _selectedImages.length > 10) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('You can select a maximum of 10 images.')),
+      // );
+      errorSnackbar("Error", "You can select a maximum of 10 images.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +69,15 @@ class _JobDetailsState extends State<JobDetails> {
         // elevation: 0,
         backgroundColor: tPrimaryColor,
         centerTitle: true,
-        automaticallyImplyLeading: true,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: ttextColor,
+              size: tlargefontsize(context),
+            )),
         title: Text("Job Detail",
             style: TextStyle(
                 color: Colors.black, fontSize: tmidfontsize(context))),
@@ -35,37 +89,15 @@ class _JobDetailsState extends State<JobDetails> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: screenHeight * 0.05),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 8.0), // Adds spacing to the right
-                        child: Material(
-                            color: Colors.white,
-                            elevation: 4,
-                            shadowColor: Colors.grey.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(18),
-                            child: _firstNameField()),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 8.0), // Adds spacing to the left
-                        child: Material(
-                            color: Colors.white,
-                            elevation: 4,
-                            shadowColor: Colors.grey.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(18),
-                            child: _lastNameField()),
-                      ),
-                    ),
-                  ],
-                )
+                priceRange(context, screenHeight),
+                SizedBox(height: screenHeight * 0.05),
+                jobDetailSection(context, screenHeight),
+                SizedBox(height: screenHeight * 0.05),
+                imagePickerSection(screenHeight),
+                SizedBox(height: screenHeight * 0.05),
               ],
             ),
           ),
@@ -74,60 +106,305 @@ class _JobDetailsState extends State<JobDetails> {
     );
   }
 
-  TextFormField _firstNameField() {
-    return TextFormField(
-      controller: _firstNameController,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(
-            RegExp(r'[a-zA-Z]')), // Allow only alphabets
-        LengthLimitingTextInputFormatter(8), // Limits input to 10 characters
-      ],
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Enter your first name';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white10),
-            borderRadius: BorderRadius.circular(18)),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black45),
-          borderRadius: BorderRadius.circular(12),
+  // Image picker section with grid display
+  Widget imagePickerSection(double screenHeight) {
+    return Column(
+      children: [
+        Center(
+          child: Text(
+            "Add images",
+            style: TextStyle(
+              fontSize: tlargefontsize(context),
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        hintText: 'Firstname',
-        labelText: 'Firstname',
-        prefixIcon: Icon(Icons.person_outline),
-      ),
+        SizedBox(height: screenHeight * 0.01),
+
+        // Display selected images in a GridView
+        _selectedImages.isNotEmpty
+            ? GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, // Number of images per row
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
+                ),
+                itemCount: _selectedImages.length,
+                itemBuilder: (context, index) {
+                  return Stack(
+                    children: [
+                      // Image display
+                      Positioned.fill(
+                        child: Image.file(
+                          _selectedImages[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
+                      // Cross button to remove the image
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedImages.removeAt(index);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              )
+            : Text("No images selected"),
+
+        SizedBox(height: screenHeight * 0.01),
+
+        // Button to pick images
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            backgroundColor: tPrimaryColor, // Button color
+          ),
+          onPressed: _selectedImages.length < 10
+              ? _pickImages
+              : null, // Disable button if 10 images are selected
+          child: Text(
+            'Pick Images',
+            style: TextStyle(fontSize: tsmallfontsize(context)),
+          ),
+        ),
+
+        // Show max image limit warning
+        if (_selectedImages.length == 10)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              'You can select a maximum of 10 images.',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+      ],
     );
   }
 
-  TextFormField _lastNameField() {
-    return TextFormField(
-      controller: _lastNameController,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(
-            RegExp(r'[a-zA-Z]')), // Allow only alphabets
-        LengthLimitingTextInputFormatter(8), // Limits input to 10 characters
+  Column jobDetailSection(BuildContext context, double screenHeight) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "  Enter your work description:",
+          style:
+              TextStyle(fontSize: tsmallfontsize(context), color: Colors.grey),
+        ),
+        SizedBox(height: screenHeight * 0.01),
+        Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          elevation: 4,
+          shadowColor: Colors.grey.withOpacity(0.5),
+          child: TextField(
+            controller: _descriptionController,
+            keyboardType: TextInputType.text,
+            maxLines: 5,
+            decoration: InputDecoration(
+              // labelText: 'Message',
+              hintText: "Require plumber to fix sink tap...",
+              hintStyle: TextStyle(
+                color: Colors.grey.shade600, // Adjust hint text color
+                fontSize:
+                    tverysmallfontsize(context), // Adjust font size of hint
+              ),
+              filled: true, // Enable background color
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Colors.grey.shade400, // Border color for enabled state
+                  width: 1.5, // Adjust border thickness
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: tPrimaryColor, // Border color when focused
+                  width: 2.0, // Thicker border when focused
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Colors.redAccent, // Border color for error state
+                  width: 1.5,
+                ),
+              ),
+            ),
+            // enabled: false, // Email is not editable
+          ),
+        ),
       ],
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Enter your last name';
-        }
-        return null;
+    );
+  }
+
+  Container priceRange(BuildContext context, double screenHeight) {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Set your Price Range",
+            style: TextStyle(
+                fontSize: tmidfontsize(context), color: Colors.black)),
+        SizedBox(height: screenHeight * 0.01),
+        RangeSlider(
+          activeColor: tPrimaryColor,
+          values: RangeValues(_minPrice, _maxPrice),
+          min: 400,
+          max: 10000,
+          divisions: 1000,
+          labels: RangeLabels(
+            'Rs ${_minPrice.toStringAsFixed(0)}',
+            'Rs ${_maxPrice.toStringAsFixed(0)}',
+          ),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _minPrice = values.start;
+              _maxPrice = values.end;
+              if (_maxPrice < _minPrice) {
+                _maxPrice = _minPrice;
+              }
+              _minPriceController.text = _minPrice.toStringAsFixed(0);
+              _maxPriceController.text = _maxPrice.toStringAsFixed(0);
+            });
+          },
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Material(
+                  color: Colors.white,
+                  elevation: 4,
+                  shadowColor: Colors.grey.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(18),
+                  child: TextField(
+                    controller: _minPriceController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(7),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        double minPrice = double.tryParse(value) ?? 400;
+                        if (minPrice < _maxPrice) {
+                          _minPrice = minPrice;
+                        }
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Min Price',
+                      labelText: 'Min Price',
+                      prefixText: "Rs ",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Material(
+                  color: Colors.white,
+                  elevation: 4,
+                  shadowColor: Colors.grey.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(18),
+                  child: TextField(
+                    controller: _maxPriceController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(7),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        double maxPrice = double.tryParse(value) ?? 10000;
+                        if (maxPrice > _minPrice) {
+                          _maxPrice = maxPrice;
+                        }
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Max Price',
+                      labelText: 'Max Price',
+                      prefixText: "Rs ",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ));
+  }
+
+  TextFormField _priceField(TextEditingController controller, String label) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(7),
+      ],
+      onChanged: (value) {
+        setState(() {
+          double minPrice = double.tryParse(value) ?? 400;
+          if (minPrice < _maxPrice) {
+            _minPrice = minPrice;
+          }
+        });
       },
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white10),
-            borderRadius: BorderRadius.circular(18)),
+          borderSide: BorderSide(color: Colors.white10),
+          borderRadius: BorderRadius.circular(18),
+        ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black45),
           borderRadius: BorderRadius.circular(12),
         ),
-        hintText: 'Lastname',
-        labelText: 'Lastname',
-        prefixIcon: Icon(Icons.person_outline),
+        hintText: label,
+        labelText: label,
+        prefixText: "Rs  ",
       ),
     );
   }

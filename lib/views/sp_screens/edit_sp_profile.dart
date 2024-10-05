@@ -165,7 +165,8 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
                             height: screenHeight / 3.1,
                             width: screenWidth,
                             decoration: BoxDecoration(
-                                color: const Color.fromARGB(84, 4, 190, 190),
+                                // color: const Color.fromARGB(84, 4, 190, 190),
+                                color: Colors.grey[300],
                                 borderRadius: BorderRadius.vertical(
                                     bottom: Radius.elliptical(
                                         MediaQuery.of(context).size.width,

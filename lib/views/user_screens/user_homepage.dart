@@ -34,6 +34,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   List<String> _filteredProviders = [];
   bool _isWhereToEnabled = false;
   bool _showSuggestions = false;
+  String? selectedProvider;
 
   @override
   void initState() {
@@ -57,6 +58,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       _filteredProviders.clear();
       _showSuggestions = false;
       _isWhereToEnabled = false;
+      selectedProvider = null;
       FocusScope.of(context).unfocus(); // Closes the keyboard
     });
   }
@@ -67,8 +69,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       _filteredProviders.clear();
       _showSuggestions = false;
       _isWhereToEnabled = true;
-
+      selectedProvider = suggestion;
       FocusScope.of(context).unfocus(); // Closes the keyboard
+      print('Selected Service Provider: $suggestion');
     });
   }
 
@@ -246,7 +249,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               GestureDetector(
                                 onTap: _isWhereToEnabled
                                     ? () {
-                                        Get.toNamed("/mapscreen");
+                                        Get.toNamed("/mapscreen", arguments: {
+                                          'serviceProvider': selectedProvider
+                                        });
                                       }
                                     : null, // Disable tap if not enabled
                                 child: Material(
@@ -339,7 +344,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Skillful Person\nBook Now →',
+                                    'Need a Handyman?\n\nBook Now →',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: screenWidth * 0.05,
