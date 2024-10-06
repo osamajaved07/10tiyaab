@@ -1,6 +1,7 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures, prefer_const_declarations, dead_code
+// ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, prefer_const_constructors, await_only_futures, prefer_const_declarations, dead_code, unused_local_variable, unused_import
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
@@ -809,11 +810,20 @@ class UserAuthController extends GetxController {
       );
       Get.back();
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response body: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> loginData = jsonDecode(response.body);
+        String? selectedProvider;
+        final message = loginData['message'];
+        final userId = loginData['id'].toString();
+        print('Message: $message');
+        print('User Id: $userId');
+        await _secureStorage.write(key: 'id', value: userId);
+
         print('Location successfully sent to server.');
         // Get.back();
-        Get.offNamed("/jobdetail");
+        Get.offNamed("/jobdetail",
+            arguments: {'serviceProvider': selectedProvider});
         successSnackbar('Success', 'Your location saved successfully.');
       } else {
         // Get.back();
@@ -824,6 +834,77 @@ class UserAuthController extends GetxController {
       Get.back();
       print('Error sending location: $e');
       errorSnackbar('Error', 'Something went wrong.');
+    }
+  }
+
+  Future<void> submitJobDetails(
+    String jobDescription,
+    List<File> images,
+    String minPriceRange,
+    String maxPriceRange,
+    String userLocation,
+    String requiredSkill,
+    // Access token passed here
+  ) async {
+    // Show loading indicator
+    Get.dialog(
+      Center(
+        child: CircularProgressIndicator(
+          color: tPrimaryColor,
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    try {
+      // Create a multipart request for the images
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/api/service-request/'),
+      );
+
+      // Add headers for authentication
+      request.headers['Authorization'] = 'Bearer $accessToken';
+
+      // Add body fields
+      request.fields['job_description'] = jobDescription;
+      request.fields['min_price_range'] = minPriceRange;
+      request.fields['max_price_range'] = maxPriceRange;
+      request.fields['user_location'] = userLocation;
+      request.fields['required_skill'] = requiredSkill;
+
+      // Add images
+      if (images.isNotEmpty) {
+        for (var image in images) {
+          var fileStream =
+              await http.MultipartFile.fromPath('images', image.path);
+          request.files.add(fileStream);
+        }
+      }
+
+      // Send the request
+      var response = await request.send();
+      Get.back(); // Dismiss loading
+      // Capture the response body
+      String responseBody = await response.stream.bytesToString();
+      print("Response status code: ${response.statusCode}");
+      print("Response body: $responseBody"); // Print response body
+
+      if (response.statusCode == 201) {
+        // Success
+        successSnackbar('Success', 'Detail stored.');
+      } else if (response.statusCode == 400) {
+        // Handle failure with error messages
+        String errorMessage = formatErrorMessage(jsonDecode(responseBody));
+        errorSnackbar('Error', errorMessage);
+      } else {
+        // Handle failure with error messages
+        errorSnackbar('Error', 'Submission failed. Please try again.');
+      }
+    } catch (e) {
+      Get.back(); // Dismiss loading in case of error
+      errorSnackbar('Error', 'An unexpected error occurred. Please try again.');
+      print("Error: $e");
     }
   }
 }

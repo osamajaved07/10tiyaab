@@ -3,6 +3,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:fyp_1/utils/custom_dialog.dart';
 import 'package:get/get.dart';
@@ -23,26 +25,42 @@ class _JobDetailsState extends State<JobDetails> {
   TextEditingController _maxPriceController =
       TextEditingController(text: "10000");
   TextEditingController _descriptionController = TextEditingController();
-
+  final UserAuthController authController = Get.find<UserAuthController>();
   double _minPrice = 400.0;
   double _maxPrice = 10000.0;
+  final _secureStorage = const FlutterSecureStorage();
 
   final ImagePicker _picker = ImagePicker();
   List<File> _selectedImages = [];
-  late String _selectedServiceProvider;
+  String _selectedServiceProvider = "Unknown Provider";
 
   @override
   void initState() {
     super.initState();
+    _getStoredServiceProvider();
     final arguments = Get.arguments as Map<String, dynamic>?;
     if (arguments != null) {
       _selectedServiceProvider =
-          arguments['serviceProvider'] ?? "Unknown Provider";
+          arguments['serviceProvider'] ?? "Not found Provider";
       print("Selected Service Provider: $_selectedServiceProvider");
     }
     // _selectedServiceProvider = Get.arguments['serviceProvider'];
     // // Print the selected service provider ID for debugging
     // print("Selected Service Provider: $_selectedServiceProvider");
+  }
+
+  Future<void> _getStoredServiceProvider() async {
+    // Retrieve the stored service provider from secure storage
+    String? storedProvider = await _secureStorage.read(key: 'selectedProvider');
+
+    if (storedProvider != null) {
+      setState(() {
+        _selectedServiceProvider = storedProvider;
+      });
+      print('Stored Service Provider: $storedProvider');
+    } else {
+      print('No service provider found in local storage.');
+    }
   }
 
   Future<void> _pickImages() async {
@@ -97,12 +115,67 @@ class _JobDetailsState extends State<JobDetails> {
                 jobDetailSection(context, screenHeight),
                 SizedBox(height: screenHeight * 0.05),
                 imagePickerSection(screenHeight),
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.09),
+                confirmButton(screenWidth, screenHeight, context),
+                SizedBox(height: screenHeight * 0.09),
               ],
             ),
           ),
         );
       }),
+    );
+  }
+
+  Center confirmButton(
+      double screenWidth, double screenHeight, BuildContext context) {
+    return Center(
+      child: Material(
+        elevation: 12,
+        shadowColor: Colors.grey.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          width: screenWidth * 0.8,
+          height: screenHeight * 0.06,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              backgroundColor: tPrimaryColor, // Button color
+            ),
+            // Disable button if 10 images are selected
+            onPressed: () async {
+              String jobDescription = _descriptionController.text.trim();
+              String minPrice = _minPriceController.text.trim();
+              String maxPrice = _maxPriceController.text.trim();
+              List<File> images = _selectedImages;
+              String? userId = await _secureStorage.read(key: 'id');
+
+              if (jobDescription.isNotEmpty && maxPrice.isNotEmpty) {
+                if (userId != null) {
+                  await authController.submitJobDetails(
+                    jobDescription,
+                    images,
+                    minPrice,
+                    maxPrice,
+                    userId,
+                    _selectedServiceProvider,
+                  );
+                } else {
+                  errorSnackbar("Error",
+                      "User ID is not available. Please set your location first.");
+                }
+              } else {
+                errorSnackbar("Error", "Please provide the required fields.");
+              }
+            },
+            child: Text(
+              'Confirm details',
+              style: TextStyle(fontSize: tmidfontsize(context)),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -173,9 +246,7 @@ class _JobDetailsState extends State<JobDetails> {
                 },
               )
             : Text("No images selected"),
-
         SizedBox(height: screenHeight * 0.01),
-
         // Button to pick images
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -211,7 +282,7 @@ class _JobDetailsState extends State<JobDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "  Enter your work description:",
+          "  Enter your work description: *",
           style:
               TextStyle(fontSize: tsmallfontsize(context), color: Colors.grey),
         ),
@@ -361,7 +432,7 @@ class _JobDetailsState extends State<JobDetails> {
                     },
                     decoration: InputDecoration(
                       hintText: 'Max Price',
-                      labelText: 'Max Price',
+                      labelText: 'Max Price *',
                       prefixText: "Rs ",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),

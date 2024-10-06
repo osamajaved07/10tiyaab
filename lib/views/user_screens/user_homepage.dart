@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/service_provider_list.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -9,8 +10,6 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHomeScreen extends StatefulWidget {
-  // final SharedPreferences prefs;
-
   const UserHomeScreen({
     Key? key,
   }) : super(key: key);
@@ -20,7 +19,7 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
   final UserAuthController authController = Get.find<UserAuthController>();
   final TextEditingController _searchController = TextEditingController();
   final List<String> _serviceProviders = [
@@ -63,7 +62,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     });
   }
 
-  void _selectSuggestion(String suggestion) {
+  void _selectSuggestion(String suggestion) async {
+    await _storage.write(key: 'selectedProvider', value: suggestion);
     setState(() {
       _searchController.text = suggestion;
       _filteredProviders.clear();
