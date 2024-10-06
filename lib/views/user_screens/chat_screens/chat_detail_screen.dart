@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+class ChatDetailScreen extends StatelessWidget {
+  const ChatDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,27 +22,27 @@ class ChatScreen extends StatelessWidget {
         ),
         title: const Text('Chat', style: TextStyle(color: Colors.black)),
         centerTitle: true,
-        elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: TextButton(
-              onPressed: () {
-                // Accept offer action
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: tPrimaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              child: const Text(
-                'Accept Offer',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+        elevation: 4,
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        //     child: TextButton(
+        //       onPressed: () {
+        //         // Accept offer action
+        //       },
+        //       style: TextButton.styleFrom(
+        //         backgroundColor: tPrimaryColor,
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(8.0),
+        //         ),
+        //       ),
+        //       child: const Text(
+        //         'Accept Offer',
+        //         style: TextStyle(color: Colors.white),
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -88,7 +88,7 @@ class ChatScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(16.0),
               ),
               child: Text(message),
@@ -113,7 +113,7 @@ class ChatScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              color: Colors.tealAccent,
+              color: tPrimaryColor,
               borderRadius: BorderRadius.circular(16.0),
             ),
             child: Text(message),

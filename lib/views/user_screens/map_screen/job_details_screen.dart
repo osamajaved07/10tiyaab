@@ -44,9 +44,6 @@ class _JobDetailsState extends State<JobDetails> {
           arguments['serviceProvider'] ?? "Not found Provider";
       print("Selected Service Provider: $_selectedServiceProvider");
     }
-    // _selectedServiceProvider = Get.arguments['serviceProvider'];
-    // // Print the selected service provider ID for debugging
-    // print("Selected Service Provider: $_selectedServiceProvider");
   }
 
   Future<void> _getStoredServiceProvider() async {
@@ -72,9 +69,6 @@ class _JobDetailsState extends State<JobDetails> {
             .addAll(images.map((image) => File(image.path)).toList());
       });
     } else if (images != null && images.length + _selectedImages.length > 10) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('You can select a maximum of 10 images.')),
-      // );
       errorSnackbar("Error", "You can select a maximum of 10 images.");
     }
   }
@@ -111,9 +105,13 @@ class _JobDetailsState extends State<JobDetails> {
               children: [
                 SizedBox(height: screenHeight * 0.05),
                 priceRange(context, screenHeight),
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.03),
+                divider(screenWidth),
+                SizedBox(height: screenHeight * 0.03),
                 jobDetailSection(context, screenHeight),
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.03),
+                divider(screenWidth),
+                SizedBox(height: screenHeight * 0.03),
                 imagePickerSection(screenHeight),
                 SizedBox(height: screenHeight * 0.09),
                 confirmButton(screenWidth, screenHeight, context),
@@ -123,6 +121,14 @@ class _JobDetailsState extends State<JobDetails> {
           ),
         );
       }),
+    );
+  }
+
+  Container divider(double screenWidth) {
+    return Container(
+      height: 2, // Adjust height as needed
+      width: screenWidth * 1, // Width of the divider line
+      color: Colors.black12, // Line color
     );
   }
 
@@ -162,8 +168,7 @@ class _JobDetailsState extends State<JobDetails> {
                     _selectedServiceProvider,
                   );
                 } else {
-                  errorSnackbar("Error",
-                      "User ID is not available. Please set your location first.");
+                  errorSnackbar("Error", "Please set your location first.");
                 }
               } else {
                 errorSnackbar("Error", "Please provide the required fields.");
@@ -181,99 +186,112 @@ class _JobDetailsState extends State<JobDetails> {
 
   // Image picker section with grid display
   Widget imagePickerSection(double screenHeight) {
-    return Column(
-      children: [
-        Center(
-          child: Text(
-            "Add images",
-            style: TextStyle(
-              fontSize: tlargefontsize(context),
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 3,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Center(
+            child: Text(
+              "Add images",
+              style: TextStyle(
+                fontSize: tlargefontsize(context),
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: screenHeight * 0.01),
+          SizedBox(height: screenHeight * 0.01),
 
-        // Display selected images in a GridView
-        _selectedImages.isNotEmpty
-            ? GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // Number of images per row
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                ),
-                itemCount: _selectedImages.length,
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      // Image display
-                      Positioned.fill(
-                        child: Image.file(
-                          _selectedImages[index],
-                          fit: BoxFit.cover,
+          // Display selected images in a GridView
+          _selectedImages.isNotEmpty
+              ? GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // Number of images per row
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                  ),
+                  itemCount: _selectedImages.length,
+                  itemBuilder: (context, index) {
+                    return Stack(
+                      children: [
+                        // Image display
+                        Positioned.fill(
+                          child: Image.file(
+                            _selectedImages[index],
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-
-                      // Cross button to remove the image
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedImages.removeAt(index);
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 16,
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedImages.removeAt(index);
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              )
-            : Text("No images selected"),
-        SizedBox(height: screenHeight * 0.01),
-        // Button to pick images
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+                      ],
+                    );
+                  },
+                )
+              : Text("No images selected"),
+          SizedBox(height: screenHeight * 0.01),
+          // Button to pick images
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              backgroundColor: tPrimaryColor, // Button color
             ),
-            backgroundColor: tPrimaryColor, // Button color
-          ),
-          onPressed: _selectedImages.length < 10
-              ? _pickImages
-              : null, // Disable button if 10 images are selected
-          child: Text(
-            'Pick Images',
-            style: TextStyle(fontSize: tsmallfontsize(context)),
-          ),
-        ),
-
-        // Show max image limit warning
-        if (_selectedImages.length == 10)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            onPressed: _selectedImages.length < 10
+                ? _pickImages
+                : null, // Disable button if 10 images are selected
             child: Text(
-              'You can select a maximum of 10 images.',
-              style: TextStyle(color: Colors.redAccent),
+              'Pick Images',
+              style: TextStyle(fontSize: tsmallfontsize(context)),
             ),
           ),
-      ],
+
+          // Show max image limit warning
+          if (_selectedImages.length == 10)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                'You can select a maximum of 10 images.',
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
+        ],
+      ),
     );
   }
 

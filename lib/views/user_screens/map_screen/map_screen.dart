@@ -22,9 +22,8 @@ class _UserMapScreenState extends State<UserMapScreen> {
 
   CameraPosition _initialCameraPosition = const CameraPosition(
     target: LatLng(24.8607, 67.0011), // Default location
-    zoom: 14.4746,
+    zoom: 18,
   );
-
   late Position _currentPosition;
   bool _isMapLoading = true; // Tracks map loading state
   final TextEditingController _locationController = TextEditingController();
@@ -105,7 +104,7 @@ class _UserMapScreenState extends State<UserMapScreen> {
         _locationController.text = address;
         _initialCameraPosition = CameraPosition(
           target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
-          zoom: 14.4746,
+          zoom: 18,
         );
         _isMapLoading = false;
       });
@@ -143,7 +142,7 @@ class _UserMapScreenState extends State<UserMapScreen> {
         final GoogleMapController controller = await _controller.future;
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
-            CameraPosition(target: newLatLng, zoom: 14.4746),
+            CameraPosition(target: newLatLng, zoom: 18),
           ),
         );
 
@@ -237,50 +236,54 @@ class _UserMapScreenState extends State<UserMapScreen> {
                   ),
                   showLocationField(screenHeight),
                   getCurrentLocation(screenHeight, screenWidth),
-                  Positioned(
-                    bottom: screenHeight * 0.04,
-                    left: screenWidth * 0.19,
-                    right: screenWidth * 0.19,
-                    child: Material(
-                      elevation: 12,
-                      shadowColor: Colors.grey.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(18),
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              tPrimaryColor,
-                              const Color.fromARGB(255, 52, 235, 235)
-                            ], // Your gradient colors
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ElevatedButton(
-                          onPressed:
-                              _saveLocation, // Call the save location function
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            'Confirm location',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: tsecondarytextColor,
-                                fontSize: tmidfontsize(context)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  button(screenHeight, screenWidth, context),
                 ],
               );
             }),
+    );
+  }
+
+  Positioned button(
+      double screenHeight, double screenWidth, BuildContext context) {
+    return Positioned(
+      bottom: screenHeight * 0.04,
+      left: screenWidth * 0.19,
+      right: screenWidth * 0.19,
+      child: Material(
+        elevation: 12,
+        shadowColor: Colors.grey.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                tPrimaryColor,
+                const Color.fromARGB(255, 52, 235, 235)
+              ], // Your gradient colors
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ElevatedButton(
+            onPressed: _saveLocation, // Call the save location function
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              'Confirm location',
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: tsecondarytextColor,
+                  fontSize: tmidfontsize(context)),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -335,13 +338,6 @@ class _UserMapScreenState extends State<UserMapScreen> {
                     borderSide: BorderSide.none,
                   ),
                   hintText: 'Search location',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      _searchLocation(_locationController
-                          .text); // Search location on pressing the search icon
-                    },
-                  ),
                 ),
                 onSubmitted: (value) {
                   _searchLocation(

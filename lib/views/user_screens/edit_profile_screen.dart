@@ -130,26 +130,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       extendBody: true,
       backgroundColor: tSecondaryColor,
-      // appBar: AppBar(
-      //   actions: [
-      //     IconButton(
-      //       onPressed: () {
-      //         _showLogoutDialog(context);
-      //       },
-      //       icon: Icon(
-      //         Icons.logout_outlined,
-      //         color: tPrimaryColor,
-      //         size: 32,
-      //       ),
-      //     )
-      //   ],
-      //   title: Text('Profile',
-      //       style: TextStyle(color: Colors.black, fontSize: 24)),
-      //   centerTitle: true,
-      //   backgroundColor: tSecondaryColor,
-      //   elevation: 0,
-      //   automaticallyImplyLeading: false,
-      // ),
       body: _isLoading
           ? Center(
               child: Column(
@@ -169,72 +149,66 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 final screenHeight = constraints.maxHeight;
 
                 return SingleChildScrollView(
-                  child: Container(
-                    height: screenHeight,
-                    child: Stack(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                              top: 45.0, left: 20.0, right: 20.0),
-                          height: screenHeight / 5.5,
-                          width: screenWidth,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.elliptical(
-                                      MediaQuery.of(context).size.width,
-                                      105.0))),
+                  child: Stack(
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.only(top: 45.0, left: 20.0, right: 20.0),
+                        height: screenHeight / 5.5,
+                        width: screenWidth,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.vertical(
+                                bottom: Radius.elliptical(
+                                    MediaQuery.of(context).size.width, 105.0))),
+                      ),
+                      Positioned(
+                          right: 0,
+                          top: screenHeight * 0.035,
+                          child: IconButton(
+                              onPressed: () {
+                                _showLogoutDialog(context);
+                              },
+                              icon: Icon(
+                                Icons.logout_outlined,
+                                color: ttextColor,
+                                size: 32,
+                              ))),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.08,
+                            vertical: screenHeight * 0.08),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // SizedBox(height: screenHeight * 0.05),
+
+                            // Profile Picture Section
+                            picUpload(screenWidth),
+                            SizedBox(height: screenHeight * 0.02),
+
+                            // User Name
+                            userNameField(screenWidth),
+                            SizedBox(height: screenHeight * 0.04),
+
+                            // Name TextField
+                            nameField(),
+                            SizedBox(height: screenHeight * 0.03),
+
+                            // Email TextField
+                            emailField(),
+                            SizedBox(height: screenHeight * 0.03),
+
+                            phoneNumberField(screenWidth, screenHeight),
+                            SizedBox(height: screenHeight * 0.05),
+
+                            // Update Button
+                            updateButton(screenHeight, screenWidth),
+                            SizedBox(height: screenHeight * 0.05),
+                          ],
                         ),
-                        Positioned(
-                            right: 0,
-                            top: screenHeight * 0.035,
-                            child: IconButton(
-                                onPressed: () {
-                                  _showLogoutDialog(context);
-                                },
-                                icon: Icon(
-                                  Icons.logout_outlined,
-                                  color: ttextColor,
-                                  size: 32,
-                                ))),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.08,
-                              vertical: screenHeight * 0.08),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // SizedBox(height: screenHeight * 0.05),
-
-                              // Profile Picture Section
-                              picUpload(screenWidth),
-                              SizedBox(height: screenHeight * 0.02),
-
-                              // User Name
-                              userNameField(screenWidth),
-                              SizedBox(height: screenHeight * 0.04),
-
-                              // Name TextField
-                              nameField(),
-                              SizedBox(height: screenHeight * 0.03),
-
-                              // Email TextField
-                              emailField(),
-                              SizedBox(height: screenHeight * 0.03),
-
-                              phoneNumberField(screenWidth, screenHeight),
-                              SizedBox(height: screenHeight * 0.05),
-
-                              // Update Button
-                              updateButton(screenHeight, screenWidth),
-                              SizedBox(
-                                height: 12,
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -282,17 +256,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         Container(
           width: screenWidth * 0.15,
           height: screenHeight * 0.07,
-          child: Material(
-            color: Colors.transparent,
-            elevation: 4,
-            shadowColor: Colors.grey.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(12),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: Image.asset(
-                'assets/images/flag.png',
-                fit: BoxFit.contain,
-              ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12.0),
+            child: Image.asset(
+              'assets/images/flag.png',
+              fit: BoxFit.contain,
             ),
           ),
         ),

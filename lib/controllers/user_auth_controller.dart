@@ -14,7 +14,6 @@ class UserAuthController extends GetxController {
   String? user_id; // Nullable user_id to be set after registration
   String? accessToken;
   String? _refreshToken;
-
   final _secureStorage = const FlutterSecureStorage();
 
   @override

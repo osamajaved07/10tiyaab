@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:get/get.dart';
 
 class ChatHome extends StatelessWidget {
   ChatHome({super.key});
@@ -66,7 +67,7 @@ class ChatItemWidget extends StatelessWidget {
         ],
       ),
       onTap: () {
-        // Navigate to chat detail screen
+        Get.toNamed("/chatdetailscreen");
       },
     );
   }

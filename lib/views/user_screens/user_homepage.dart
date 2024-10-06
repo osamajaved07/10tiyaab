@@ -80,6 +80,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         extendBody: true,
         backgroundColor: tSecondaryColor,
         appBar: AppBar(
@@ -354,6 +355,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   Image.asset(
                                     'assets/images/worker.png',
                                     width: screenWidth * 0.3,
+                                    height: screenHeight * 0.6,
                                   ),
                                 ],
                               ),

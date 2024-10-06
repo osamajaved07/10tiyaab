@@ -63,6 +63,7 @@ class _SpContactUsScreenState extends State<SpContactUsScreen> {
         //   'Success',
         //   'Message sent successfully',
         // );
+        FocusScope.of(context).unfocus();
         _messageController.clear();
       } catch (e) {
         print('Error sending your message: $e');
@@ -86,6 +87,7 @@ class _SpContactUsScreenState extends State<SpContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       extendBody: true,
       backgroundColor: tSecondaryColor,
       appBar: AppBar(
