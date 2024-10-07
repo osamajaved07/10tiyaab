@@ -891,7 +891,7 @@ class UserAuthController extends GetxController {
 
       if (response.statusCode == 201) {
         // Success
-        successSnackbar('Success', 'Detail stored.');
+        successSnackbar('Success', 'Details send successfully.');
       } else if (response.statusCode == 400) {
         // Handle failure with error messages
         String errorMessage = formatErrorMessage(jsonDecode(responseBody));

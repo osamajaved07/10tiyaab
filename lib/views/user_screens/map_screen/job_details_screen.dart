@@ -83,7 +83,7 @@ class _JobDetailsState extends State<JobDetails> {
         centerTitle: true,
         leading: IconButton(
             onPressed: () {
-              Get.back();
+              Get.toNamed("/mapscreen");
             },
             icon: Icon(
               Icons.arrow_back,
@@ -167,6 +167,7 @@ class _JobDetailsState extends State<JobDetails> {
                     userId,
                     _selectedServiceProvider,
                   );
+                  Get.offNamed("/findsp");
                 } else {
                   errorSnackbar("Error", "Please set your location first.");
                 }
