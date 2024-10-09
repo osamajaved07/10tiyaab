@@ -774,10 +774,33 @@ class UserAuthController extends GetxController {
       }
       // return true;
       else if (response.statusCode == 401) {
-        // Token is expired or invalid
+        // Token expired, attempt to refresh the token
+        print('Access token expired. Refreshing token...');
+        await refreshToken(); // Directly call refreshToken
 
-        print('Token expired or invalid. User is not logged in.');
-        return false;
+        // Retry the request with the refreshed token
+        final retryResponse = await http.get(
+          Uri.parse('$baseUrl/accounts/profile/'),
+          headers: {'Authorization': 'Bearer $accessToken'},
+        );
+
+        if (retryResponse.statusCode == 200) {
+          // Token refresh was successful
+          final String? userType = await _secureStorage.read(key: 'user_type');
+          if (userType == 'customer') {
+            print('User is logged in as a customer after token refresh.');
+            successSnackbar('Welcome back', '');
+            return true;
+          } else {
+            print(
+                'User is not a customer after token refresh. User type: $userType');
+            return false;
+          }
+        } else {
+          // Refresh token failed, user is not logged in
+          print('Failed to retrieve profile after token refresh.');
+          return false;
+        }
       } else {
         // Other error responses
         print('Failed to check login status: ${response.statusCode}');

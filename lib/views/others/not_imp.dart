@@ -1,114 +1,69 @@
-// Future<void> submitJobDetails(
-//   String jobDescription,
-//   List<File> images,
-//   String minPriceRange,
-//   String maxPriceRange,
-//   String userLocation,
-//   String requiredSkill,
-// ) async {
-//   Get.dialog(
-//     Center(
-//       child: CircularProgressIndicator(
-//         color: tPrimaryColor,
-//       ),
-//     ),
-//     barrierDismissible: false,
-//   );
+// Future<bool> isLoggedIn() async {
+//   // Retrieve stored tokens
+//   accessToken = await _secureStorage.read(key: 'accessToken');
+//   _refreshToken = await _secureStorage.read(key: 'refreshToken');
 
+//   // Check if access token is available
 //   if (accessToken == null) {
-//     errorSnackbar(
-//       'Error',
-//       'An unexpected error occurred',
-//     );
-//     print("Access token is not available");
-//     return null;
+//     print('No access token found. User is not logged in.');
+//     return false;
 //   }
 
 //   try {
-//     // Create a multipart request for the images
-//     var request = http.MultipartRequest(
-//       'POST',
-//       Uri.parse('$baseUrl/api/service-request/'),
+//     final response = await http.get(
+//       Uri.parse('$baseUrl/accounts/profile/'),
+//       headers: {'Authorization': 'Bearer $accessToken'},
 //     );
+//     print('Response status: ${response.statusCode}');
+//     print('Response body: ${response.body}');
 
-//     // Add headers for authentication
-//     request.headers['Authorization'] = 'Bearer $accessToken';
+//     if (response.statusCode == 200) {
+//       // Token is valid, check user_type from secure storage
+//       final String? userType = await _secureStorage.read(key: 'user_type');
 
-//     // Add body fields
-//     request.fields['job_description'] = jobDescription;
-//     request.fields['min_price_range'] = minPriceRange;
-//     request.fields['max_price_range'] = maxPriceRange;
-//     request.fields['user_location'] = userLocation;
-//     request.fields['required_skill'] = requiredSkill;
-
-//     // Add images
-//     if (images.isNotEmpty) {
-//       for (var image in images) {
-//         var fileStream = await http.MultipartFile.fromPath('images', image.path);
-//         request.files.add(fileStream);
+//       // Check if user_type is "customer"
+//       if (userType == 'customer') {
+//         print('User is logged in as a customer.');
+//         successSnackbar('Welcome back', '');
+//         return true; // User is logged in and is a customer
+//       } else {
+//         print('User is logged in but is not a customer. User type: $userType');
+//         return false; // User is logged in but not a customer
 //       }
-//     }
-
-//     // Send the request
-//     var response = await request.send();
-//     Get.back(); // Dismiss loading
-
-//     // Capture the response body
-//     String responseBody = await response.stream.bytesToString();
-//     print("Response status code: ${response.statusCode}");
-//     print("Response body: $responseBody"); // Print response body
-
-//     if (response.statusCode == 201) {
-//       // Success
-//       successSnackbar('Success', 'Details sent successfully.');
 //     } else if (response.statusCode == 401) {
-//       // Handle token refresh if the response indicates the token is expired
+//       // Token expired, attempt to refresh the token
 //       print('Access token expired. Refreshing token...');
-//       await refreshToken();
+//       await refreshToken(); // Directly call refreshToken
 
-//       // Retry submitting the job details after token refresh
-//       var retryRequest = http.MultipartRequest(
-//         'POST',
-//         Uri.parse('$baseUrl/api/service-request/'),
+//       // Retry the request with the refreshed token
+//       final retryResponse = await http.get(
+//         Uri.parse('$baseUrl/accounts/profile/'),
+//         headers: {'Authorization': 'Bearer $accessToken'},
 //       );
 
-//       retryRequest.headers['Authorization'] = 'Bearer $accessToken';
-
-//       retryRequest.fields['job_description'] = jobDescription;
-//       retryRequest.fields['min_price_range'] = minPriceRange;
-//       retryRequest.fields['max_price_range'] = maxPriceRange;
-//       retryRequest.fields['user_location'] = userLocation;
-//       retryRequest.fields['required_skill'] = requiredSkill;
-
-//       if (images.isNotEmpty) {
-//         for (var image in images) {
-//           var fileStream = await http.MultipartFile.fromPath('images', image.path);
-//           retryRequest.files.add(fileStream);
+//       if (retryResponse.statusCode == 200) {
+//         // Token refresh was successful
+//         final String? userType = await _secureStorage.read(key: 'user_type');
+//         if (userType == 'customer') {
+//           print('User is logged in as a customer after token refresh.');
+//           successSnackbar('Welcome back', '');
+//           return true;
+//         } else {
+//           print('User is not a customer after token refresh. User type: $userType');
+//           return false;
 //         }
-//       }
-
-//       var retryResponse = await retryRequest.send();
-//       String retryResponseBody = await retryResponse.stream.bytesToString();
-//       print("Retry response status code: ${retryResponse.statusCode}");
-//       print("Retry response body: $retryResponseBody");
-
-//       if (retryResponse.statusCode == 201) {
-//         successSnackbar('Success', 'Details sent successfully after token refresh.');
 //       } else {
-//         print('Failed to send job details after token refresh: $retryResponseBody');
-//         errorSnackbar('Error', 'Failed to submit job details after refreshing token.');
+//         // Refresh token failed, user is not logged in
+//         print('Failed to retrieve profile after token refresh.');
+//         return false;
 //       }
-//     } else if (response.statusCode == 400) {
-//       // Handle failure with specific error messages
-//       String errorMessage = formatErrorMessage(jsonDecode(responseBody));
-//       errorSnackbar('Error', errorMessage);
 //     } else {
-//       // General failure case
-//       errorSnackbar('Error', 'Submission failed. Please try again.');
+//       // Other error responses
+//       print('Failed to check login status: ${response.statusCode}');
+//       return false;
 //     }
 //   } catch (e) {
-//     Get.back(); // Dismiss loading in case of error
-//     errorSnackbar('Error', 'An unexpected error occurred. Please try again.');
-//     print("Error: $e");
+//     print('Error checking login status: $e');
+//     return false;
 //   }
 // }

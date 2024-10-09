@@ -210,14 +210,13 @@ class SpAuthController extends GetxController {
       return false;
     }
     try {
-      // Always attempt to refresh the token to ensure it's up-to-date
-      // await refreshToken();
-
       // Now check if the access token is valid
       final response = await http.get(
         Uri.parse('$baseUrl/accounts/profile/'),
         headers: {'Authorization': 'Bearer $_accessToken'},
       );
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final String? userType = await _secureStorage.read(key: 'user_type');
@@ -235,9 +234,32 @@ class SpAuthController extends GetxController {
           return false; // User is logged in but not a customer
         }
       } else if (response.statusCode == 401) {
-        // Token is expired or invalid
-        print('Token expired or invalid. User is not logged in.');
-        return false;
+        // Token expired, attempt to refresh the token
+        print('Access token expired. Refreshing token...');
+        await refreshToken(); // Directly call refreshToken
+
+        // Retry the request with the refreshed token
+        final retryResponse = await http.get(
+          Uri.parse('$baseUrl/accounts/profile/'),
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        );
+
+        if (retryResponse.statusCode == 200) {
+          // Token refresh was successful
+          final String? userType = await _secureStorage.read(key: 'user_type');
+          if (userType == 'service_provider') {
+            print('User is logged in as a service provider.');
+            successSnackbar('Welcome back', '');
+            return true;
+          } else {
+            print('User is logged in but is not a sp. User type: $userType');
+            return false;
+          }
+        } else {
+          // Refresh token failed, user is not logged in
+          print('Failed to retrieve profile after token refresh.');
+          return false;
+        }
       } else {
         // Other error responses
         print('Failed to check login status: ${response.statusCode}');
