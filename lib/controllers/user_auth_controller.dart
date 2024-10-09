@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -305,7 +306,7 @@ class UserAuthController extends GetxController {
       } else {
         errorSnackbar(
           'Error',
-          'Failed to load user profile: ${response.statusCode} - ${response.body}',
+          'Failed to load user profile',
         );
         print(
             'Failed response: ${response.body}'); // Log the response body for debugging
@@ -314,7 +315,7 @@ class UserAuthController extends GetxController {
     } catch (e) {
       errorSnackbar(
         'Error',
-        'An unexpected error occurred: $e',
+        'An unexpected error occurred',
       );
       print('Exception: $e'); // Log the exception
       return null;
@@ -790,9 +791,20 @@ class UserAuthController extends GetxController {
 
   Future<void> sendUserLocation(double latitude, double longitude) async {
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+      )),
       barrierDismissible: false,
     );
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred',
+      );
+      print("Access token is not available");
+      return null;
+    }
 
     try {
       // Make a POST request to send the location
@@ -809,10 +821,10 @@ class UserAuthController extends GetxController {
       );
       Get.back();
       print('Response status: ${response.statusCode}');
-      // print('Response body: ${response.body}');
+      print("Access Token: $accessToken");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> loginData = jsonDecode(response.body);
-        String? selectedProvider;
+        // String? selectedProvider;
         final message = loginData['message'];
         final userId = loginData['id'].toString();
         print('Message: $message');
@@ -821,11 +833,50 @@ class UserAuthController extends GetxController {
 
         print('Location successfully sent to server.');
         // Get.back();
-        Get.offNamed("/jobdetail",
-            arguments: {'serviceProvider': selectedProvider});
+        Get.offNamed(
+          "/jobdetail",
+          // arguments: {'serviceProvider': selectedProvider}
+        );
         successSnackbar('Success', 'Your location saved successfully.');
+      } else if (response.statusCode == 401) {
+        // Handle token refresh if the response indicates the token is expired
+        print('Access token expired. Refreshing token...');
+        await refreshToken();
+
+        // Retry sending the location after token refresh
+        final retryResponse = await http.post(
+          Uri.parse("$baseUrl/api/save-location/"),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          },
+          body: jsonEncode({
+            'latitude': latitude,
+            'longitude': longitude,
+          }),
+        );
+
+        if (retryResponse.statusCode == 200 ||
+            retryResponse.statusCode == 201) {
+          final Map<String, dynamic> retryData = jsonDecode(retryResponse.body);
+          final message = retryData['message'];
+          final userId = retryData['id'].toString();
+          print('Retry message: $message');
+          print('Retry User Id: $userId');
+          await _secureStorage.write(key: 'id', value: userId);
+
+          print('Location successfully sent to server after token refresh.');
+          Get.offNamed(
+            "/jobdetail",
+          );
+          successSnackbar('Success', 'Your location saved successfully.');
+        } else {
+          print(
+              'Failed to send location after token refresh: ${retryResponse.body}');
+          errorSnackbar(
+              'Error', 'Failed to set destination after refreshing token.');
+        }
       } else {
-        // Get.back();
         print('Response body: ${response.body}');
         errorSnackbar('Error', 'Failed to set destination.');
       }
@@ -854,6 +905,15 @@ class UserAuthController extends GetxController {
       ),
       barrierDismissible: false,
     );
+
+    if (accessToken == null) {
+      errorSnackbar(
+        'Error',
+        'An unexpected error occurred',
+      );
+      print("Access token is not available");
+      return null;
+    }
 
     try {
       // Create a multipart request for the images
@@ -884,7 +944,7 @@ class UserAuthController extends GetxController {
       // Send the request
       var response = await request.send();
       Get.back(); // Dismiss loading
-      // Capture the response body
+
       String responseBody = await response.stream.bytesToString();
       print("Response status code: ${response.statusCode}");
       print("Response body: $responseBody"); // Print response body
@@ -892,8 +952,49 @@ class UserAuthController extends GetxController {
       if (response.statusCode == 201) {
         // Success
         successSnackbar('Success', 'Details send successfully.');
+      } else if (response.statusCode == 401) {
+        // Handle token refresh if the response indicates the token is expired
+        print('Access token expired. Refreshing token...');
+        await refreshToken();
+
+        // Retry submitting the job details after token refresh
+        var retryRequest = http.MultipartRequest(
+          'POST',
+          Uri.parse('$baseUrl/api/service-request/'),
+        );
+
+        retryRequest.headers['Authorization'] = 'Bearer $accessToken';
+
+        retryRequest.fields['job_description'] = jobDescription;
+        retryRequest.fields['min_price_range'] = minPriceRange;
+        retryRequest.fields['max_price_range'] = maxPriceRange;
+        retryRequest.fields['user_location'] = userLocation;
+        retryRequest.fields['required_skill'] = requiredSkill;
+
+        if (images.isNotEmpty) {
+          for (var image in images) {
+            var fileStream =
+                await http.MultipartFile.fromPath('images', image.path);
+            retryRequest.files.add(fileStream);
+          }
+        }
+
+        var retryResponse = await retryRequest.send();
+        String retryResponseBody = await retryResponse.stream.bytesToString();
+        print("Retry response status code: ${retryResponse.statusCode}");
+        print("Retry response body: $retryResponseBody");
+
+        if (retryResponse.statusCode == 201) {
+          successSnackbar(
+              'Success', 'Details sent successfully after token refresh.');
+        } else {
+          print(
+              'Failed to send job details after token refresh: $retryResponseBody');
+          errorSnackbar(
+              'Error', 'Failed to submit job details after refreshing token.');
+        }
       } else if (response.statusCode == 400) {
-        // Handle failure with error messages
+        // Handle failure with specific error messages
         String errorMessage = formatErrorMessage(jsonDecode(responseBody));
         errorSnackbar('Error', errorMessage);
       } else {

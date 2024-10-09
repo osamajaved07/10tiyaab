@@ -90,7 +90,7 @@ class _JobDetailsState extends State<JobDetails> {
               color: ttextColor,
               size: tlargefontsize(context),
             )),
-        title: Text("Job Detail",
+        title: Text("Job Details",
             style: TextStyle(
                 color: Colors.black, fontSize: tmidfontsize(context))),
       ),

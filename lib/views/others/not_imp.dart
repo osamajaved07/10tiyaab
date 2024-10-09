@@ -1,236 +1,114 @@
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import 'package:fyp_1/utils/colors.dart';
-// import 'package:geocoding/geocoding.dart';
-// import 'package:get/get.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:geolocator/geolocator.dart';
-
-// class FindSp extends StatefulWidget {
-//   const FindSp({super.key});
-
-//   @override
-//   State<FindSp> createState() => _FindSpState();
-// }
-
-// class _FindSpState extends State<FindSp> {
-//   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
-
-//   CameraPosition _initialCameraPosition = const CameraPosition(
-//     target: LatLng(24.8607, 67.0011),
-//     zoom: 18,
+// Future<void> submitJobDetails(
+//   String jobDescription,
+//   List<File> images,
+//   String minPriceRange,
+//   String maxPriceRange,
+//   String userLocation,
+//   String requiredSkill,
+// ) async {
+//   Get.dialog(
+//     Center(
+//       child: CircularProgressIndicator(
+//         color: tPrimaryColor,
+//       ),
+//     ),
+//     barrierDismissible: false,
 //   );
 
-//   late Position _currentPosition;
-//   bool _isMapLoading = true;
-//   bool _isSearchingForProviders = true;
-//   final TextEditingController _locationController = TextEditingController();
-//   String? _selectedServiceProvider;
-//   bool _showNotification = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _getCurrentLocation();
-//     final arguments = Get.arguments as Map<String, dynamic>?;
-//     if (arguments != null) {
-//       _selectedServiceProvider = arguments['serviceProvider'] ?? "Unknown Provider";
-//     }
-//     Future.delayed(Duration(seconds: 3), () {
-//       setState(() {
-//         _isSearchingForProviders = false;
-//         _showNotification = true;
-//       });
-//     });
+//   if (accessToken == null) {
+//     errorSnackbar(
+//       'Error',
+//       'An unexpected error occurred',
+//     );
+//     print("Access token is not available");
+//     return null;
 //   }
 
-//   Future<void> _getCurrentLocation() async {
-//     bool serviceEnabled;
-//     LocationPermission permission;
+//   try {
+//     // Create a multipart request for the images
+//     var request = http.MultipartRequest(
+//       'POST',
+//       Uri.parse('$baseUrl/api/service-request/'),
+//     );
 
-//     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//     if (!serviceEnabled) {
-//       _showLocationDialog(
-//         context,
-//         'Location services are disabled. Please enable them in settings.',
-//         openLocationSettings: true,
-//       );
-//       return;
-//     }
+//     // Add headers for authentication
+//     request.headers['Authorization'] = 'Bearer $accessToken';
 
-//     permission = await Geolocator.checkPermission();
-//     if (permission == LocationPermission.denied) {
-//       permission = await Geolocator.requestPermission();
-//       if (permission == LocationPermission.denied) {
-//         _showLocationDialog(
-//           context,
-//           'Location permissions are denied. Please allow permissions in settings.',
-//           openAppSettings: true,
-//         );
-//         return;
+//     // Add body fields
+//     request.fields['job_description'] = jobDescription;
+//     request.fields['min_price_range'] = minPriceRange;
+//     request.fields['max_price_range'] = maxPriceRange;
+//     request.fields['user_location'] = userLocation;
+//     request.fields['required_skill'] = requiredSkill;
+
+//     // Add images
+//     if (images.isNotEmpty) {
+//       for (var image in images) {
+//         var fileStream = await http.MultipartFile.fromPath('images', image.path);
+//         request.files.add(fileStream);
 //       }
 //     }
 
-//     if (permission == LocationPermission.deniedForever) {
-//       _showLocationDialog(
-//         context,
-//         'Location permissions are permanently denied. Please enable them in settings.',
-//         openAppSettings: true,
+//     // Send the request
+//     var response = await request.send();
+//     Get.back(); // Dismiss loading
+
+//     // Capture the response body
+//     String responseBody = await response.stream.bytesToString();
+//     print("Response status code: ${response.statusCode}");
+//     print("Response body: $responseBody"); // Print response body
+
+//     if (response.statusCode == 201) {
+//       // Success
+//       successSnackbar('Success', 'Details sent successfully.');
+//     } else if (response.statusCode == 401) {
+//       // Handle token refresh if the response indicates the token is expired
+//       print('Access token expired. Refreshing token...');
+//       await refreshToken();
+
+//       // Retry submitting the job details after token refresh
+//       var retryRequest = http.MultipartRequest(
+//         'POST',
+//         Uri.parse('$baseUrl/api/service-request/'),
 //       );
-//       return;
+
+//       retryRequest.headers['Authorization'] = 'Bearer $accessToken';
+
+//       retryRequest.fields['job_description'] = jobDescription;
+//       retryRequest.fields['min_price_range'] = minPriceRange;
+//       retryRequest.fields['max_price_range'] = maxPriceRange;
+//       retryRequest.fields['user_location'] = userLocation;
+//       retryRequest.fields['required_skill'] = requiredSkill;
+
+//       if (images.isNotEmpty) {
+//         for (var image in images) {
+//           var fileStream = await http.MultipartFile.fromPath('images', image.path);
+//           retryRequest.files.add(fileStream);
+//         }
+//       }
+
+//       var retryResponse = await retryRequest.send();
+//       String retryResponseBody = await retryResponse.stream.bytesToString();
+//       print("Retry response status code: ${retryResponse.statusCode}");
+//       print("Retry response body: $retryResponseBody");
+
+//       if (retryResponse.statusCode == 201) {
+//         successSnackbar('Success', 'Details sent successfully after token refresh.');
+//       } else {
+//         print('Failed to send job details after token refresh: $retryResponseBody');
+//         errorSnackbar('Error', 'Failed to submit job details after refreshing token.');
+//       }
+//     } else if (response.statusCode == 400) {
+//       // Handle failure with specific error messages
+//       String errorMessage = formatErrorMessage(jsonDecode(responseBody));
+//       errorSnackbar('Error', errorMessage);
+//     } else {
+//       // General failure case
+//       errorSnackbar('Error', 'Submission failed. Please try again.');
 //     }
-
-//     try {
-//       _currentPosition = await Geolocator.getCurrentPosition();
-//       List<Placemark> placemarks = await placemarkFromCoordinates(
-//         _currentPosition.latitude, _currentPosition.longitude);
-
-//       Placemark place = placemarks[0];
-
-//       String address = "${place.street}, ${place.subLocality}, ${place.locality}";
-//       setState(() {
-//         _locationController.text = address;
-//         _initialCameraPosition = CameraPosition(
-//           target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
-//           zoom: 18,
-//         );
-//         _isMapLoading = false;
-//       });
-
-//       final GoogleMapController controller = await _controller.future;
-//       controller.animateCamera(CameraUpdate.newCameraPosition(_initialCameraPosition));
-//     } catch (e) {
-//       print("Error getting location: $e");
-//     }
-//   }
-
-//   void _showLocationDialog(BuildContext context, String message, {bool openAppSettings = false, bool openLocationSettings = false}) {
-//     showDialog(
-//       context: context,
-//       builder: (context) {
-//         return AlertDialog(
-//           title: Text('Location Access Required'),
-//           content: Text(message),
-//           actions: [
-//             TextButton(
-//               onPressed: () => Get.back(),
-//               child: Text('Cancel'),
-//             ),
-//             TextButton(
-//               onPressed: () async {
-//                 if (openAppSettings) {
-//                   await openAppSettings;
-//                 }
-//                 if (openLocationSettings) {
-//                   await Geolocator.openLocationSettings();
-//                 }
-//               },
-//               child: Text('Open Settings'),
-//             ),
-//           ],
-//         );
-//       },
-//     );
-//   }
-
-//   Widget _buildServiceProviderContainers() {
-//     return Column(
-//       children: [
-//         _buildServiceProviderContainer("Provider 1", "2.5 km away"),
-//         _buildServiceProviderContainer("Provider 2", "3.0 km away"),
-//         _buildServiceProviderContainer("Provider 3", "4.0 km away"),
-//       ],
-//     );
-//   }
-
-//   Widget _buildServiceProviderContainer(String providerName, String distance) {
-//     return Container(
-//       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-//       padding: EdgeInsets.all(16),
-//       decoration: BoxDecoration(
-//         color: tPrimaryColor,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black12,
-//             blurRadius: 10,
-//             offset: Offset(0, 5),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(
-//             providerName,
-//             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-//           ),
-//           SizedBox(height: 5),
-//           Text(
-//             distance,
-//             style: TextStyle(color: Colors.white),
-//           ),
-//           SizedBox(height: 10),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               ElevatedButton(
-//                 onPressed: () {},
-//                 child: Text("Accept"),
-//                 style: ElevatedButton.styleFrom(
-//                   primary: Colors.green,
-//                 ),
-//               ),
-//               ElevatedButton(
-//                 onPressed: () {},
-//                 child: Text("Decline"),
-//                 style: ElevatedButton.styleFrom(
-//                   primary: Colors.red,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: _isMapLoading
-//           ? Center(
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   CircularProgressIndicator(
-//                     color: tPrimaryColor,
-//                   ),
-//                   SizedBox(height: 8),
-//                   Text("Loading..."),
-//                 ],
-//               ),
-//             )
-//           : Stack(
-//               children: [
-//                 GoogleMap(
-//                   mapType: MapType.normal,
-//                   initialCameraPosition: _initialCameraPosition,
-//                   myLocationEnabled: true,
-//                   myLocationButtonEnabled: false,
-//                   onMapCreated: (GoogleMapController controller) {
-//                     _controller.complete(controller);
-//                   },
-//                 ),
-//                 if (_isSearchingForProviders)
-//                   Center(
-//                     child: CircularProgressIndicator(
-//                       color: tPrimaryColor,
-//                     ),
-//                   ),
-//                 if (!_isSearchingForProviders) _buildServiceProviderContainers(),
-//               ],
-//             ),
-//     );
+//   } catch (e) {
+//     Get.back(); // Dismiss loading in case of error
+//     errorSnackbar('Error', 'An unexpected error occurred. Please try again.');
+//     print("Error: $e");
 //   }
 // }

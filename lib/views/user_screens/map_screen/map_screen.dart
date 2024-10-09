@@ -34,12 +34,12 @@ class _UserMapScreenState extends State<UserMapScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-    final arguments = Get.arguments as Map<String, dynamic>?;
-    if (arguments != null) {
-      _selectedServiceProvider =
-          arguments['serviceProvider'] ?? "Unknown Provider";
-      print("Selected Service Provider: $_selectedServiceProvider");
-    }
+    // final arguments = Get.arguments as Map<String, dynamic>?;
+    // if (arguments != null) {
+    //   _selectedServiceProvider =
+    //       arguments['serviceProvider'] ?? "Unknown Provider";
+    //   print("Selected Service Provider: $_selectedServiceProvider");
+    // }
   }
 
   // Function to get the current location of the user
@@ -94,12 +94,6 @@ class _UserMapScreenState extends State<UserMapScreen> {
       String address =
           "${place.street}, ${place.subLocality}, ${place.locality}";
 
-      // Set the address in the TextField
-
-      // _locationController.text = address;
-
-      // _locationController.text =
-      //     "${_currentPosition.latitude}, ${_currentPosition.longitude}"; // Set current location in the text field
       setState(() {
         _locationController.text = address;
         _initialCameraPosition = CameraPosition(

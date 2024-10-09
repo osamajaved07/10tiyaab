@@ -364,7 +364,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         ),
                         SizedBox(height: screenHeight * 0.05),
                         Text(
-                          'Suggestions',
+                          ' Suggestions',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: screenWidth * 0.05,
@@ -424,38 +424,53 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-  Widget _suggestionIcon(String imagePath, String title) {
-    return Container(
-      width: MediaQuery.of(context).size.width / 4.5,
-      height: MediaQuery.of(context).size.height / 8.5,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 190, 190, 190)
-              .withOpacity(0.5), // Shadow color with opacity
-          spreadRadius: 5, // Spread radius
-          blurRadius: 7, // Blur radius
-          offset: Offset(0, 3), // Offset for the shadow (x, y)
-        ),
-      ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              imagePath,
-              width: 40, // Adjust the size as needed
-              height: 40,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: 12),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
+  Widget _suggestionIcon(String imagePath, String suggestion) {
+    return GestureDetector(
+      onTap: () async {
+        // Store selected provider in local storage
+        await _storage.write(key: 'selectedProvider', value: suggestion);
+        setState(() {
+          selectedProvider = suggestion;
+          print('Selected Service Provider: $suggestion');
+        });
+
+        // Redirect to map screen
+        Get.toNamed(
+          "/mapscreen",
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width / 4.5,
+        height: MediaQuery.of(context).size.height / 8.5,
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 190, 190, 190)
+                .withOpacity(0.5), // Shadow color with opacity
+            spreadRadius: 5, // Spread radius
+            blurRadius: 7, // Blur radius
+            offset: Offset(0, 3), // Offset for the shadow (x, y)
+          ),
+        ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                imagePath,
+                width: 40, // Adjust the size as needed
+                height: 40,
+                fit: BoxFit.contain,
               ),
-            ),
-          ],
+              SizedBox(height: 12),
+              Text(
+                suggestion,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
