@@ -426,19 +426,21 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
   Widget _suggestionIcon(String imagePath, String suggestion) {
     return GestureDetector(
-      onTap: () async {
-        // Store selected provider in local storage
-        await _storage.write(key: 'selectedProvider', value: suggestion);
-        setState(() {
-          selectedProvider = suggestion;
-          print('Selected Service Provider: $suggestion');
-        });
+      onTap: suggestion != 'More'
+          ? () async {
+              // Store selected provider in local storage
+              await _storage.write(key: 'selectedProvider', value: suggestion);
+              setState(() {
+                selectedProvider = suggestion;
+                print('Selected Service Provider: $suggestion');
+              });
 
-        // Redirect to map screen
-        Get.toNamed(
-          "/mapscreen",
-        );
-      },
+              // Redirect to map screen
+              Get.toNamed(
+                "/mapscreen",
+              );
+            }
+          : null,
       child: Container(
         width: MediaQuery.of(context).size.width / 4.5,
         height: MediaQuery.of(context).size.height / 8.5,

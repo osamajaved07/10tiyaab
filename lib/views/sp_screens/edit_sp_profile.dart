@@ -8,6 +8,7 @@ import 'package:fyp_1/utils/custom_dialog.dart';
 import 'package:fyp_1/views/sp_screens/sp_home.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:quickalert/quickalert.dart';
 
 class EditSpProfilePage extends StatefulWidget {
   const EditSpProfilePage({
@@ -91,34 +92,53 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
     }
   }
 
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: tlightPrimaryColor,
-          elevation: 8,
-          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          title: Text("Logout"),
-          content: Text("Are you sure you want to logout?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await _authController.splogout();
-              },
-              child: Text("Logout", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+  void _showConfirmationDialog(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.warning,
+        title: "Are you sure you want to logout?",
+        confirmBtnText: 'Logout',
+        cancelBtnText: 'Cancel',
+        showCancelBtn: true,
+        confirmBtnColor: Colors.red,
+        width: 100,
+        onConfirmBtnTap: () async {
+          await _authController.splogout();
+          // Navigator.of(context).pop();
+        },
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+        });
   }
+
+  // void _showLogoutDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor: tlightPrimaryColor,
+  //         elevation: 8,
+  //         shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+  //         title: Text("Logout"),
+  //         content: Text("Are you sure you want to logout?"),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Close the dialog
+  //             },
+  //             child: Text("Cancel"),
+  //           ),
+  //           TextButton(
+  //             onPressed: () async {
+  //               await _authController.splogout();
+  //             },
+  //             child: Text("Logout", style: TextStyle(color: Colors.red)),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   void _updateProfile() async {
     String profilePicPath = _pickedImage?.path ?? '';
@@ -154,76 +174,69 @@ class _EditSpProfilePageState extends State<EditSpProfilePage> {
                   final screenWidth = constraints.maxWidth;
                   final screenHeight = constraints.maxHeight;
                   return SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: screenHeight, // Ensure full height
-                      ),
-                      child: IntrinsicHeight(
-                        child: Stack(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(
-                                  top: 45.0, left: 20.0, right: 20.0),
-                              height: screenHeight / 3.1,
-                              width: screenWidth,
-                              decoration: BoxDecoration(
-                                  // color: const Color.fromARGB(84, 4, 190, 190),
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.elliptical(
-                                          MediaQuery.of(context).size.width,
-                                          105.0))),
-                            ),
-                            Positioned(
-                                right: 0,
-                                top: screenHeight * 0.035,
-                                child: IconButton(
-                                    onPressed: () {
-                                      _showLogoutDialog(context);
-                                    },
-                                    icon: Icon(
-                                      Icons.logout_outlined,
-                                      color: ttextColor,
-                                      size: 32,
-                                    ))),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: screenWidth * 0.08,
-                                  vertical: screenHeight * 0.08),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  // SizedBox(height: screenHeight * 0.05),
-
-                                  // Profile Picture Section
-                                  picUpload(screenWidth),
-                                  SizedBox(height: screenHeight * 0.02),
-
-                                  // User Name
-                                  userName(screenWidth),
-                                  SizedBox(height: screenHeight * 0.04),
-
-                                  // Name TextField
-                                  nameField(),
-                                  SizedBox(height: screenHeight * 0.03),
-
-                                  // Email TextField
-                                  emailField(),
-                                  SizedBox(height: screenHeight * 0.03),
-                                  skillField(),
-                                  SizedBox(height: screenHeight * 0.03),
-                                  phoneNumberField(screenWidth, screenHeight),
-                                  SizedBox(height: screenHeight * 0.05),
-
-                                  // Update Button
-                                  updateButton(screenHeight, screenWidth),
-                                  SizedBox(height: screenHeight * 0.05),
-                                ],
-                              ),
-                            ),
-                          ],
+                    child: Stack(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(
+                              top: 45.0, left: 20.0, right: 20.0),
+                          height: screenHeight / 3.1,
+                          width: screenWidth,
+                          decoration: BoxDecoration(
+                              // color: const Color.fromARGB(84, 4, 190, 190),
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.vertical(
+                                  bottom: Radius.elliptical(
+                                      MediaQuery.of(context).size.width,
+                                      105.0))),
                         ),
-                      ),
+                        Positioned(
+                            right: 0,
+                            top: screenHeight * 0.045,
+                            child: IconButton(
+                                onPressed: () {
+                                  _showConfirmationDialog(context);
+                                },
+                                icon: Icon(
+                                  Icons.logout_outlined,
+                                  color: ttextColor,
+                                  size: 32,
+                                ))),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.08,
+                              vertical: screenHeight * 0.08),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // SizedBox(height: screenHeight * 0.05),
+
+                              // Profile Picture Section
+                              picUpload(screenWidth),
+                              SizedBox(height: screenHeight * 0.02),
+
+                              // User Name
+                              userName(screenWidth),
+                              SizedBox(height: screenHeight * 0.04),
+
+                              // Name TextField
+                              nameField(),
+                              SizedBox(height: screenHeight * 0.03),
+
+                              // Email TextField
+                              emailField(),
+                              SizedBox(height: screenHeight * 0.03),
+                              skillField(),
+                              SizedBox(height: screenHeight * 0.03),
+                              phoneNumberField(screenWidth, screenHeight),
+                              SizedBox(height: screenHeight * 0.05),
+
+                              // Update Button
+                              updateButton(screenHeight, screenWidth),
+                              SizedBox(height: screenHeight * 0.05),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },

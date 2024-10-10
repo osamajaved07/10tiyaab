@@ -1,10 +1,10 @@
 // ignore_for_file: unused_element
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import '../../utils/colors.dart';
 
 class SpHomeScreen extends StatefulWidget {
@@ -34,35 +34,27 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
     return {'username': username, 'skill': skill};
   }
 
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: tlightPrimaryColor,
-          elevation: 8,
-          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          title: Text("Confirmation"),
-          content: Text("Are you sure you want to start earning?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back(); // Close the dialog
-              },
-              child: Text("No", style: TextStyle(color: Colors.red)),
-            ),
-            TextButton(
-              onPressed: () async {
-                Get.offNamed(
-                  '/spmap',
-                );
-              },
-              child: Text("Yes", style: TextStyle(color: Colors.blue)),
-            ),
-          ],
-        );
-      },
-    );
+  void _showConfirmationDialog(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.warning,
+        title: "Are you sure you want to start earning?",
+        // text: 'Are you sure you want to start earning?',
+        confirmBtnText: 'Yes',
+        cancelBtnText: 'No',
+        showCancelBtn: true,
+        confirmBtnColor: Colors.green,
+        onConfirmBtnTap: () {
+          Get.offNamed(
+            '/spmap',
+          );
+          // Navigator.of(context).pop();
+        },
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+        },
+        customAsset: 'assets/lottie/earn-money.gif',
+        width: MediaQuery.of(context).size.width * 0.5);
   }
 
   @override
@@ -624,20 +616,26 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
     return Center(
       child: GestureDetector(
         onTap: () {
-          _showLogoutDialog(context);
+          _showConfirmationDialog(context);
         },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05),
-          decoration: BoxDecoration(
-              border: Border.all(width: 2, color: Colors.black54),
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(12)),
-          child: Text(
-            'Start earning →',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: screenWidth * 0.05,
+        child: Material(
+          color: Colors.transparent,
+          elevation: 4,
+          shadowColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05),
+            decoration: BoxDecoration(
+                border: Border.all(width: 2, color: Colors.black54),
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(12)),
+            child: Text(
+              'Start earning →',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: screenWidth * 0.05,
+              ),
             ),
           ),
         ),
@@ -645,53 +643,62 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
     );
   }
 
-  Container skillShow(double screenHeight, double screenWidth) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-          vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05),
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 121, 121, 121)
-              .withOpacity(0.5), // Shadow color with opacity
-          spreadRadius: 5, // Spread radius
-          blurRadius: 7, // Blur radius
-          offset: Offset(0, 3), // Offset for the shadow (x, y)
+  Material skillShow(double screenHeight, double screenWidth) {
+    return Material(
+      color: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(1),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+            vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05),
+        decoration: BoxDecoration(
+            // boxShadow: [
+            // BoxShadow(
+            //   color: const Color.fromARGB(255, 121, 121, 121)
+            //       .withOpacity(0.5), // Shadow color with opacity
+            //   spreadRadius: 5, // Spread radius
+            //   blurRadius: 7, // Blur radius
+            //   offset: Offset(0, 3), // Offset for the shadow (x, y)
+            // ),
+            // ],
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Provider type:",
+              style: TextStyle(
+                  fontSize: screenHeight * 0.024,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[700]),
+            ),
+            Container(
+              height: screenHeight * 0.03, // Adjust height as needed
+              width: 2, // Width of the divider line
+              color: Colors.grey[400], // Line color
+            ),
+            FutureBuilder<String>(
+                future: _getSkill(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error loading skill');
+                  } else {
+                    final skill = snapshot.data ?? 'Unknown Skill';
+                    return Text(
+                      skill,
+                      style: TextStyle(
+                          fontSize: screenHeight * 0.027,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[800]),
+                    );
+                  }
+                })
+          ],
         ),
-      ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Provider type:",
-            style: TextStyle(
-                fontSize: screenHeight * 0.024,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700]),
-          ),
-          Container(
-            height: screenHeight * 0.03, // Adjust height as needed
-            width: 2, // Width of the divider line
-            color: Colors.grey[400], // Line color
-          ),
-          FutureBuilder<String>(
-              future: _getSkill(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error loading skill');
-                } else {
-                  final skill = snapshot.data ?? 'Unknown Skill';
-                  return Text(
-                    skill,
-                    style: TextStyle(
-                        fontSize: screenHeight * 0.027,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[800]),
-                  );
-                }
-              })
-        ],
       ),
     );
   }
