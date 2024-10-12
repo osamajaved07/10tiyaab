@@ -15,17 +15,36 @@ class UserRegister extends StatefulWidget {
 
 class _UserRegisterState extends State<UserRegister> {
   final UserAuthController _authController = Get.put(UserAuthController());
-
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
   bool ispasswordVisible = false;
-
+  bool isButtonEnabled = false;
   // Controllers
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _userNameController.addListener(_validateFields);
+    _firstNameController.addListener(_validateFields);
+    _lastNameController.addListener(_validateFields);
+    _passwordController.addListener(_validateFields);
+    _confirmPasswordController.addListener(_validateFields);
+  }
+
+  void _validateFields() {
+    setState(() {
+      isButtonEnabled = _userNameController.text.isNotEmpty &&
+          _firstNameController.text.isNotEmpty &&
+          _lastNameController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty &&
+          _confirmPasswordController.text.isNotEmpty;
+    });
+  }
 
   void register() async {
     if (_formkey.currentState!.validate()) {
@@ -207,7 +226,7 @@ class _UserRegisterState extends State<UserRegister> {
 
   GestureDetector _registerButton(BuildContext context) {
     return GestureDetector(
-      onTap: register,
+      onTap: isButtonEnabled ? register : null,
       child: Material(
         elevation: 5.0,
         borderRadius: BorderRadius.circular(12),
@@ -282,10 +301,9 @@ class _UserRegisterState extends State<UserRegister> {
             return 'Please enter password';
           } else if (value.length < 8) {
             return 'Password must be at least 8 characters';
-          } else if (!RegExp(
-                  r'^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[a-z\d@$!%*#?&]{8,}$')
+          } else if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$')
               .hasMatch(value)) {
-            return 'Password must contain at least one letter,\none number, and one special character';
+            return 'Password must contain at least one letter\n and one number';
           } else {
             return null;
           }

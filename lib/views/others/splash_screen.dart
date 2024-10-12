@@ -23,92 +23,83 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // _navigateToNextScreen();
-    _startSplashScreenTimer();
-    _performBackgroundTasks();
+    _navigateToNextScreen();
+    // _startSplashScreenTimer();
+    // _performBackgroundTasks();
   }
 
-  void _startSplashScreenTimer() async {
-    await Future.delayed(Duration(seconds: 16));
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
-  }
+  // void _startSplashScreenTimer() async {
+  //   await Future.delayed(Duration(seconds: 16));
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  // }
 
-  Future<void> _performBackgroundTasks() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final bool isOnboardingCompleted =
-          prefs.getBool('isOnboardingCompleted') ?? false;
-      final String? userType = await _secureStorage.read(key: 'user_type');
+  // Future<void> _performBackgroundTasks() async {
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final bool isOnboardingCompleted =
+  //         prefs.getBool('isOnboardingCompleted') ?? false;
+  //     final String? userType = await _secureStorage.read(key: 'user_type');
 
-      final results = await Future.wait([
-        _authController.isLoggedIn(),
-        _spauthController.isspLoggedIn(),
-      ]);
-      final bool isLoggedin = results[0];
-      final bool isspLoggedin = results[1];
+  //     final results = await Future.wait([
+  //       _authController.isLoggedIn(),
+  //       _spauthController.isspLoggedIn(),
+  //     ]);
+  //     final bool isLoggedin = results[0];
+  //     final bool isspLoggedin = results[1];
 
-      // Check if splash screen is still active
-      if (mounted) {
-        if (isOnboardingCompleted) {
-          if (isLoggedin) {
-            print('Type: $userType');
-            Get.offAllNamed("/homescreen");
-          } else if (isspLoggedin) {
-            print('Type: $userType');
-            Get.offAllNamed("/sphome");
-          } else {
-            Get.offAllNamed("/selection");
-          }
-        } else {
-          Get.offAllNamed('/onboarding_screen');
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        // If there was an error, navigate to the login screen
-        print("Failed to retrieve profile after token refresh: $e");
-        Get.offAllNamed('/userLogin');
-      }
-    }
-  }
-
-  // Future<void> _navigateToNextScreen() async {
-  //   await Future.delayed(Duration(seconds: 4));
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final bool isOnboardingCompleted =
-  //       prefs.getBool('isOnboardingCompleted') ?? false;
-  //   final String? userType = await _secureStorage.read(key: 'user_type');
-  //   // final isLoggedinFuture = _authController.isLoggedIn();
-  //   // final isspLoggedinFuture = _spauthController.isspLoggedIn();
-  //   // // Wait for both login checks simultaneously
-  //   // final bool isLoggedin = await isLoggedinFuture;
-  //   // final bool isspLoggedin = await isspLoggedinFuture;
-
-  //   final results = await Future.wait(
-  //       [_authController.isLoggedIn(), _spauthController.isspLoggedIn()]);
-  //   final bool isLoggedin = results[0];
-  //   final bool isspLoggedin = results[1];
-
-  //   if (isOnboardingCompleted) {
-  //     // if (userType == 'customer' && isLoggedin) {
-  //     if (isLoggedin) {
-  //       print('Type: $userType');
-  //       Get.offAllNamed("/homescreen");
-  //       // } else if (userType == 'service_provider' && isspLoggedin) {
-  //     } else if (isspLoggedin) {
-  //       print('Type: $userType');
-  //       Get.offAllNamed("/sphome");
+  //     if (isOnboardingCompleted) {
+  //       if (isLoggedin) {
+  //         print('Type: $userType');
+  //         Get.offAllNamed("/homescreen");
+  //       } else if (isspLoggedin) {
+  //         print('Type: $userType');
+  //         Get.offAllNamed("/sphome");
+  //       } else {
+  //         Get.offAllNamed("/selection");
+  //       }
   //     } else {
-  //       Get.offAllNamed("/selection");
+  //       Get.offAllNamed('/onboarding_screen');
   //     }
-  //   } else {
-  //     Get.offAllNamed('/onboarding_screen');
+  //   } catch (e) {
+  //     print("Failed to retrieve profile after token refresh: $e");
+  //     Get.offAllNamed('/userLogin');
   //   }
   // }
+  Future<void> _navigateToNextScreen() async {
+    await Future.delayed(Duration(seconds: 4));
+    final prefs = await SharedPreferences.getInstance();
+    final bool isOnboardingCompleted =
+        prefs.getBool('isOnboardingCompleted') ?? false;
+    final String? userType = await _secureStorage.read(key: 'user_type');
+    // final isLoggedinFuture = _authController.isLoggedIn();
+    // final isspLoggedinFuture = _spauthController.isspLoggedIn();
+    // // Wait for both login checks simultaneously
+    // final bool isLoggedin = await isLoggedinFuture;
+    // final bool isspLoggedin = await isspLoggedinFuture;
+
+    final results = await Future.wait(
+        [_authController.isLoggedIn(), _spauthController.isspLoggedIn()]);
+    final bool isLoggedin = results[0];
+    final bool isspLoggedin = results[1];
+
+    if (isOnboardingCompleted) {
+      // if (userType == 'customer' && isLoggedin) {
+      if (isLoggedin) {
+        print('Type: $userType');
+        Get.offAllNamed("/homescreen");
+        // } else if (userType == 'service_provider' && isspLoggedin) {
+      } else if (isspLoggedin) {
+        print('Type: $userType');
+        Get.offAllNamed("/sphome");
+      } else {
+        Get.offAllNamed("/selection");
+      }
+    } else {
+      Get.offAllNamed('/onboarding_screen');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

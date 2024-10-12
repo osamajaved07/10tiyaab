@@ -95,6 +95,8 @@ class SpAuthController extends GetxController {
         print('Access token refreshed successfully');
       } else if (response.statusCode == 401) {
         // Handle token blacklisting
+        print("Refresh token is invalid or blacklisted. Logging out the user.");
+        await splogout();
         errorSnackbar(
           'Error',
           'Session expired. Please log in again.',
@@ -199,7 +201,7 @@ class SpAuthController extends GetxController {
   }
 
   Future<bool> isspLoggedIn() async {
-    print('accessToken: $_accessToken');
+    // print('accessToken: $_accessToken');
     // Retrieve stored tokens
     _accessToken = await _secureStorage.read(key: 'accessToken');
     _refreshToken = await _secureStorage.read(key: 'refreshToken');

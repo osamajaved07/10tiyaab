@@ -87,9 +87,8 @@ class UserAuthController extends GetxController {
 
       // Send the request
       final response = await request.send();
-
+      final responseBody = await response.stream.bytesToString();
       Get.back();
-
       if (response.statusCode == 200) {
         successSnackbar(
           'Success',
@@ -97,7 +96,12 @@ class UserAuthController extends GetxController {
         );
         // Optionally refresh user profile
         await fetchUserProfile();
+      } else if (response.statusCode == 401) {
+        await handleTokenExpirationAndRetry(
+            firstName, lastName, phoneNumber, profilePicPath);
       } else {
+        print(responseBody);
+        print(response.statusCode);
         errorSnackbar(
           'Error',
           'Failed to update user information. Please try again.',
@@ -109,6 +113,49 @@ class UserAuthController extends GetxController {
         'Error',
         'An unexpected error occurred: $e',
       );
+    }
+  }
+
+  Future<void> handleTokenExpirationAndRetry(String firstName, String lastName,
+      String phoneNumber, String? profilePicPath) async {
+    try {
+      print('Access token expired. Refreshing token...');
+      await refreshToken(); // Refresh the token
+
+      // Retry updating user info after token refresh
+      var retryRequest = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl/accounts/profile/update/'),
+      )
+        ..headers['Authorization'] = 'Bearer $accessToken'
+        ..fields.addAll({
+          'first_name': firstName,
+          'last_name': lastName,
+          'phone_no': phoneNumber,
+        });
+
+      // Add the profile picture again if it was provided
+      if (profilePicPath != null) {
+        retryRequest.files.add(
+          await http.MultipartFile.fromPath('profile_pic', profilePicPath),
+        );
+      }
+
+      // Send the retry request
+      final retryResponse = await retryRequest.send();
+      final retryResponseBody = await retryResponse.stream.bytesToString();
+
+      if (retryResponse.statusCode == 200) {
+        successSnackbar(
+            'Success', 'Profile updated successfully after token refresh');
+        await fetchUserProfile(); // Refresh profile after success
+      } else {
+        print('Retry Response Body: $retryResponseBody');
+        errorSnackbar('Error',
+            'Failed to update profile after token refresh. Please try again.');
+      }
+    } catch (e) {
+      errorSnackbar('Error', 'An error occurred while refreshing token: $e');
     }
   }
 
@@ -239,6 +286,8 @@ class UserAuthController extends GetxController {
         print('Access token refreshed successfully');
       } else if (response.statusCode == 401) {
         // Handle token blacklisting
+        print("Refresh token is invalid or blacklisted. Logging out the user.");
+        await logout();
         errorSnackbar(
           'Error',
           'Session expired. Please log in again.',
@@ -257,6 +306,7 @@ class UserAuthController extends GetxController {
         'Error',
         'An unexpected error occurred: $e',
       );
+      Get.offAllNamed('/userLogin');
     }
   }
 
@@ -377,9 +427,7 @@ class UserAuthController extends GetxController {
           'Success',
           'Phone number added successfully',
         );
-        Future.delayed(Duration(seconds: 1), () {
-          Get.toNamed("/userregisterfinal");
-        });
+        Get.toNamed("/userregisterfinal");
       } else {
         String errorMessage;
         if (response.statusCode == 400) {
@@ -430,14 +478,14 @@ class UserAuthController extends GetxController {
       Get.back();
 
       if (response.statusCode == 200) {
+        Get.offAllNamed("/verify");
         successSnackbar(
           'Success',
           'OTP sent to your email',
         );
         // Adding a slight delay to ensure the Snackbar is visible
-        Future.delayed(Duration(seconds: 1), () {
-          Get.offAllNamed("/verify");
-        });
+        // Future.delayed(Duration(seconds: 1), () {
+        // });
       } else {
         String errorMessage;
         if (response.statusCode == 400) {

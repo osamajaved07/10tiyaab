@@ -50,7 +50,7 @@ class OnboardingScreen extends StatelessWidget {
         lottie: 'OB3',
       ),
       Onboard(
-        title: 'Make Your Own Handyman Account',
+        title: "Visit Our Branch to Create Your Handyman Account",
         subtitle: {
           'Grow Your Business': true,
           'Expand Your Network': true,

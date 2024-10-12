@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print, prefer_final_fields, unused_element
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -8,7 +7,6 @@ import 'package:fyp_1/utils/custom_dialog.dart';
 import 'package:fyp_1/views/user_screens/user_homepage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:quickalert/quickalert.dart';
 import '../../controllers/user_auth_controller.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -87,52 +85,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  // void _showLogoutDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         backgroundColor: tlightPrimaryColor,
-  //         elevation: 8,
-  //         shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
-  //         title: Text("Logout"),
-  //         content: Text("Are you sure you want to logout?"),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text("Cancel"),
-  //           ),
-  //           TextButton(
-  //             onPressed: () async {
-  //               await _authController.logout();
-  //             },
-  //             child: Text("Logout", style: TextStyle(color: Colors.red)),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
   void _showConfirmationDialog(BuildContext context) {
-    QuickAlert.show(
-        context: context,
-        type: QuickAlertType.warning,
-        title: "Are you sure you want to logout?",
-        confirmBtnText: 'Logout',
-        cancelBtnText: 'Cancel',
-        showCancelBtn: true,
-        confirmBtnColor: Colors.red,
-        width: 100,
-        onConfirmBtnTap: () async {
-          await _authController.logout();
-          // Navigator.of(context).pop();
-        },
-        onCancelBtnTap: () {
-          Navigator.of(context).pop();
-        });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: tlightPrimaryColor,
+          elevation: 8,
+          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text("Logout"),
+          content: Text("Are you sure you want to logout?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _authController.logout();
+              },
+              child: Text("Logout", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _updateProfile() async {

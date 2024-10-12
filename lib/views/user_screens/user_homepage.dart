@@ -28,6 +28,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Painter',
     'Plumber',
     'Welder',
+    "Gardeners",
     'Mechanic'
   ]; // Example list of service providers
   List<String> _filteredProviders = [];
