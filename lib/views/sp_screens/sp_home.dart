@@ -36,6 +36,7 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
 
   void _showConfirmationDialog(BuildContext context) {
     QuickAlert.show(
+        // backgroundColor: Colors.grey,
         context: context,
         type: QuickAlertType.warning,
         title: "Are you sure you want to start earning?",
@@ -53,8 +54,8 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
         onCancelBtnTap: () {
           Navigator.of(context).pop();
         },
-        customAsset: 'assets/lottie/earn-money.gif',
-        width: MediaQuery.of(context).size.width * 0.5);
+        customAsset: 'assets/lottie/money.gif',
+        width: MediaQuery.of(context).size.width * 0.6);
   }
 
   @override

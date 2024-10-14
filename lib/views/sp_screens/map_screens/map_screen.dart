@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
@@ -27,6 +28,8 @@ class _SpMapScreenState extends State<SpMapScreen> {
   late Position _currentPosition;
   bool _isMapLoading = true; // Tracks map loading state
   final TextEditingController _locationController = TextEditingController();
+  String _connectionState = "Offline";
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -81,14 +84,8 @@ class _SpMapScreenState extends State<SpMapScreen> {
           _currentPosition.latitude, _currentPosition.longitude);
 
       Placemark place = placemarks[0]; // Get the first result
-
-      // Construct a user-friendly address
       String address =
           "${place.street}, ${place.subLocality}, ${place.locality}";
-
-      // Set the address in the TextField
-      // _locationController.text =
-      //     "${_currentPosition.latitude}, ${_currentPosition.longitude}"; // Set current location in the text field
       setState(() {
         _locationController.text = address;
         _initialCameraPosition = CameraPosition(
@@ -106,6 +103,32 @@ class _SpMapScreenState extends State<SpMapScreen> {
       );
     } catch (e) {
       print("Error getting location: $e");
+    }
+  }
+
+  Future<void> _toggleConnection() async {
+    if (_connectionState == "Offline") {
+      setState(() {
+        _connectionState = "Connecting";
+      });
+      Future.delayed(Duration(seconds: 3), () {
+        setState(() {
+          _connectionState = "Online";
+          print("Connection State: Online");
+        });
+        _storage.write(key: 'connectionState', value: 'Online'); // Store Online
+      });
+    } else if (_connectionState == "Online") {
+      setState(() {
+        _connectionState = "Connecting";
+      });
+      Future.delayed(Duration(seconds: 3), () {
+        setState(() {
+          _connectionState = "Offline";
+          print("Connection State: Offline"); // Switch to offline after delay
+        });
+        _storage.write(key: 'connectionState', value: 'Offline');
+      });
     }
   }
 
@@ -213,11 +236,81 @@ class _SpMapScreenState extends State<SpMapScreen> {
                       _controller.complete(controller);
                     },
                   ),
-                  locationDisplayDialog(screenHeight),
+                  locationDisplayDialog(screenHeight, screenWidth),
                   getCurrentLocation(screenHeight, screenWidth),
+                  connectionToggleButton(screenHeight, screenWidth),
+                  cancelButton(screenHeight, screenWidth),
                 ],
               );
             }),
+    );
+  }
+
+  Positioned cancelButton(double screenHeight, double screenWidth) {
+    return Positioned(
+      bottom: screenHeight * 0.05,
+      left: screenWidth * 0.25,
+      child: SizedBox(
+        width: screenWidth * 0.5,
+        child: ElevatedButton(
+          onPressed: () {
+            Get.offAllNamed('/sphome'); // Navigate to the home screen
+          },
+          style: ElevatedButton.styleFrom(
+            elevation: 8,
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Positioned connectionToggleButton(double screenHeight, double screenWidth) {
+    return Positioned(
+      top: screenHeight * 0.15,
+      right: 20,
+      child: ElevatedButton(
+        onPressed: _toggleConnection,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _connectionState == "Online"
+              ? tPrimaryColor
+              : _connectionState == "Connecting"
+                  ? Colors.orange
+                  : Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _connectionState,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: tsmallfontsize(context)),
+            ),
+            SizedBox(width: screenWidth * 0.02),
+            Icon(
+              _connectionState == "Online"
+                  ? Icons.check_circle
+                  : _connectionState == "Connecting"
+                      ? Icons.more_horiz // Horizontal three-dot icon
+                      : Icons.error_outline, // Warning icon for Offline
+              color: Colors.white,
+              size: screenWidth * 0.055,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -233,60 +326,47 @@ class _SpMapScreenState extends State<SpMapScreen> {
     );
   }
 
-  Positioned locationDisplayDialog(double screenHeight) {
+  Positioned locationDisplayDialog(double screenHeight, double screenWidth) {
     return Positioned(
       top: screenHeight * 0.06,
-      left: 5,
-      right: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: Icon(Icons.arrow_back)),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 121, 121, 121)
-                        .withOpacity(0.5), // Shadow color with opacity
-                    spreadRadius: 5, // Spread radius
-                    blurRadius: 7, // Blur radius
-                    offset: Offset(0, 3), // Offset for the shadow (x, y)
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _locationController,
-                style:
-                    TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
-                enabled: false,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search location',
-                  // suffixIcon: IconButton(
-                  //   icon: Icon(Icons.search),
-                  //   onPressed: () {
-                  //     _searchLocation(_locationController
-                  //         .text); // Search location on pressing the search icon
-                  //   },
-                  // ),
-                ),
-                onSubmitted: (value) {
-                  _searchLocation(value);
-                },
-              ),
+      left: screenWidth * 0.06, // 10% from the left
+      right: screenWidth * 0.06,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 121, 121, 121)
+                  .withOpacity(0.5), // Shadow color with opacity
+              spreadRadius: 5, // Spread radius
+              blurRadius: 7, // Blur radius
+              offset: Offset(0, 3), // Offset for the shadow (x, y)
             ),
+          ],
+        ),
+        child: TextField(
+          controller: _locationController,
+          style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+          enabled: false,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            hintText: 'Search location',
+            // suffixIcon: IconButton(
+            //   icon: Icon(Icons.search),
+            //   onPressed: () {
+            //     _searchLocation(_locationController
+            //         .text); // Search location on pressing the search icon
+            //   },
+            // ),
           ),
-        ],
+          onSubmitted: (value) {
+            _searchLocation(value);
+          },
+        ),
       ),
     );
   }

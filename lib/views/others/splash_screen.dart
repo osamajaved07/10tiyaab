@@ -1,7 +1,8 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fyp_1/controllers/sp_auth_controller.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _startSplashScreenTimer() async {
-    await Future.delayed(Duration(seconds: 4)); // Wait for 4 seconds
+    await Future.delayed(Duration(seconds: 4));
     _checkLoginStatus();
   }
 
@@ -87,12 +88,19 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(
-                    color: tPrimaryColor,
-                    backgroundColor: Colors.blueGrey,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
                   ),
-                  SizedBox(height: 16),
-                  Text('Loading...', style: TextStyle(fontSize: 16)),
+                  SpinKitThreeBounce(
+                    size: 30,
+                    color: const Color(0xFFFFFFFF),
+                  ),
+                  // CircularProgressIndicator(
+                  //   color: tPrimaryColor,
+                  //   backgroundColor: Colors.blueGrey,
+                  // ),
+                  // SizedBox(height: 16),
+                  // Text('Loading...', style: TextStyle(fontSize: 16)),
                 ],
               ),
             ),
