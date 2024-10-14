@@ -102,7 +102,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: tPrimaryColor),
+                  CircularProgressIndicator(
+                    color: tPrimaryColor,
+                    backgroundColor: Colors.blueGrey,
+                  ),
                   SizedBox(
                     height: 16,
                   ),

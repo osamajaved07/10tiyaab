@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field
+// ignore_for_file: unused_field, dead_code
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -124,6 +124,7 @@ class SpAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -226,14 +227,14 @@ class SpAuthController extends GetxController {
         // Check if user_type is "customer"
         if (userType == 'service_provider') {
           print('User is logged in as a service provider.');
-          successSnackbar(
-            'Welcome back',
-            '',
-          );
-          return true; // User is logged in and is a sp
+          return true;
+          // successSnackbar(
+          //   'Welcome back',
+          //   '',
+          // );
         } else {
           print('User is logged in but is not a sp. User type: $userType');
-          return false; // User is logged in but not a customer
+          return false;
         }
       } else if (response.statusCode == 401) {
         // Token expired, attempt to refresh the token
@@ -347,7 +348,11 @@ class SpAuthController extends GetxController {
     }
 
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
+      )),
       barrierDismissible: false,
     );
     final String url = 'https://fyp-project-zosb.onrender.com/contact/us/';
@@ -397,7 +402,11 @@ class SpAuthController extends GetxController {
     }
 
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
+      )),
       barrierDismissible: false,
     );
 
@@ -461,7 +470,11 @@ class SpAuthController extends GetxController {
       return;
     }
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
+      )),
       barrierDismissible: false,
     );
     try {

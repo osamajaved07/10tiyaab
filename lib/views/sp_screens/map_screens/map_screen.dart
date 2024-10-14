@@ -189,6 +189,7 @@ class _SpMapScreenState extends State<SpMapScreen> {
               children: [
                 CircularProgressIndicator(
                   color: tPrimaryColor,
+                  backgroundColor: Colors.blueGrey,
                 ),
                 SizedBox(
                   height: 8,

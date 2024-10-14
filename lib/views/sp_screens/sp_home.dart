@@ -114,7 +114,8 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                                     ConnectionState.waiting) {
                                   return Center(
                                       child: CircularProgressIndicator(
-                                    color: tlightPrimaryColor,
+                                    color: tPrimaryColor,
+                                    backgroundColor: Colors.blueGrey,
                                   ));
                                 } else if (snapshot.hasError) {
                                   return Text('Error loading info');
@@ -683,7 +684,10 @@ class _SpHomeScreenState extends State<SpHomeScreen> {
                 future: _getSkill(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return CircularProgressIndicator(
+                      color: tPrimaryColor,
+                      backgroundColor: Colors.blueGrey,
+                    );
                   } else if (snapshot.hasError) {
                     return Text('Error loading skill');
                   } else {

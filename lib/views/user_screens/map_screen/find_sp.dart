@@ -269,6 +269,7 @@ class _FindSpState extends State<FindSp> {
               children: [
                 CircularProgressIndicator(
                   color: tPrimaryColor,
+                  backgroundColor: Colors.blueGrey,
                 ),
                 SizedBox(
                   height: 8,

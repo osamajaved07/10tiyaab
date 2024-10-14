@@ -205,6 +205,7 @@ class _UserMapScreenState extends State<UserMapScreen> {
               children: [
                 CircularProgressIndicator(
                   color: tPrimaryColor,
+                  backgroundColor: Colors.blueGrey,
                 ),
                 SizedBox(
                   height: 8,

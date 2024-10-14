@@ -59,7 +59,11 @@ class UserAuthController extends GetxController {
     }
 
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
+      )),
       barrierDismissible: false,
     );
 
@@ -169,7 +173,11 @@ class UserAuthController extends GetxController {
     }
 
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
+      )),
       barrierDismissible: false,
     );
     final String url = 'https://fyp-project-zosb.onrender.com/contact/us/';
@@ -212,7 +220,11 @@ class UserAuthController extends GetxController {
       return;
     }
     Get.dialog(
-      Center(child: CircularProgressIndicator(color: tPrimaryColor)),
+      Center(
+          child: CircularProgressIndicator(
+        color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
+      )),
       barrierDismissible: false,
     );
     try {
@@ -408,6 +420,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -462,6 +475,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -520,6 +534,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -569,6 +584,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -618,6 +634,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     ); // Show the circular progress indicator
@@ -712,6 +729,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -809,11 +827,11 @@ class UserAuthController extends GetxController {
         // Check if user_type is "customer"
         if (userType == 'customer') {
           print('User is logged in as a customer.');
-          successSnackbar(
-            'Welcome back',
-            '',
-          );
           return true; // User is logged in and is a customer
+          // successSnackbar(
+          //   'Welcome back',
+          //   '',
+          // );
         } else {
           print(
               'User is logged in but is not a customer. User type: $userType');
@@ -865,6 +883,7 @@ class UserAuthController extends GetxController {
       Center(
           child: CircularProgressIndicator(
         color: tPrimaryColor,
+        backgroundColor: Colors.blueGrey,
       )),
       barrierDismissible: false,
     );
@@ -972,6 +991,7 @@ class UserAuthController extends GetxController {
       Center(
         child: CircularProgressIndicator(
           color: tPrimaryColor,
+          backgroundColor: Colors.blueGrey,
         ),
       ),
       barrierDismissible: false,

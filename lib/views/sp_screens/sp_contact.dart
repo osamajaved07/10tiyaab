@@ -106,7 +106,10 @@ class _SpContactUsScreenState extends State<SpContactUsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: tPrimaryColor),
+                  CircularProgressIndicator(
+                    color: tPrimaryColor,
+                    backgroundColor: Colors.blueGrey,
+                  ),
                   SizedBox(
                     height: 16,
                   ),

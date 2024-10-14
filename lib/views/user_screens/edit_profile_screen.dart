@@ -134,7 +134,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: tPrimaryColor),
+                  CircularProgressIndicator(
+                    color: tPrimaryColor,
+                    backgroundColor: Colors.blueGrey,
+                  ),
                   SizedBox(
                     height: 16,
                   ),
@@ -388,6 +391,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           Center(
             child: CircularProgressIndicator(
               color: tPrimaryColor,
+              backgroundColor: Colors.blueGrey,
             ),
           ),
         Positioned(
