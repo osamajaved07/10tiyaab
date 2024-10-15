@@ -1,6 +1,7 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, unused_field
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:geocoding/geocoding.dart';
@@ -20,33 +21,98 @@ class _FindSpState extends State<FindSp> {
       Completer<GoogleMapController>();
 
   CameraPosition _initialCameraPosition = const CameraPosition(
-    target: LatLng(24.8607, 67.0011), // Default location
+    target: LatLng(24.8607, 67.0011),
     zoom: 18,
   );
 
   late Position _currentPosition;
-  bool _isMapLoading = true; // Tracks map loading state
-  bool _isSearchingForProviders = true; // Tracks provider search state
+  bool _isMapLoading = true;
+  bool _isSearchingForProviders = true;
   final TextEditingController _locationController = TextEditingController();
-  String? _selectedServiceProvider;
-// To store the passed service provider
+  final _secureStorage = const FlutterSecureStorage();
+  String _selectedServiceProvider = "Unknown Provider";
+
+// For controlling the animated container visibility
+  bool _showFirst = false;
+  bool _showSecond = false;
+  bool _showThird = false;
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
-    final arguments = Get.arguments as Map<String, dynamic>?;
-    if (arguments != null) {
-      _selectedServiceProvider =
-          arguments['serviceProvider'] ?? "Unknown Provider";
-      print("Selected Service Provider: $_selectedServiceProvider");
-    }
-    Future.delayed(Duration(seconds: 12), () {
+    _getStoredServiceProvider();
+    // final arguments = Get.arguments as Map<String, dynamic>?;
+    // if (arguments != null) {
+    //   _selectedServiceProvider =
+    //       arguments['serviceProvider'] ?? "Unknown Provider";
+    //   print("Selected Service Provider: $_selectedServiceProvider");
+    // }
+    Future.delayed(Duration(seconds: 8), () {
       setState(() {
         _isSearchingForProviders = false;
+        // Trigger the animations with delays
+        Timer(Duration(seconds: 2), () {
+          setState(() {
+            _showFirst = true;
+          });
+        });
+        Timer(Duration(seconds: 5), () {
+          setState(() {
+            _showSecond = true;
+          });
+        });
+        Timer(Duration(seconds: 8), () {
+          setState(() {
+            _showThird = true;
+          });
+        });
       });
-      // _showServiceProviderSnackBar();
     });
+  }
+
+  Future<void> _getStoredServiceProvider() async {
+    // Retrieve the stored service provider from secure storage
+    String? storedProvider = await _secureStorage.read(key: 'selectedProvider');
+
+    if (storedProvider != null) {
+      setState(() {
+        _selectedServiceProvider = storedProvider;
+      });
+      print('Selected Service Provider: $storedProvider');
+    } else {
+      print('No service provider found in local storage.');
+    }
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: tlightPrimaryColor,
+          elevation: 8,
+          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text("Confirm"),
+          content: Text(
+              "Are you sure you want to stop finding $_selectedServiceProvider?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel", style: TextStyle(color: ttextColor)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.offNamed('/homescreen');
+              },
+              child: Text("Yes", style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Function to get the current location of the user
@@ -192,19 +258,36 @@ class _FindSpState extends State<FindSp> {
 
   Widget _buildServiceProviderContainers() {
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
         ),
-        _buildServiceProviderContainer("Kamran Ghulam", "2.5 km away"),
-        _buildServiceProviderContainer("Babar khan", "3.0 km away"),
-        _buildServiceProviderContainer("Rizwan Ali", "4.0 km away"),
+        _buildAnimatedServiceProviderContainer(
+            _showFirst, "Kamran Ghulam", _selectedServiceProvider, "Rs 400"),
+        _buildAnimatedServiceProviderContainer(
+            _showSecond, "Babar khan", _selectedServiceProvider, "Rs 600"),
+        _buildAnimatedServiceProviderContainer(
+            _showThird, "Rizwan Ali", _selectedServiceProvider, "Rs 800"),
       ],
     );
   }
 
-  Widget _buildServiceProviderContainer(String providerName, String distance) {
+  Widget _buildAnimatedServiceProviderContainer(
+      bool isVisible, String providerName, String skill, String price) {
+    return AnimatedSlide(
+      offset: isVisible ? Offset(0, 0) : Offset(0, -1), // Slide from top
+      duration: Duration(milliseconds: 1000), // Duration of the slide animation
+      curve: Curves.easeInOut, // Easing curve
+      child: AnimatedOpacity(
+        opacity: isVisible ? 1.0 : 0.0, // Fade in the container
+        duration: Duration(milliseconds: 500), // Duration of the opacity change
+        child: _buildServiceProviderContainer(providerName, skill, price),
+      ),
+    );
+  }
+
+  Widget _buildServiceProviderContainer(
+      String providerName, String skill, String price) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: EdgeInsets.all(16),
@@ -222,16 +305,28 @@ class _FindSpState extends State<FindSp> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            providerName,
-            style: TextStyle(
-                color: ttextColor,
-                fontWeight: FontWeight.bold,
-                fontSize: tsmallfontsize(context)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                providerName,
+                style: TextStyle(
+                    color: ttextColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: tsmallfontsize(context)),
+              ),
+              Text(
+                "Fare: $price",
+                style: TextStyle(
+                    color: ttextColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: tsmallfontsize(context)),
+              ),
+            ],
           ),
           SizedBox(height: 5),
           Text(
-            distance,
+            "Skill: $skill",
             style: TextStyle(color: ttextColor),
           ),
           SizedBox(height: 10),
@@ -243,6 +338,21 @@ class _FindSpState extends State<FindSp> {
                 child: Text("Accept"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: Row(
+                  children: [
+                    Text("Chat"),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Icon(Icons.chat_outlined)
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
                 ),
               ),
               ElevatedButton(
@@ -302,59 +412,63 @@ class _FindSpState extends State<FindSp> {
                     ),
                   if (!_isSearchingForProviders)
                     _buildServiceProviderContainers(),
-
-                  showLocationField(screenHeight),
+                  showLocationField(screenHeight, screenWidth),
                   getCurrentLocation(screenHeight, screenWidth),
-                  // button(screenHeight, screenWidth, context),
+                  cancelButton(screenHeight, screenWidth, context),
                 ],
               );
             }),
     );
   }
 
-  // Positioned button(
-  //     double screenHeight, double screenWidth, BuildContext context) {
-  //   return Positioned(
-  //     bottom: screenHeight * 0.04,
-  //     left: screenWidth * 0.19,
-  //     right: screenWidth * 0.19,
-  //     child: Material(
-  //       elevation: 12,
-  //       shadowColor: Colors.grey.withOpacity(0.9),
-  //       borderRadius: BorderRadius.circular(18),
-  //       child: Ink(
-  //         decoration: BoxDecoration(
-  //           gradient: LinearGradient(
-  //             colors: [
-  //               tPrimaryColor,
-  //               const Color.fromARGB(255, 52, 235, 235)
-  //             ], // Your gradient colors
-  //             begin: Alignment.topLeft,
-  //             end: Alignment.bottomRight,
-  //           ),
-  //           borderRadius: BorderRadius.circular(10),
-  //         ),
-  //         child: ElevatedButton(
-  //           onPressed: _saveLocation, // Call the save location function
-  //           style: ElevatedButton.styleFrom(
-  //             backgroundColor: Colors.transparent,
-  //             padding: EdgeInsets.symmetric(vertical: 15),
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(10),
-  //             ),
-  //           ),
-  //           child: Text(
-  //             'Confirm location',
-  //             style: TextStyle(
-  //                 fontWeight: FontWeight.w500,
-  //                 color: tsecondarytextColor,
-  //                 fontSize: tmidfontsize(context)),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Positioned cancelButton(
+      double screenHeight, double screenWidth, BuildContext context) {
+    return Positioned(
+      bottom: screenHeight * 0.04,
+      left: screenWidth * 0.19,
+      right: screenWidth * 0.19,
+      child: Material(
+        elevation: 12,
+        shadowColor: Colors.grey.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.grey,
+                const Color.fromARGB(255, 197, 197, 197),
+              ], // Your gradient colors
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ElevatedButton(
+            onPressed: () {
+              _showConfirmationDialog(context);
+              // Get.offNamed('/homescreen');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(
+                  vertical: screenHeight * 0.016,
+                  horizontal: screenWidth * 0.19),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: tsecondarytextColor,
+                  fontSize: tmidfontsize(context)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Positioned getCurrentLocation(double screenHeight, double screenWidth) {
     return Positioned(
@@ -368,54 +482,41 @@ class _FindSpState extends State<FindSp> {
     );
   }
 
-  Positioned showLocationField(double screenHeight) {
+  Positioned showLocationField(double screenHeight, double screenWidth) {
     return Positioned(
       top: screenHeight * 0.06,
-      left: 5,
-      right: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-              onPressed: () {
-                Get.toNamed("/jobdetail");
-              },
-              icon: Icon(Icons.arrow_back)),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 121, 121, 121)
-                        .withOpacity(0.5), // Shadow color with opacity
-                    spreadRadius: 5, // Spread radius
-                    blurRadius: 7, // Blur radius
-                    offset: Offset(0, 3), // Offset for the shadow (x, y)
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _locationController,
-                style:
-                    TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
-                enabled: false,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search location',
-                ),
-                onSubmitted: (value) {
-                  _searchLocation(
-                      value); // Search location when the user submits the location
-                },
-              ),
+      left: screenWidth * 0.06, // 10% from the left
+      right: screenWidth * 0.06,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 121, 121, 121)
+                  .withOpacity(0.5), // Shadow color with opacity
+              spreadRadius: 5, // Spread radius
+              blurRadius: 7, // Blur radius
+              offset: Offset(0, 3), // Offset for the shadow (x, y)
             ),
+          ],
+        ),
+        child: TextField(
+          controller: _locationController,
+          style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+          enabled: false,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            hintText: 'Search location',
           ),
-        ],
+          onSubmitted: (value) {
+            _searchLocation(
+                value); // Search location when the user submits the location
+          },
+        ),
       ),
     );
   }

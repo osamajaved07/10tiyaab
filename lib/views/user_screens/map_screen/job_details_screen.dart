@@ -38,12 +38,12 @@ class _JobDetailsState extends State<JobDetails> {
   void initState() {
     super.initState();
     _getStoredServiceProvider();
-    final arguments = Get.arguments as Map<String, dynamic>?;
-    if (arguments != null) {
-      _selectedServiceProvider =
-          arguments['serviceProvider'] ?? "Not found Provider";
-      print("Selected Service Provider: $_selectedServiceProvider");
-    }
+    // final arguments = Get.arguments as Map<String, dynamic>?;
+    // if (arguments != null) {
+    //   _selectedServiceProvider =
+    //       arguments['serviceProvider'] ?? "Not found Provider";
+    //   print("Selected Service Provider: $_selectedServiceProvider");
+    // }
   }
 
   Future<void> _getStoredServiceProvider() async {

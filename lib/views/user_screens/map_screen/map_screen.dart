@@ -292,7 +292,14 @@ class _UserMapScreenState extends State<UserMapScreen> {
             borderRadius: BorderRadius.circular(18),
             child: Ink(
               decoration: BoxDecoration(
-                color: Colors.red, // Cancel button background color
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.grey,
+                    const Color.fromARGB(255, 197, 197, 197),
+                  ], // Your gradient colors
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ), // Cancel button background color
                 borderRadius: BorderRadius.circular(10),
               ),
               child: ElevatedButton(

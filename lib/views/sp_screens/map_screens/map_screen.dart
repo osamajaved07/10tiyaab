@@ -258,7 +258,7 @@ class _SpMapScreenState extends State<SpMapScreen> {
           },
           style: ElevatedButton.styleFrom(
             elevation: 8,
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.grey,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -345,9 +345,10 @@ class _SpMapScreenState extends State<SpMapScreen> {
         ),
         child: TextField(
           controller: _locationController,
-          style: TextStyle(color: ttextColor, 
-          fontWeight: FontWeight.w500,
-          fontSize: tsmallfontsize(context)),
+          style: TextStyle(
+              color: ttextColor,
+              fontWeight: FontWeight.w500,
+              fontSize: tsmallfontsize(context)),
           enabled: false,
           decoration: InputDecoration(
             filled: true,
