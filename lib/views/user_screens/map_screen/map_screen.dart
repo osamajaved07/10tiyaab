@@ -229,7 +229,7 @@ class _UserMapScreenState extends State<UserMapScreen> {
                       _controller.complete(controller);
                     },
                   ),
-                  showLocationField(screenHeight),
+                  showLocationField(screenHeight, screenWidth),
                   getCurrentLocation(screenHeight, screenWidth),
                   button(screenHeight, screenWidth, context),
                 ],
@@ -244,40 +244,81 @@ class _UserMapScreenState extends State<UserMapScreen> {
       bottom: screenHeight * 0.04,
       left: screenWidth * 0.19,
       right: screenWidth * 0.19,
-      child: Material(
-        elevation: 12,
-        shadowColor: Colors.grey.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(18),
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                tPrimaryColor,
-                const Color.fromARGB(255, 52, 235, 235)
-              ], // Your gradient colors
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ElevatedButton(
-            onPressed: _saveLocation, // Call the save location function
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(vertical: 15),
-              shape: RoundedRectangleBorder(
+      child: Column(
+        children: [
+          Material(
+            elevation: 12,
+            shadowColor: Colors.grey.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(18),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    tPrimaryColor,
+                    const Color.fromARGB(255, 52, 235, 235)
+                  ], // Your gradient colors
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(10),
               ),
-            ),
-            child: Text(
-              'Confirm location',
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: tsecondarytextColor,
-                  fontSize: tmidfontsize(context)),
+              child: ElevatedButton(
+                onPressed: _saveLocation, // Call the save location function
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.016,
+                      horizontal: screenWidth * 0.09),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Confirm location',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: tsecondarytextColor,
+                      fontSize: tmidfontsize(context)),
+                ),
+              ),
             ),
           ),
-        ),
+          SizedBox(
+            height: screenHeight * 0.02,
+          ),
+          Material(
+            elevation: 12,
+            shadowColor: Colors.grey.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(18),
+            child: Ink(
+              decoration: BoxDecoration(
+                color: Colors.red, // Cancel button background color
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.offNamed('/homescreen'); // Navigate to the home screen
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.016,
+                      horizontal: screenWidth * 0.19),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white, // White text color for cancel button
+                      fontSize: tmidfontsize(context)),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -294,54 +335,44 @@ class _UserMapScreenState extends State<UserMapScreen> {
     );
   }
 
-  Positioned showLocationField(double screenHeight) {
+  Positioned showLocationField(double screenHeight, double screenWidth) {
     return Positioned(
       top: screenHeight * 0.06,
-      left: 5,
-      right: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-              onPressed: () {
-                Get.toNamed("/homescreen");
-              },
-              icon: Icon(Icons.arrow_back)),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 121, 121, 121)
-                        .withOpacity(0.5), // Shadow color with opacity
-                    spreadRadius: 5, // Spread radius
-                    blurRadius: 7, // Blur radius
-                    offset: Offset(0, 3), // Offset for the shadow (x, y)
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _locationController,
-                style:
-                    TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
-                enabled: false,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search location',
-                ),
-                onSubmitted: (value) {
-                  _searchLocation(
-                      value); // Search location when the user submits the location
-                },
-              ),
+      left: screenWidth * 0.06, // 10% from the left
+      right: screenWidth * 0.06,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 121, 121, 121)
+                  .withOpacity(0.5), // Shadow color with opacity
+              spreadRadius: 5, // Spread radius
+              blurRadius: 7, // Blur radius
+              offset: Offset(0, 3), // Offset for the shadow (x, y)
             ),
+          ],
+        ),
+        child: TextField(
+          controller: _locationController,
+          style: TextStyle(
+              color: ttextColor,
+              fontWeight: FontWeight.w500,
+              fontSize: tsmallfontsize(context)),
+          enabled: false,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            hintText: 'Search location',
           ),
-        ],
+          onSubmitted: (value) {
+            _searchLocation(
+                value); // Search location when the user submits the location
+          },
+        ),
       ),
     );
   }

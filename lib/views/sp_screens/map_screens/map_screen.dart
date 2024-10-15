@@ -345,7 +345,9 @@ class _SpMapScreenState extends State<SpMapScreen> {
         ),
         child: TextField(
           controller: _locationController,
-          style: TextStyle(color: ttextColor, fontWeight: FontWeight.w500),
+          style: TextStyle(color: ttextColor, 
+          fontWeight: FontWeight.w500,
+          fontSize: tsmallfontsize(context)),
           enabled: false,
           decoration: InputDecoration(
             filled: true,
