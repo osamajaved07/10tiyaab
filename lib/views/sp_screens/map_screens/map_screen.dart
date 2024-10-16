@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
@@ -30,11 +31,20 @@ class _SpMapScreenState extends State<SpMapScreen> {
   final TextEditingController _locationController = TextEditingController();
   String _connectionState = "Offline";
   final FlutterSecureStorage _storage = FlutterSecureStorage();
+  Timer? _timer;
+  bool _showFindingJobsContainer = false;
+  bool _showAdditionalContainers = false;
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer if the widget is disposed
+    super.dispose();
   }
 
   // Function to get the current location of the user
@@ -115,6 +125,19 @@ class _SpMapScreenState extends State<SpMapScreen> {
         setState(() {
           _connectionState = "Online";
           print("Connection State: Online");
+          // Start the timer to show the "Finding jobs" container after 8 seconds
+          _timer = Timer(Duration(seconds: 8), () {
+            setState(() {
+              _showFindingJobsContainer = true; // Show "Finding jobs" container
+              // Show additional containers after 8 more seconds
+              _timer = Timer(Duration(seconds: 8), () {
+                setState(() {
+                  _showAdditionalContainers =
+                      true; // Show additional containers
+                });
+              });
+            });
+          });
         });
         _storage.write(key: 'connectionState', value: 'Online'); // Store Online
       });
@@ -125,7 +148,10 @@ class _SpMapScreenState extends State<SpMapScreen> {
       Future.delayed(Duration(seconds: 3), () {
         setState(() {
           _connectionState = "Offline";
-          print("Connection State: Offline"); // Switch to offline after delay
+          print("Connection State: Offline");
+          _showFindingJobsContainer = false; // Hide "Finding jobs" container
+          _showAdditionalContainers = false; // Hide additional containers
+          _timer?.cancel();
         });
         _storage.write(key: 'connectionState', value: 'Offline');
       });
@@ -168,6 +194,35 @@ class _SpMapScreenState extends State<SpMapScreen> {
     } catch (e) {
       print("Error searching location: $e");
     }
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: tlightPrimaryColor,
+          elevation: 8,
+          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text("Confirm"),
+          content: Text("Are you sure you want to stop earning?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel", style: TextStyle(color: ttextColor)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.offNamed('/sphome');
+              },
+              child: Text("Yes", style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showLocationDialog(BuildContext context, String message,
@@ -240,6 +295,116 @@ class _SpMapScreenState extends State<SpMapScreen> {
                   getCurrentLocation(screenHeight, screenWidth),
                   connectionToggleButton(screenHeight, screenWidth),
                   cancelButton(screenHeight, screenWidth),
+                  if (_showFindingJobsContainer) // Show the container based on visibility
+                    Positioned(
+                      top: screenHeight * 0.4, // Adjust as needed
+                      left: screenWidth * 0.1,
+                      right: screenWidth * 0.1,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.02,
+                            vertical: screenHeight * 0.02),
+                        decoration: BoxDecoration(
+                          color: tPrimaryColor, // Change color as needed
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Finding jobs near you!',
+                              style: TextStyle(
+                                  color: ttextColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: tmidfontsize(context)),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              width: screenHeight * 0.01,
+                            ),
+                            SpinKitSpinningLines(
+                              size: tlargefontsize(context),
+                              color: Colors.black,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (_showAdditionalContainers) ...[
+                    Positioned(
+                      top: screenHeight * 0.65,
+                      left: screenWidth * 0.05,
+                      right: screenWidth * 0.05,
+                      child: Container(
+                        height: 80,
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: tlightPrimaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text("Additional Container 1"),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: screenHeight * 0.75,
+                      left: screenWidth * 0.05,
+                      right: screenWidth * 0.05,
+                      child: Container(
+                        height: 80,
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: tlightPrimaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text("Additional Container 2"),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: screenHeight * 0.85,
+                      left: screenWidth * 0.05,
+                      right: screenWidth * 0.05,
+                      child: Container(
+                        height: 80,
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: tlightPrimaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text("Additional Container 3"),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               );
             }),
@@ -254,7 +419,8 @@ class _SpMapScreenState extends State<SpMapScreen> {
         width: screenWidth * 0.5,
         child: ElevatedButton(
           onPressed: () {
-            Get.offAllNamed('/sphome'); // Navigate to the home screen
+            _showConfirmationDialog(context);
+            // Navigate to the home screen
           },
           style: ElevatedButton.styleFrom(
             elevation: 8,
