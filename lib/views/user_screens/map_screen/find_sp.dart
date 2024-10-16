@@ -256,24 +256,116 @@ class _FindSpState extends State<FindSp> {
     );
   }
 
+  void _showServiceProviderDialog(BuildContext context, String travelTime,
+      String providerName, String price, String skill) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Align(
+          alignment: Alignment.center,
+          child: Material(
+            borderRadius: BorderRadius.circular(15),
+            elevation: 10,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(29, 229, 229, 229),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 3,
+                  ),
+                ],
+              ),
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage:
+                            AssetImage('assets/images/default.png'),
+                        radius: 25,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.04,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(providerName,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: tmidfontsize(context))),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.005),
+                          Text(
+                            skill,
+                            style: TextStyle(fontSize: tsmallfontsize(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // Text(
+                  //   skill,
+                  //   style: TextStyle(fontSize: tmidfontsize(context)),
+                  // ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Travel time: $travelTime"),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      Text("Price: $price"),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: tPrimaryColor),
+                    onPressed: () {
+                      // Navigator.pop(context); // Close the dialog
+                    },
+                    child: Text("Accept"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildServiceProviderContainers() {
     return Column(
       children: [
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
         ),
-        _buildAnimatedServiceProviderContainer(
-            _showFirst, "Kamran Ghulam", _selectedServiceProvider, "Rs 400"),
-        _buildAnimatedServiceProviderContainer(
-            _showSecond, "Babar khan", _selectedServiceProvider, "Rs 600"),
-        _buildAnimatedServiceProviderContainer(
-            _showThird, "Rizwan Ali", _selectedServiceProvider, "Rs 800"),
+        _buildAnimatedServiceProviderContainer(_showFirst, "800m away",
+            "Kamran Ghulam", _selectedServiceProvider, "Rs 400"),
+        _buildAnimatedServiceProviderContainer(_showSecond, "800m away",
+            "Babar khan", _selectedServiceProvider, "Rs 600"),
+        _buildAnimatedServiceProviderContainer(_showThird, "800m away",
+            "Rizwan Ali", _selectedServiceProvider, "Rs 800"),
       ],
     );
   }
 
-  Widget _buildAnimatedServiceProviderContainer(
-      bool isVisible, String providerName, String skill, String price) {
+  Widget _buildAnimatedServiceProviderContainer(bool isVisible,
+      String travelTime, String providerName, String skill, String price) {
     return AnimatedSlide(
       offset: isVisible ? Offset(0, 0) : Offset(0, -1), // Slide from top
       duration: Duration(milliseconds: 1000), // Duration of the slide animation
@@ -281,13 +373,14 @@ class _FindSpState extends State<FindSp> {
       child: AnimatedOpacity(
         opacity: isVisible ? 1.0 : 0.0, // Fade in the container
         duration: Duration(milliseconds: 500), // Duration of the opacity change
-        child: _buildServiceProviderContainer(providerName, skill, price),
+        child: _buildServiceProviderContainer(
+            travelTime, providerName, skill, price),
       ),
     );
   }
 
   Widget _buildServiceProviderContainer(
-      String providerName, String skill, String price) {
+      String travelTime, String providerName, String skill, String price) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: EdgeInsets.all(16),
@@ -334,14 +427,20 @@ class _FindSpState extends State<FindSp> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                onPressed: () {},
-                child: Text("Accept"),
+                onPressed: () {
+                  _showServiceProviderDialog(
+                      context, travelTime, providerName, price, skill);
+                },
+                child: Text("View"),
                 style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 32),
                   backgroundColor: Colors.green,
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed('/chatscreen');
+                },
                 child: Row(
                   children: [
                     Text("Chat"),
@@ -353,13 +452,6 @@ class _FindSpState extends State<FindSp> {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("Decline"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
                 ),
               ),
             ],
