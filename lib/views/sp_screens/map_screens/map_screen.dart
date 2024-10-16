@@ -33,7 +33,8 @@ class _SpMapScreenState extends State<SpMapScreen> {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
   Timer? _timer;
   bool _showFindingJobsContainer = false;
-  bool _showAdditionalContainers = false;
+  // bool _showAdditionalContainers = false;
+  List<bool> _containerVisibility = [false, false, false];
 
   @override
   void initState() {
@@ -125,15 +126,16 @@ class _SpMapScreenState extends State<SpMapScreen> {
         setState(() {
           _connectionState = "Online";
           print("Connection State: Online");
-          // Start the timer to show the "Finding jobs" container after 8 seconds
-          _timer = Timer(Duration(seconds: 8), () {
+
+          _timer = Timer(Duration(seconds: 2), () {
             setState(() {
-              _showFindingJobsContainer = true; // Show "Finding jobs" container
-              // Show additional containers after 8 more seconds
-              _timer = Timer(Duration(seconds: 8), () {
+              _showFindingJobsContainer = true;
+
+              _timer = Timer(Duration(seconds: 4), () {
                 setState(() {
-                  _showAdditionalContainers =
-                      true; // Show additional containers
+                  _startAdditionalContainersAnimation();
+                  // _showAdditionalContainers =
+                  //     true; // Show additional containers
                 });
               });
             });
@@ -149,11 +151,21 @@ class _SpMapScreenState extends State<SpMapScreen> {
         setState(() {
           _connectionState = "Offline";
           print("Connection State: Offline");
-          _showFindingJobsContainer = false; // Hide "Finding jobs" container
-          _showAdditionalContainers = false; // Hide additional containers
+          _showFindingJobsContainer = false;
+          _containerVisibility = [false, false, false];
+          // _showAdditionalContainers = false; // Hide additional containers
           _timer?.cancel();
         });
         _storage.write(key: 'connectionState', value: 'Offline');
+      });
+    }
+  }
+
+  void _startAdditionalContainersAnimation() async {
+    for (int i = 0; i < _containerVisibility.length; i++) {
+      await Future.delayed(const Duration(seconds: 3));
+      setState(() {
+        _containerVisibility[i] = true; // Show each container one by one
       });
     }
   }
@@ -331,80 +343,54 @@ class _SpMapScreenState extends State<SpMapScreen> {
                         ),
                       ),
                     ),
-                  if (_showAdditionalContainers) ...[
+                  for (int i = 0; i < _containerVisibility.length; i++)
                     Positioned(
-                      top: screenHeight * 0.65,
+                      top: screenHeight * (0.6 + (i * 0.1)),
                       left: screenWidth * 0.05,
                       right: screenWidth * 0.05,
-                      child: Container(
-                        height: 80,
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: tlightPrimaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
+                      child: AnimatedOpacity(
+                        opacity: _containerVisibility[i] ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 500),
+                        child: Container(
+                          height: screenHeight * 0.088,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: tlightPrimaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  switch (i) {
+                                    0 => "Job 1: Repair my main switch board",
+                                    1 => "Job 2: Repair the sink",
+                                    2 => "Job 3: Paint the room",
+                                    _ => "Unknown job post", // Default case
+                                  },
+                                ),
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.grey[500]),
+                                  onPressed: () {},
+                                  label: Text("Chat"),
+                                  icon: Icon(Icons.message_outlined),
+                                )
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text("Additional Container 1"),
+                          ),
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: screenHeight * 0.75,
-                      left: screenWidth * 0.05,
-                      right: screenWidth * 0.05,
-                      child: Container(
-                        height: 80,
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: tlightPrimaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text("Additional Container 2"),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: screenHeight * 0.85,
-                      left: screenWidth * 0.05,
-                      right: screenWidth * 0.05,
-                      child: Container(
-                        height: 80,
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: tlightPrimaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text("Additional Container 3"),
-                        ),
-                      ),
-                    ),
-                  ],
                 ],
               );
             }),
@@ -524,13 +510,6 @@ class _SpMapScreenState extends State<SpMapScreen> {
               borderSide: BorderSide.none,
             ),
             hintText: 'Search location',
-            // suffixIcon: IconButton(
-            //   icon: Icon(Icons.search),
-            //   onPressed: () {
-            //     _searchLocation(_locationController
-            //         .text); // Search location on pressing the search icon
-            //   },
-            // ),
           ),
           onSubmitted: (value) {
             _searchLocation(value);
