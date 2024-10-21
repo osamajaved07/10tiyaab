@@ -23,10 +23,11 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
 7. ### Job Details & Form Submission:
    Users can submit detailed job information, such as the job description, location, images, and required skills, which are handled efficiently with error handling and form validation.
 8. ### Dismissible Job Cards:
-   Job containers are swipeable, allowing users to dismiss and remove jobs from their view for easier management.
+   Job containers are swipeable, allowing service providers to dismiss and remove jobs from their view for easier management.
 9. ### Responsive UI Design:ui
    The app's UI is designed to work seamlessly on different screen sizes and devices, ensuring a consistent user experience.
-
+10. ### Backend & Database Frameworks ⚙️💾
+    10tiyaab's backend uses Django for scalable development and PostgreSQL for reliable data management and powerful querying.
 
 ## Screenshots
 <table>
