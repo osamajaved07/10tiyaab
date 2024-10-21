@@ -10,9 +10,9 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
 ## Key Features:
 1. ### User-Friendly Interface:
    Users can easily navigate through the app, from selecting service providers to booking jobs and managing their profiles.
-2. ### Service Provider Selection:
+2. ### Service Provider Selection👷
    The app provides a list of service providers in the user's area. Users can search for service providers based on services, view details, and select the appropriate one.
-3. ### Dynamic Price Range:
+3. ### Dynamic Price Range💰
    Users can set a minimum and maximum price range when posting a job. The price range slider dynamically adjusts based on user input, allowing more flexibility in job pricing.
 4. ### Map Integration🗺️
    10tiyaab includes a map feature using Google Maps and Geolocator to display the user's current location. Users can set their destination and view the proximity of service providers.
@@ -24,7 +24,7 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
    Users can submit detailed job information, such as the job description, location, images, and required skills, which are handled efficiently with error handling and form validation.
 8. ### Dismissible Job Cards:
    Job containers are swipeable, allowing users to dismiss and remove jobs from their view for easier management.
-9. ### Responsive UI Design:
+9. ### Responsive UI Design:ui
    The app's UI is designed to work seamlessly on different screen sizes and devices, ensuring a consistent user experience.
 
 
