@@ -1,5 +1,5 @@
 # 10tiyaab
-Mobile Application designed to facilitate seamless interactions between **Service Providers** and **Consumers**.
+**10tiyaab** is a marketplace app connecting **users** with **service providers**👷🏼‍♂️ for various jobs. Users can search🔍, select, and hire providers based on location📍, budget💰, and real-time tracking🕐, with the option to chat💬 and negotiate prices before confirming. Service providers can find jobs in real time🕐, earn money💰, and negotiate prices with users via in-app chat💬, making the process seamless for both parties.🔥
 
 
 **Show your support by starring the repository ⭐️**
