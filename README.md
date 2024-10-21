@@ -48,7 +48,7 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
       <p>Customer Registration Page</p>
     </td>
   </tr>
-
+</table>
 
 
 
