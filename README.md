@@ -37,31 +37,31 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
       <p>Splash Screen</p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/ff8c2178-5ea5-4657-973a-f2abab0147f3" alt="ss1" width="200"/>
-      <p>User Selection Page</p>
+      <img src="https://github.com/user-attachments/assets/2916fd8f-8419-4443-ac1f-205db83c4c1c" alt="ss1" width="200"/>
+      <p>User Selection Screen</p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/35d18d2f-7979-429d-8369-723e68e5e7e6" alt="ss1" width="200"/>
-      <p>Login Page</p>
+      <img src="https://github.com/user-attachments/assets/c5e9f56f-8c17-4429-90f0-5748b35d33ba" alt="ss1" width="200"/>
+      <p>Login Screen</p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/f5d5e867-4624-4aaf-bfd5-5021dcdda0fc" alt="ss1" width="200"/>
-      <p>Customer Registration Page</p>
+      <img src="https://github.com/user-attachments/assets/a0c8794b-da6f-4484-8aee-ded984a81982" alt="ss1" width="200"/>
+      <p>Customer Registration Screen</p>
     </td>
   </tr>
   
   <tr>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/a9046842-881f-4a41-be63-80d316ad3f32" alt="ss1" width="200"/>
-      <p>Splash Screen</p>
+      <img src="https://github.com/user-attachments/assets/f31df2f6-8ba1-4a2a-a783-12d911b01e16" alt="ss1" width="200"/>
+      <p>Email Input Screen</p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/ff8c2178-5ea5-4657-973a-f2abab0147f3" alt="ss1" width="200"/>
-      <p>User Selection Page</p>
+      <img src="https://github.com/user-attachments/assets/6d15ee2e-c307-4ebb-ada0-6c50fe4d0555" alt="ss1" width="200"/>
+      <p>Email Verification Screen</p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/35d18d2f-7979-429d-8369-723e68e5e7e6" alt="ss1" width="200"/>
-      <p>Login Page</p>
+      <img src="https://github.com/user-attachments/assets/55836dd8-86c0-4220-a6da-4b6ecf8bf944" alt="ss1" width="200"/>
+      <p>Phone# Input Screen</p>
     </td>
     <td align="center">
       <img src="https://github.com/user-attachments/assets/f5d5e867-4624-4aaf-bfd5-5021dcdda0fc" alt="ss1" width="200"/>
