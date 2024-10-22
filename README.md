@@ -68,6 +68,21 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
       <p>User Home Screen</p>
     </td>
   </tr>
+
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/4a7c676c-3a32-4ffb-a389-790446800e8b" alt="ss1" width="200"/>
+      <p>Profile Screen</p>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/24793aee-ba7c-4974-81fe-06f8abdeb5e5" alt="ss1" width="200"/>
+      <p>Past Activities Screen</p>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/73aaa60b-6906-440c-a2f0-c9483276f6f5" alt="ss1" width="200"/>
+      <p>ContactUs Screen</p>
+    </td>
+  </tr>
 </table>
 
 
