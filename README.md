@@ -64,8 +64,8 @@ Get the APK file from the [apk_folder](https://github.com/osamajaved07/10tiyaab/
       <p>Phone# Input Screen</p>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/f5d5e867-4624-4aaf-bfd5-5021dcdda0fc" alt="ss1" width="200"/>
-      <p>Customer Registration Page</p>
+      <img src="https://github.com/user-attachments/assets/36cd3416-9167-4479-a23e-9e8a3960117d" alt="ss1" width="200"/>
+      <p>User Home Screen</p>
     </td>
   </tr>
 </table>
