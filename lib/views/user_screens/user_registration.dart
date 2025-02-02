@@ -301,7 +301,7 @@ class _UserRegisterState extends State<UserRegister> {
             return 'Please enter password';
           } else if (value.length < 8) {
             return 'Password must be at least 8 characters';
-          } else if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$')
+          } else if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).{8,}$')
               .hasMatch(value)) {
             return 'Password must contain at least one letter\n and one number';
           } else {

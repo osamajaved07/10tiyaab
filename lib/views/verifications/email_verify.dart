@@ -50,7 +50,7 @@ class _EmailVerificationState extends State<EmailVerification> {
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                Get.offNamed("/professionalregister"); // Navigate back
+                Get.offNamed("/userregister"); // Navigate back
               },
             ),
           ],
