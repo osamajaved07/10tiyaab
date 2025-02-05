@@ -4,65 +4,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fyp_1/utils/colors.dart';
+import 'package:fyp_1/utils/dummy_service_providers.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart'; // Import the dummy service providers
 
 class FindSp extends StatefulWidget {
   const FindSp({super.key});
-
   @override
   State<FindSp> createState() => _FindSpState();
 }
 
 class _FindSpState extends State<FindSp> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
-
+  final Completer<GoogleMapController> _controller = Completer();
   CameraPosition _initialCameraPosition = const CameraPosition(
-    target: LatLng(24.8607, 67.0011),
+    target: LatLng(24.8607, 67.0011), // Default location
     zoom: 18,
   );
-
-  late Position _currentPosition;
+  Position? _currentPosition; // Use nullable type
   bool _isMapLoading = true;
   bool _isSearchingForProviders = true;
   final TextEditingController _locationController = TextEditingController();
   final _secureStorage = const FlutterSecureStorage();
   String _selectedServiceProvider = "Unknown Provider";
 
-// For controlling the animated container visibility
+  // For controlling the animated container visibility
   bool _showFirst = false;
   bool _showSecond = false;
   bool _showThird = false;
+
+  // List of dummy service providers
+  List<ServiceProvider> _serviceProviders = [];
+  List<ServiceProvider> _filteredServiceProviders = [];
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
     _getStoredServiceProvider();
-    // final arguments = Get.arguments as Map<String, dynamic>?;
+    _serviceProviders = dummyServiceProviders; // Assign dummy service providers
+    // final arguments = Get.arguments as Map?;
     // if (arguments != null) {
     //   _selectedServiceProvider =
-    //       arguments['serviceProvider'] ?? "Unknown Provider";
+    //	arguments['serviceProvider'] ?? "Unknown Provider";
     //   print("Selected Service Provider: $_selectedServiceProvider");
     // }
-    Future.delayed(Duration(seconds: 8), () {
+    Future.delayed(const Duration(seconds: 8), () {
       setState(() {
         _isSearchingForProviders = false;
         // Trigger the animations with delays
-        Timer(Duration(seconds: 2), () {
+        Timer(const Duration(seconds: 2), () {
           setState(() {
             _showFirst = true;
           });
         });
-        Timer(Duration(seconds: 5), () {
+        Timer(const Duration(seconds: 5), () {
           setState(() {
             _showSecond = true;
           });
         });
-        Timer(Duration(seconds: 8), () {
+        Timer(const Duration(seconds: 8), () {
           setState(() {
             _showThird = true;
           });
@@ -71,10 +73,9 @@ class _FindSpState extends State<FindSp> {
     });
   }
 
-  Future<void> _getStoredServiceProvider() async {
+  void _getStoredServiceProvider() async {
     // Retrieve the stored service provider from secure storage
     String? storedProvider = await _secureStorage.read(key: 'selectedProvider');
-
     if (storedProvider != null) {
       setState(() {
         _selectedServiceProvider = storedProvider;
@@ -119,7 +120,6 @@ class _FindSpState extends State<FindSp> {
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Show a dialog to ask the user to enable location services
@@ -130,7 +130,6 @@ class _FindSpState extends State<FindSp> {
       );
       return;
     }
-
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -144,7 +143,6 @@ class _FindSpState extends State<FindSp> {
         return;
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       // Permissions are permanently denied, handle accordingly by directing to settings
       _showLocationDialog(
@@ -154,33 +152,33 @@ class _FindSpState extends State<FindSp> {
       );
       return;
     }
-
     try {
       _currentPosition = await Geolocator.getCurrentPosition();
       // Use reverse geocoding to get address from coordinates
       List<Placemark> placemarks = await placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
-
+          _currentPosition!.latitude, _currentPosition!.longitude);
       Placemark place = placemarks[0]; // Get the first result
-
       // Construct a user-friendly address
       String address =
           "${place.street}, ${place.subLocality}, ${place.locality}";
       setState(() {
         _locationController.text = address;
         _initialCameraPosition = CameraPosition(
-          target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+          target:
+              LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
           zoom: 18,
         );
         _isMapLoading = false;
       });
-
       final GoogleMapController controller = await _controller.future;
       controller.animateCamera(
         CameraUpdate.newCameraPosition(
           _initialCameraPosition,
         ),
       );
+
+      // Filter service providers based on the new location
+      _filterServiceProviders();
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -193,14 +191,12 @@ class _FindSpState extends State<FindSp> {
       if (locations.isNotEmpty) {
         Location newLocation = locations.first;
         LatLng newLatLng = LatLng(newLocation.latitude, newLocation.longitude);
-
         final GoogleMapController controller = await _controller.future;
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(target: newLatLng, zoom: 18),
           ),
         );
-
         // Update the current position and the text field
         setState(() {
           _currentPosition = Position(
@@ -215,9 +211,10 @@ class _FindSpState extends State<FindSp> {
             altitudeAccuracy: 1.0, // Add altitudeAccuracy
             headingAccuracy: 1.0,
           );
-          // _locationController.text =
-          //     "${newLatLng.latitude}, ${newLatLng.longitude}";
         });
+
+        // Filter service providers based on the new location
+        _filterServiceProviders();
       }
     } catch (e) {
       print("Error searching location: $e");
@@ -234,7 +231,7 @@ class _FindSpState extends State<FindSp> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () => Get.back,
+              onPressed: () => Get.back(),
               child: Text('Cancel'),
             ),
             TextButton(
@@ -282,7 +279,6 @@ class _FindSpState extends State<FindSp> {
               width: MediaQuery.of(context).size.width * 0.7,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -314,11 +310,6 @@ class _FindSpState extends State<FindSp> {
                       ),
                     ],
                   ),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // Text(
-                  //   skill,
-                  //   style: TextStyle(fontSize: tmidfontsize(context)),
-                  // ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -348,19 +339,35 @@ class _FindSpState extends State<FindSp> {
     );
   }
 
+  void _filterServiceProviders() {
+    if (_currentPosition != null) {
+      _filteredServiceProviders = _serviceProviders.where((provider) {
+        double distanceInMeters = Geolocator.distanceBetween(
+          _currentPosition!.latitude,
+          _currentPosition!.longitude,
+          provider.location.latitude,
+          provider.location.longitude,
+        );
+        // Assume a radius of 5km for demonstration purposes
+        return distanceInMeters <= 5000;
+      }).toList();
+
+      // Update UI
+      setState(() {});
+    }
+  }
+
   Widget _buildServiceProviderContainers() {
     return Column(
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.15,
-        ),
-        _buildAnimatedServiceProviderContainer(_showFirst, "800m away",
-            "Kamran Ghulam", _selectedServiceProvider, "Rs 400"),
-        _buildAnimatedServiceProviderContainer(_showSecond, "800m away",
-            "Babar khan", _selectedServiceProvider, "Rs 600"),
-        _buildAnimatedServiceProviderContainer(_showThird, "800m away",
-            "Rizwan Ali", _selectedServiceProvider, "Rs 800"),
-      ],
+      children: _filteredServiceProviders.map((provider) {
+        return _buildAnimatedServiceProviderContainer(
+          true, // Always visible for simplicity
+          provider.travelTime,
+          provider.name,
+          provider.skill,
+          provider.price,
+        );
+      }).toList(),
     );
   }
 
