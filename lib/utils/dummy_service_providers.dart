@@ -157,76 +157,76 @@ List<ServiceProvider> dummyServiceProviders = [
     skill: "Plumber",
     price: "Rs 500",
     travelTime: "1km away",
-    location: const LatLng(24.8880, 67.0620), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Haseeb",
     skill: "Electrician",
     price: "Rs 700",
     travelTime: "1.2km away",
-    location: const LatLng(24.8890, 67.0630), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Naveed",
     skill: "Painter",
     price: "Rs 900",
     travelTime: "1.5km away",
-    location: const LatLng(24.8900, 67.0640), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Saeed",
     skill: "Carpenter",
     price: "Rs 600",
     travelTime: "2km away",
-    location: const LatLng(24.8910, 67.0650), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Amna",
     skill: "Cleaner",
     price: "Rs 400",
     travelTime: "2.5km away",
-    location: const LatLng(24.8920, 67.0660), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Raza",
     skill: "Mechanic",
     price: "Rs 800",
     travelTime: "3km away",
-    location: const LatLng(24.8930, 67.0670), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Sobia",
     skill: "Cook",
     price: "Rs 1000",
     travelTime: "3.5km away",
-    location: const LatLng(24.8940, 67.0680), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Farooq",
-    skill: "Gardener",
+    skill: "Plumber",
     price: "Rs 550",
     travelTime: "4km away",
-    location: const LatLng(24.8950, 67.0690), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
-    name: "Sana",
-    skill: "Driver",
-    price: "Rs 650",
+    name: "Rahman",
+    skill: "Carpenter",
+    price: "Rs 450",
     travelTime: "4.5km away",
-    location: const LatLng(24.8960, 67.0700), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
     name: "Nasir",
-    skill: "Tailor",
+    skill: "Welder",
     price: "Rs 450",
     travelTime: "5km away",
-    location: const LatLng(24.8970, 67.0710), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
   ServiceProvider(
-    name: "Hina",
-    skill: "Laundry",
+    name: "Hamza",
+    skill: "Electrician",
     price: "Rs 350",
     travelTime: "5.5km away",
-    location: const LatLng(24.8980, 67.0720), // North Karachi
+    location: const LatLng(24.9729, 67.0643), // North Karachi
   ),
 ];

@@ -8,7 +8,7 @@ import 'package:fyp_1/utils/dummy_service_providers.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart'; // Import the dummy service providers
+import 'package:geolocator/geolocator.dart';
 
 class FindSp extends StatefulWidget {
   const FindSp({super.key});
@@ -28,12 +28,10 @@ class _FindSpState extends State<FindSp> {
   final TextEditingController _locationController = TextEditingController();
   final _secureStorage = const FlutterSecureStorage();
   String _selectedServiceProvider = "Unknown Provider";
-
   // For controlling the animated container visibility
   bool _showFirst = false;
   bool _showSecond = false;
   bool _showThird = false;
-
   // List of dummy service providers
   List<ServiceProvider> _serviceProviders = [];
   List<ServiceProvider> _filteredServiceProviders = [];
@@ -44,12 +42,12 @@ class _FindSpState extends State<FindSp> {
     _getCurrentLocation();
     _getStoredServiceProvider();
     _serviceProviders = dummyServiceProviders; // Assign dummy service providers
-    // final arguments = Get.arguments as Map?;
-    // if (arguments != null) {
-    //   _selectedServiceProvider =
-    //	arguments['serviceProvider'] ?? "Unknown Provider";
-    //   print("Selected Service Provider: $_selectedServiceProvider");
-    // }
+    final arguments = Get.arguments as Map?;
+    if (arguments != null) {
+      _selectedServiceProvider =
+          arguments['serviceProvider'] ?? "Unknown Provider";
+      print("Selected Service Provider: $_selectedServiceProvider");
+    }
     Future.delayed(const Duration(seconds: 8), () {
       setState(() {
         _isSearchingForProviders = false;
@@ -176,7 +174,6 @@ class _FindSpState extends State<FindSp> {
           _initialCameraPosition,
         ),
       );
-
       // Filter service providers based on the new location
       _filterServiceProviders();
     } catch (e) {
@@ -212,7 +209,6 @@ class _FindSpState extends State<FindSp> {
             headingAccuracy: 1.0,
           );
         });
-
         // Filter service providers based on the new location
         _filterServiceProviders();
       }
@@ -349,7 +345,13 @@ class _FindSpState extends State<FindSp> {
           provider.location.longitude,
         );
         // Assume a radius of 5km for demonstration purposes
-        return distanceInMeters <= 5000;
+        bool isInRadius = distanceInMeters <= 5000;
+        bool isMatchingSkill = _selectedServiceProvider.isEmpty ||
+            provider.skill == _selectedServiceProvider;
+        bool isIncluded = isInRadius && isMatchingSkill;
+        print(
+            "Provider: ${provider.name}, Distance: ${distanceInMeters.toStringAsFixed(2)}m, In Radius: $isInRadius, Matching Skill: $isMatchingSkill, Included: $isIncluded");
+        return isIncluded;
       }).toList();
 
       // Update UI
@@ -359,6 +361,7 @@ class _FindSpState extends State<FindSp> {
 
   Widget _buildServiceProviderContainers() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: _filteredServiceProviders.map((provider) {
         return _buildAnimatedServiceProviderContainer(
           true, // Always visible for simplicity
@@ -510,7 +513,7 @@ class _FindSpState extends State<FindSp> {
                       ),
                     ),
                   if (!_isSearchingForProviders)
-                    _buildServiceProviderContainers(),
+                    Center(child: _buildServiceProviderContainers()),
                   showLocationField(screenHeight, screenWidth),
                   getCurrentLocation(screenHeight, screenWidth),
                   cancelButton(screenHeight, screenWidth, context),

@@ -74,6 +74,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       FocusScope.of(context).unfocus(); // Closes the keyboard
       print('Selected Service Provider: $suggestion');
     });
+    if (selectedProvider != null) {
+      Get.toNamed("/mapscreen", arguments: {'serviceProvider': suggestion});
+    }
   }
 
   @override
@@ -346,7 +349,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Need a Handyman?\n\nBook Now →',
+                                    'Need a Handyman?\n\nBook Now',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: screenWidth * 0.05,
@@ -432,14 +435,26 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               // Store selected provider in local storage
               await _storage.write(key: 'selectedProvider', value: suggestion);
               setState(() {
+                // selectedProvider = suggestion;
+                // print('Selected Service Provider: $suggestion');
+                _searchController.text = suggestion;
+                _filteredProviders.clear();
+                _showSuggestions = false;
+                _isWhereToEnabled = true;
                 selectedProvider = suggestion;
+                FocusScope.of(context).unfocus(); // Closes the keyboard
                 print('Selected Service Provider: $suggestion');
               });
+              if (selectedProvider != null) {
+                Get.toNamed("/mapscreen",
+                    arguments: {'serviceProvider': suggestion});
+              }
 
               // Redirect to map screen
-              Get.toNamed(
-                "/mapscreen",
-              );
+              // Get.toNamed(
+              //   "/mapscreen",
+              //   arguments: {'serviceProvider': suggestion},
+              // );
             }
           : null,
       child: Container(
