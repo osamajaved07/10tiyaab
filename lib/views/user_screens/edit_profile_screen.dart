@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print, prefer_final_fields, unused_element
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -104,7 +105,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             TextButton(
               onPressed: () async {
+                await FirebaseAuth.instance.signOut();
                 await _authController.logout();
+                print("Logged out from firebase also");
               },
               child: Text("Logout", style: TextStyle(color: Colors.red)),
             ),

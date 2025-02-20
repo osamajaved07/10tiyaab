@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/user__signup_model.dart'; // Importing the signup model
+import 'package:fyp_1/services/firebase_auth_service.dart';
 import 'package:fyp_1/utils/colors.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,7 @@ class UserRegister extends StatefulWidget {
 }
 
 class _UserRegisterState extends State<UserRegister> {
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   final UserAuthController _authController = Get.put(UserAuthController());
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
@@ -59,6 +61,7 @@ class _UserRegisterState extends State<UserRegister> {
             backgroundColor: Colors.red, colorText: Colors.white);
         return;
       } else {
+        await _firebaseAuthService.registerUser(username, password);
         _authController.register(
             username, firstName, lastName, password, confirmPassword);
       }

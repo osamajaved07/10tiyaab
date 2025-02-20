@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "541041760358",
+    "project_id": "tiyaab-295ad",
+    "storage_bucket": "tiyaab-295ad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541041760358:android:5f95e81c90860d15f675a7",
+        "android_client_info": {
+          "package_name": "com.example.fyp_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgsHHcOAxX238UqY9HmEWx34EecqTayVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

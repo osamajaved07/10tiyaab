@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_1/controllers/user_auth_controller.dart';
 import 'package:fyp_1/models/login_model.dart';
+import 'package:fyp_1/services/firebase_auth_service.dart';
 import 'package:fyp_1/views/others/home.dart';
 import 'package:fyp_1/views/sp_screens/sp_registration.dart';
 import 'package:fyp_1/utils/colors.dart';
@@ -22,6 +23,7 @@ class UserLogin extends StatefulWidget {
 }
 
 class _UserLoginState extends State<UserLogin> {
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   final UserAuthController _authController = Get.find<UserAuthController>();
   final _formkey = GlobalKey<FormState>();
   bool isPasswordVisible = false;
@@ -49,7 +51,9 @@ class _UserLoginState extends State<UserLogin> {
       String password = _passwordcontroller.text.trim();
 
       // Call the login method from AuthController
+      await _firebaseAuthService.loginUser(username, password);
       await _authController.login(username, password);
+      print("User loggedIn successfully");
     } else {
       Get.snackbar('Error', 'Please fill all the required fields',
           backgroundColor: Colors.red, colorText: Colors.white);
